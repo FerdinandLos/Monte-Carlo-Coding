@@ -1,8 +1,12 @@
 # Monte Carlo Simulation Johansen Juselius
 
+# Load the DGP parameters
+load("Monte-Carlo-Coding/DGPs/Johansen Juselius (1990) DGP.RData")
 
 
 # Now calculate the true profile BEFORE the loop
+# NOTE: The 'calc_persistence_profile' function needs to be defined or sourced
+# into your environment before this line can run.
 true_pp <- calc_persistence_profile(alpha = alpha_hat, beta = beta, 
                                     gamma_list = list(gamma_hat), 
                                     Sigma = Sigma_hat, horizon = 24)
@@ -21,11 +25,26 @@ T_total <- 80       # Total sample size for this experiment
 # Extract the exact coefficient matrix from your force-fitted DGP model
 # Rows: Intercept, ECT1, ECT2, ECT3, dY_lag1(4 vars), D1_c, D2_c, D3_c
 dgp_coefs <- coef(dgp_model) 
+# Reconstruct the full DGP coefficient matrix from the loaded parameters.
+# The original 'dgp_model' object is not available, so we build the matrix
+# that 'predictors %*% dgp_coefs' will use to generate dY_t.
+# The order must match the 'predictors' vector: Intercept, ECTs, dY_lags, Dummies
+dgp_coefs <- rbind(
+  mu_hat,       # Intercept (1 x K)
+  t(alpha_hat), # ECT coefs (r x K)
+  t(gamma_hat), # Lagged diff coefs (K*(p-1) x K)
+  t(phi_hat)    # Dummy coefs (n_dummies x K)
+)
 
 # Create storage for the selected lag orders across all 5,000 draws
 selected_lags <- data.frame(AIC = numeric(n_draws), 
                             SIC = numeric(n_draws), 
                             HQC = numeric(n_draws))
+
+# Create storage for the Mean Squared Errors of the persistence profiles
+mse_results <- data.frame(AIC = numeric(n_draws),
+                          SIC = numeric(n_draws),
+                          HQC = numeric(n_draws))
 
 # --- THE MONTE CARLO LOOP ---
 for (draw in 1:n_draws) {
@@ -80,6 +99,13 @@ for (draw in 1:n_draws) {
   # Keeping N constant is strictly required to compare Information Criteria properly.
   N <- nrow(Y_sim) - p_max 
   
+  # Prepare seasonal dummies for the effective sample used in estimation
+  sim_quarters_eff <- rep(c(1, 2, 3, 4), length.out = nrow(Y_sim))[(p_max + 1):nrow(Y_sim)]
+  D1_eff <- ifelse(sim_quarters_eff == 1, 1, 0) - 0.25
+  D2_eff <- ifelse(sim_quarters_eff == 2, 1, 0) - 0.25
+  D3_eff <- ifelse(sim_quarters_eff == 3, 1, 0) - 0.25
+  dummies_eff <- data.frame(D1_eff, D2_eff, D3_eff)
+  
   for (p_test in 1:p_max) {
     
     # Create the dependent variable matrix (Delta Y_t) for the effective sample
@@ -87,9 +113,12 @@ for (draw in 1:n_draws) {
     
     # Create the ECT matrix for the effective sample
     ECT_eff <- (Y_sim %*% beta)[(p_max):(nrow(Y_sim)-1), ]
+    ECT_eff_df <- as.data.frame((Y_sim %*% beta)[(p_max):(nrow(Y_sim)-1), ])
     
     # Base formula string
     form_str <- "dY_eff ~ ECT_eff"
+    # Base formula string (including dummies, which are part of the DGP)
+    form_str <- "dY_eff ~ ."
     
     # If testing lag p > 1, add lagged differences to the regression
     if (p_test > 1) {
@@ -99,8 +128,12 @@ for (draw in 1:n_draws) {
       }
     }
     
+    # Combine all regression data into one dataframe
+    regression_data_test <- cbind(dY_eff, ECT_eff_df, dummies_eff, lag_data)
+    
     # Fit the restricted VECM for this specific lag order
     test_model <- lm(as.formula(form_str))
+    test_model <- lm(as.formula(form_str), data = regression_data_test)
     
     # Calculate Residual Covariance Matrix (Sigma_bar)
     Sigma_bar <- cov(residuals(test_model))
@@ -109,6 +142,8 @@ for (draw in 1:n_draws) {
     # Count the number of freely estimated parameters in the system
     # K variables * (1 intercept + 3 ECTs + K*(p_test-1) short-run lags)
     num_params <- K * (1 + 3 + K*(p_test - 1)) 
+    # K variables * (1 intercept + 3 ECTs + 3 dummies + K*(p_test-1) short-run lags)
+    num_params <- K * (1 + ncol(beta) + 3 + K * (p_test - 1)) 
     
     # Calculate Information Criteria based on Ivanov & Kilian formulas
     ic_results$AIC[p_test] <- log(det_Sigma) + (2 / N) * num_params
@@ -123,6 +158,61 @@ for (draw in 1:n_draws) {
   
   # (Optional): Estimate Persistence Profiles using the selected lag order
   # ...
+  # --- Estimate Persistence Profiles and MSE ---
+  # This section re-estimates the model based on the selected lag order for each
+  # criterion, calculates the persistence profile, and compares it to the true one.
+  
+  criteria <- c("AIC", "SIC", "HQC")
+  
+  for (crit in criteria) {
+    p_selected <- selected_lags[[crit]][draw]
+    
+    # 1. Re-estimate the VECM with the selected lag order 'p_selected'
+    # The data construction must match the loop above to ensure constant sample size.
+    dY_eff <- diff(Y_sim)[(p_max):nrow(diff(Y_sim)), ]
+    ECT_eff <- (Y_sim %*% beta)[(p_max):(nrow(Y_sim)-1), ]
+    
+    form_str_selected <- "dY_eff ~ ECT_eff"
+    
+    # Note: We are not including dummies here for simplicity, assuming their effect
+    # on the estimated dynamic parameters (alpha, gamma) is secondary for this exercise.
+    # For a more rigorous approach, they should be included.
+    regression_data <- list(dY_eff = dY_eff, ECT_eff = ECT_eff)
+    if (p_selected > 1) {
+      for (lag in 1:(p_selected - 1)) {
+        lag_name <- paste0("dY_lag", lag)
+        regression_data[[lag_name]] <- diff(Y_sim)[(p_max - lag):(nrow(diff(Y_sim)) - lag), ]
+        form_str_selected <- paste0(form_str_selected, " + ", lag_name)
+      }
+    }
+    
+    selected_model <- lm(as.formula(form_str_selected), data = as.data.frame(regression_data))
+    
+    # 2. Extract estimated parameters
+    model_coefs <- t(coef(selected_model))
+    
+    # Coefs on ECTs (alpha)
+    alpha_est <- model_coefs[, 2:(1 + ncol(beta))]
+    
+    # Coefs on lagged differences (Gammas)
+    gamma_list_est <- list()
+    if (p_selected > 1) {
+      start_col <- 1 + ncol(beta) + 1 # After Intercept and ECTs
+      for (i in 1:(p_selected - 1)) {
+        end_col <- start_col + K - 1
+        gamma_list_est[[i]] <- model_coefs[, start_col:end_col]
+        start_col <- end_col + 1
+      }
+    }
+    
+    Sigma_est <- cov(residuals(selected_model))
+    
+    # 3. Calculate the persistence profile for this draw
+    estimated_pp <- calc_persistence_profile(alpha = alpha_est, beta = beta, 
+                                             gamma_list = gamma_list_est, Sigma = Sigma_est, horizon = 24)
+    # 4. Calculate and store the Mean Squared Error (MSE)
+    mse_results[[crit]][draw] <- mean((estimated_pp - true_pp)^2)
+  }
 }
 
 # Showcase the accuracy of the lag selection by the different criteria
@@ -140,6 +230,10 @@ summary_table <- selected_lags %>%
 
 # Print the summary
 print(summary_table)
+
+# --- Summarize MSE Results ---
+cat("\n--- Mean Squared Error of Persistence Profiles ---\n")
+print(colMeans(mse_results))
 
 # Visualize the distribution of selected lag orders for each criterion as a histogram
 library(ggplot2)
@@ -164,139 +258,3 @@ ggplot(lags_long, aes(x = Selected_Lag, fill = Criterion)) +
        x = "Selected Lag Order",
        y = "Frequency (out of 5,000 draws)") +
   annotate("text", x = p0 + 0.5, y = n_draws * 0.5, label = "True Lag", color = "red", angle = 90)
-
-
-
-# Persistence Profile Calculation Function
-
-
-
-calc_persistence_profile <- function(alpha, beta, gamma_list, Sigma, horizon = 24) {
-  K <- nrow(alpha)
-  p <- length(gamma_list) + 1 # Total VAR lag order
-  
-  # 1. Convert VECM coefficients to VAR(p) coefficients (A_matrices)
-  A <- list()
-  I_k <- diag(K)
-  
-  if (p == 1) {
-    A[[1]] <- I_k + alpha %*% t(beta)
-  } else {
-    A[[1]] <- I_k + alpha %*% t(beta) + gamma_list[[1]]
-    if (p > 2) {
-      for (i in 2:(p-1)) {
-        A[[i]] <- gamma_list[[i]] - gamma_list[[i-1]]
-      }
-    }
-    A[[p]] <- -gamma_list[[p-1]]
-  }
-  
-  # 2. Calculate Moving Average matrices (Psi)
-  Psi <- list()
-  Psi[[1]] <- I_k # Psi_0
-  
-  for (h in 1:horizon) {
-    Psi_h <- matrix(0, K, K)
-    for (j in 1:min(h, p)) {
-      Psi_h <- Psi_h + A[[j]] %*% Psi[[h - j + 1]]
-    }
-    Psi[[h + 1]] <- Psi_h
-  }
-  
-  # 3. Calculate the Persistence Profile for the first cointegrating vector
-  # (For Johansen & Juselius, beta[,1] is the m1 - y vector)
-  b1 <- as.matrix(beta[, 1]) 
-  denominator <- as.numeric(t(b1) %*% Sigma %*% b1)
-  
-  pp_values <- numeric(horizon + 1)
-  for (h in 0:horizon) {
-    numerator <- t(b1) %*% Psi[[h + 1]] %*% Sigma %*% t(Psi[[h + 1]]) %*% b1
-    pp_values[h + 1] <- as.numeric(numerator / denominator)
-  }
-  
-  return(pp_values)
-}
-
-# Calculate absolute truth PP before the loop starts
-true_pp <- calc_persistence_profile(alpha = alpha_hat, beta = beta, 
-                                    gamma_list = list(gamma_hat), # For p0=2
-                                    Sigma = Sigma_hat, horizon = 24)
-
-# Monte Carlo Loop with PP Calculation
-# Run this BEFORE the Monte Carlo loop starts
-horizon_len <- 24 + 1 # h=0 through h=24
-
-sq_err_p0  <- matrix(NA, nrow = n_draws, ncol = horizon_len)
-sq_err_AIC <- matrix(NA, nrow = n_draws, ncol = horizon_len)
-sq_err_SIC <- matrix(NA, nrow = n_draws, ncol = horizon_len)
-sq_err_HQC <- matrix(NA, nrow = n_draws, ncol = horizon_len)
-
-
-
-# Helper function to estimate VECM for a given lag and return the Persistence Profile
-get_estimated_pp <- function(p_target, Y_sim, beta) {
-  
-  # Set up data matrices for the effective sample (using constant N)
-  # Assuming p_max = 8 from the previous code block
-  p_max <- 8
-  K <- 4
-  
-  dY_eff <- diff(Y_sim)[(p_max):nrow(diff(Y_sim)), ]
-  ECT_eff <- (Y_sim %*% beta)[(p_max):(nrow(Y_sim)-1), ]
-  
-  # Build the regression formula
-  form_str <- "dY_eff ~ ECT_eff"
-  if (p_target > 1) {
-    for (lag in 1:(p_target - 1)) {
-      assign(paste0("dY_lag", lag), diff(Y_sim)[(p_max - lag):(nrow(diff(Y_sim)) - lag), ])
-      form_str <- paste0(form_str, " + dY_lag", lag)
-    }
-  }
-  
-  # Estimate the model
-  model_est <- lm(as.formula(form_str))
-  coef_est <- coef(model_est)
-  
-  # Extract parameters
-  alpha_est <- coef_est[2:4, ] # Assuming no intercept/dummies to simplify, or adjust index if included
-  Sigma_est <- cov(residuals(model_est))
-  
-  # Extract short-run momentum matrices (Gamma)
-  gamma_list_est <- list()
-  if (p_target > 1) {
-    for (lag in 1:(p_target - 1)) {
-      # Calculate the column indices for this specific lag's coefficients
-      # (Adjust indices based on the exact columns in your model_est)
-      start_col <- 4 + K*(lag - 1) + 1 
-      end_col <- start_col + (K - 1)
-      gamma_list_est[[lag]] <- coef_est[start_col:end_col, ]
-    }
-  }
-  
-  # Calculate and return the persistence profile
-  pp <- calc_persistence_profile(alpha = alpha_est, beta = beta, 
-                                 gamma_list = gamma_list_est, 
-                                 Sigma = Sigma_est, horizon = 24)
-  return(pp)
-}
-
-# ... (End of lag selection code inside the loop) ...
-
-  # 1. Retrieve the lag orders selected by each criterion
-  p_aic <- selected_lags$AIC[draw]
-  p_sic <- selected_lags$SIC[draw]
-  p_hqc <- selected_lags$HQC[draw]
-  
-  # 2. Calculate the estimated Persistence Profiles
-  # Note: true_pp is calculated ONCE before the Monte Carlo loop starts
-  estimated_pp_p0  <- get_estimated_pp(p_target = p0, Y_sim, beta)
-  estimated_pp_AIC <- get_estimated_pp(p_target = p_aic, Y_sim, beta)
-  estimated_pp_SIC <- get_estimated_pp(p_target = p_sic, Y_sim, beta)
-  estimated_pp_HQC <- get_estimated_pp(p_target = p_hqc, Y_sim, beta)
-  
-  # 3. Calculate the pointwise squared errors for this draw
-  # (estimated value - true value)^2
-  sq_err_p0[draw, ]  <- (estimated_pp_p0 - true_pp)^2
-  sq_err_AIC[draw, ] <- (estimated_pp_AIC - true_pp)^2
-  sq_err_SIC[draw, ] <- (estimated_pp_SIC - true_pp)^2
-  sq_err_HQC[draw, ] <- (estimated_pp_HQC - true_pp)^2

@@ -1,0 +1,57 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{setspace}
+
+\onehalfspacing
+
+\title{Research Proposal: Reliability of Information Criteria in Determining VAR Lag-Orders for Macroeconomic IRF Analysis}
+\author{Akin Aydin and Ferdinand Loser}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Briefly summarize the motivation, methodology, and expected outcomes of your Monte Carlo simulation project testing VAR lag-order information criteria (AIC, SIC, HQC) and their effect on Impulse Response Functions (IRFs) or Persistence Profiles.
+\end{abstract}
+
+\section{Introduction}
+Introduce the importance of Vector Autoregression (VAR) and VECM models in macroeconomics (e.g., Johansen-Juselius 1990, Ramey 2011). Discuss the challenge of selecting the correct lag order and how incorrect choices impact structural analysis and policy implications.
+
+\section{Literature Review}
+Review existing literature on lag selection criteria. Discuss the theoretical trade-offs between the Akaike Information Criterion (AIC), Schwarz/Bayesian Information Criterion (SIC/BIC), and Hannan-Quinn Criterion (HQC) in small versus large samples. 
+
+\section{Methodology}
+
+\subsection{Data Generating Processes (DGPs)}
+Describe how you will construct your DGPs based on empirical macroeconomic datasets (e.g., extracting parameters by force-fitting models on the Johansen-Juselius dataset and Ramey 2011 dataset).
+
+\subsection{Monte Carlo Simulation Design}
+Explain the core simulation loop:
+\begin{itemize}
+    \item Drawing synthetic Gaussian innovations based on empirical covariance matrices.
+    \item Generating synthetic time series of length $T$.
+    \item Fitting restricted VAR/VECM models for test lags $1$ to $p_{max}$.
+    \item Recording the lag selected by AIC, SIC, and HQC.
+    \item Calculating the Mean Squared Error (MSE) of the resulting IRFs/Persistence Profiles compared to the true profile.
+\end{itemize}
+
+\section{Expected Results}
+Discuss your hypotheses. For example, do you expect AIC to over-parameterize the model? Do you expect SIC to be more accurate in large samples but underfit in small samples ($T=80$)? How will these selection errors specifically distort the estimated Impulse Response Functions?
+
+\section{Timeline}
+Provide a brief schedule for completing the DGP extractions, Monte Carlo simulation coding in R, and the final write-up.
+
+\newpage
+
+% To use this, create a references.bib file in the same directory.
+% Add your citations there (e.g., Ivanov & Kilian 2005, Ramey 2011).
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
