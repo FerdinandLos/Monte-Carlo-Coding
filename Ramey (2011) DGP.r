@@ -92,7 +92,7 @@ ramey_spf_data <- ramey_data_raw %>%
 
 # Convert to numeric
 ramey_spf_data <- ramey_spf_data %>%
-  mutate(across(everything(), as.numeric))
+  mutate(across(-quarter, as.numeric))
 T_total <- nrow(ramey_spf_data)
 
 # ---------------------------------------------------------
