@@ -171,13 +171,13 @@ def compute_structural_irf(A, B_tilde, h_max, K, p):
     return IRF
 
 # -------------------------------------------------------------------
-# 3. THE SIGN RESTRICTION ALGORITHM 
+# 3. THE SIGN RESTRICTION ALGORITHM (WITH ELASTICITY BOUNDS)
 # -------------------------------------------------------------------
-def draw_sign_restrictions(A, SIGMA, signs, p, K, h_max=24, n_draws=100):
+def draw_sign_restrictions(A, SIGMA, signs, p, K, Q_avg, h_max=24, n_draws=1000):
     P = np.linalg.cholesky(SIGMA)
     
     valid_IRFs = []
-    valid_B_tildes = []  # Array to store the valid B_tilde matrices
+    valid_B_tildes = [] 
     attempts = 0
     
     print(f"Searching for {n_draws} valid models... This might take a moment.")
@@ -185,11 +185,13 @@ def draw_sign_restrictions(A, SIGMA, signs, p, K, h_max=24, n_draws=100):
     while len(valid_IRFs) < n_draws:
         attempts += 1
         
+        # 1. Draw and rotate
         W = np.random.randn(K, K)
         Q, R = np.linalg.qr(W)
         Q = Q @ np.diag(np.sign(np.diag(R)))
         B_tilde = P @ Q
         
+        # 2. Check Sign Restrictions
         match = True
         for i in range(K):
             for j in range(K):
@@ -200,61 +202,100 @@ def draw_sign_restrictions(A, SIGMA, signs, p, K, h_max=24, n_draws=100):
             if not match:
                 break
                 
+        # 3. Check Elasticity Bounds (Only if signs matched!)
         if match:
-            irf = compute_structural_irf(A, B_tilde, h_max, K, p)
-            valid_IRFs.append(irf)
-            valid_B_tildes.append(B_tilde) 
+            # --- A. Supply Elasticity ---
+            # Ratio of Oil Prod response (row 0) to Price response (row 2) 
+            # following a Flow Demand Shock (column 1)
+            supply_elasticity = B_tilde[0, 1] / B_tilde[2, 1]
             
-    print(f"Success! Found {n_draws} valid models out of {attempts} random draws.")
-    print(f"Acceptance rate: {(n_draws/attempts)*100:.2f}%\n")
+            # --- B. Demand Elasticity in Use ---
+            # Calculated following a Supply Shock (column 0)
+            # Formula from K&M (2014) Appendix:
+            # ((Q * d_Prod / 100) - d_Inv) / (Q * d_Price / 100)
+            numerator = (Q_avg * (B_tilde[0, 0] / 100)) - B_tilde[3, 0]
+            denominator = Q_avg * (B_tilde[2, 0] / 100)
+            demand_elasticity = numerator / denominator
+            
+            # The model is only valid if it satisfies BOTH bounds
+            if (0 <= supply_elasticity <= 0.025) and (-0.8 <= demand_elasticity <= 0.0):
+                irf = compute_structural_irf(A, B_tilde, h_max, K, p)
+                
+                # To plot permanent level shifts, we must cumulatively sum the 
+                # differences for Oil Production (index 0) and Inventories (index 3)
+                irf_cumulative = irf.copy()
+                irf_cumulative[:, 0, :] = np.cumsum(irf[:, 0, :], axis=0)
+                irf_cumulative[:, 3, :] = np.cumsum(irf[:, 3, :], axis=0)
+                
+                valid_IRFs.append(irf_cumulative)
+                valid_B_tildes.append(B_tilde) 
+                
+                # Print progress tracker so you know it hasn't frozen!
+                if len(valid_IRFs) % 100 == 0:
+                    print(f"Found {len(valid_IRFs)} / {n_draws} valid models...")
+            
+    print(f"\nSuccess! Found {n_draws} valid models out of {attempts} random draws.")
+    print(f"Acceptance rate: {(n_draws/attempts)*100:.4f}%")
     
     return np.array(valid_IRFs), np.array(valid_B_tildes)
 
 # -------------------------------------------------------------------
 # 4. EXECUTE AND FIND THE MEDIAN TARGET (B_tilde_true)
 # -------------------------------------------------------------------
+# IMPORTANT: Change p to 24 to capture long-term market dynamics!
+p_true = 24 
 h_max = 24  
-n_draws = 6000 
-K = SIGMA.shape[0]
+n_draws = 1000 
 
-# Run the algorithm 
-accepted_irfs, accepted_B_tildes = draw_sign_restrictions(A, SIGMA, sign_matrix, p=2, K=K, h_max=h_max, n_draws=n_draws)
+# Re-estimate the OLS VAR using 24 lags instead of 2
+print(f"\nRe-estimating VAR with {p_true} lags...")
+A_24, B_24, X_24, SIGMA_24, U_24, V_24 = lsvarcSA2(km_data_array, p_true)
+K = SIGMA_24.shape[0]
 
-# Step 1: Calculate the pointwise median IRF benchmark
-median_target_irf = np.median(accepted_irfs, axis=0)
+# Calculate historical average of global oil production for the elasticity formula
+Q_avg = np.mean(world_prod_array)
 
-# Step 2: Find the single model closest to the median target
-distances = np.sum((accepted_irfs - median_target_irf)**2, axis=(1, 2, 3))
+# Run the algorithm using the 24-lag matrices and the Q_avg
+accepted_irfs, accepted_B_tildes = draw_sign_restrictions(
+    A=A_24, 
+    SIGMA=SIGMA_24, 
+    signs=sign_matrix, 
+    p=p_true, 
+    K=K, 
+    Q_avg=Q_avg, 
+    h_max=h_max, 
+    n_draws=n_draws
+)
 
-# Step 3: Get the index of the model with the minimum distance
+# Step 1: Calculate the Pointwise Median (The invalid benchmark)
+pointwise_median_irf = np.median(accepted_irfs, axis=0)
+
+# Step 2: Find the distance of all real models to that benchmark
+distances = np.sum((accepted_irfs - pointwise_median_irf)**2, axis=(1, 2, 3))
 best_model_idx = np.argmin(distances)
 
-# Step 4: Lock in your exact True DGP matrices
+# Step 3: Lock in your exact True DGP matrices (The Median Target Model)
 B_tilde_true = accepted_B_tildes[best_model_idx]
 True_IRF = accepted_irfs[best_model_idx]
 
-print("=== DGP PARAMETERS ESTABLISHED ===")
+print("\n=== DGP PARAMETERS ESTABLISHED ===")
 print("True B_tilde Matrix Shape:", B_tilde_true.shape)
 print("True IRF Shape:", True_IRF.shape)
-print("Index of the Median Target Model:", best_model_idx)
 
 # --- EXPORT DGP PARAMETERS FOR MONTE CARLO ---
-# Save the essential matrices into a compressed .npz file
 export_folder = os.path.join(script_dir, 'DGP files')
-os.makedirs(export_folder, exist_ok=True) # Ensures the 'DGP files' folder exists!
-
+os.makedirs(export_folder, exist_ok=True)
 export_path = os.path.join(export_folder, 'true_dgp_parameters.npz')
 
 np.savez(export_path, 
-         A_true=A,            # OLS slope coefficients
-         SIGMA_true=SIGMA,    # Covariance matrix
-         B_tilde_true=B_tilde_true, # Structural impact matrix
-         True_IRF=True_IRF,   # Ground truth IRF
-         V_true=V,            # Deterministic terms
-         p_true=p)            # Lag order
+         A_true=A_24,            
+         SIGMA_true=SIGMA_24,    
+         B_tilde_true=B_tilde_true, 
+         True_IRF=True_IRF,   
+         V_true=V_24,            
+         p_true=p_true)            
 
 print(f"DGP parameters successfully saved to: {export_path}")
-
 
 
 
@@ -295,7 +336,7 @@ print(" TRUE DGP PARAMETERS EXPORT SUMMARY")
 print("="*50)
 
 # 1. SIGMA_true
-sigma_true_df = pd.DataFrame(SIGMA, index=var_names, columns=var_names)
+sigma_true_df = pd.DataFrame(SIGMA_true, index=var_names, columns=var_names)
 print("\n### 1. True Residual Covariance Matrix (SIGMA_true) ###")
 print("Dimensions:", SIGMA.shape)
 print("-" * 50)
