@@ -229,17 +229,13 @@ def compute_structural_irf(A_var, A0, h_max, K, p):
 
 
 # -------------------------------------------------------------------
-# 3. THE SIGN RESTRICTION ALGORITHM
+# 3. THE SIGN RESTRICTION ALGORITHM (UPDATED)
 # -------------------------------------------------------------------
 def draw_sign_restrictions(BETAnc, SIGMA, signs, p, K, h_max=24, n_draws=100):
-    """
-    Uses the Rubio-Ramirez et al. (2010) QR decomposition method 
-    to find valid structural models.
-    """
-    # Base Cholesky decomposition of the residual covariance
     P = np.linalg.cholesky(SIGMA)
     
     valid_IRFs = []
+    valid_A0s = []  # NEW: Array to store the valid A0 matrices
     attempts = 0
     
     print(f"Searching for {n_draws} valid models... This might take a moment.")
@@ -247,53 +243,70 @@ def draw_sign_restrictions(BETAnc, SIGMA, signs, p, K, h_max=24, n_draws=100):
     while len(valid_IRFs) < n_draws:
         attempts += 1
         
-        # 1. Draw a random standard normal matrix
         W = np.random.randn(K, K)
-        
-        # 2. QR Decomposition to get a random orthogonal rotation matrix Q
         Q, R = np.linalg.qr(W)
-        
-        # Normalize Q to ensure unique uniform distribution (Haar measure)
         Q = Q @ np.diag(np.sign(np.diag(R)))
-        
-        # 3. Create candidate structural impact matrix A0
         A0 = P @ Q
         
-        # 4. Check if A0 satisfies the sign restrictions
         match = True
         for i in range(K):
             for j in range(K):
                 if not np.isnan(signs[i, j]):
-                    # If the sign of our candidate doesn't match the required sign
                     if np.sign(A0[i, j]) != signs[i, j]:
                         match = False
                         break
             if not match:
                 break
                 
-        # 5. If it matches, calculate IRFs and store them
         if match:
             irf = compute_structural_irf(BETAnc, A0, h_max, K, p)
             valid_IRFs.append(irf)
+            valid_A0s.append(A0)  # NEW: Store the valid A0
             
     print(f"Success! Found {n_draws} valid models out of {attempts} random draws.")
-    print(f"Acceptance rate: {(n_draws/attempts)*100:.2f}%")
+    print(f"Acceptance rate: {(n_draws/attempts)*100:.2f}%\n")
     
-    return np.array(valid_IRFs)
+    return np.array(valid_IRFs), np.array(valid_A0s) # NEW: Return both
 
 # -------------------------------------------------------------------
-# 4. EXECUTE AND PLOT RESULTS
+# 4. EXECUTE AND FIND THE MEDIAN TARGET (A0_true)
 # -------------------------------------------------------------------
-h_max = 24  # 24 months horizon
-n_draws = 100 # Number of valid models to collect
+h_max = 24  
+n_draws = 1000 # Increased to 1000 for a more stable median target
 K = SIGMA.shape[0]
 
-# Run the algorithm
-# (Make sure BETAnc, SIGMA, and p exist from your previous lsvarcSA2 output)
-accepted_irfs = draw_sign_restrictions(BETAnc, SIGMA, sign_matrix, p=2, K=K, h_max=h_max, n_draws=n_draws)
+# Run the algorithm (unpacking both returns)
+accepted_irfs, accepted_A0s = draw_sign_restrictions(BETAnc, SIGMA, sign_matrix, p=2, K=K, h_max=h_max, n_draws=n_draws)
 
-# Extract the median IRF across all accepted models
-median_irf = np.median(accepted_irfs, axis=0)
+# Step 1: Calculate the pointwise median IRF benchmark
+median_target_irf = np.median(accepted_irfs, axis=0)
 
-print("\nShape of accepted_irfs:", accepted_irfs.shape)
-print("(Draws, Horizon, Variables, Shocks)")
+# Step 2: Find the single model closest to the median target
+# Sum of squared differences across horizons(1), variables(2), and shocks(3)
+distances = np.sum((accepted_irfs - median_target_irf)**2, axis=(1, 2, 3))
+
+# Step 3: Get the index of the model with the minimum distance
+best_model_idx = np.argmin(distances)
+
+# Step 4: Lock in your exact True DGP matrices
+A0_true = accepted_A0s[best_model_idx]
+True_IRF = accepted_irfs[best_model_idx]
+
+print("=== DGP PARAMETERS ESTABLISHED ===")
+print("True A0 Matrix Shape:", A0_true.shape)
+print("True IRF Shape:", True_IRF.shape)
+print("Index of the Median Target Model:", best_model_idx)
+
+# --- EXPORT DGP PARAMETERS FOR MONTE CARLO ---
+# Save the essential matrices into a compressed .npz file
+export_path = os.path.join(script_dir, 'DGP files', 'true_dgp_parameters.npz')
+
+np.savez(export_path, 
+         B_true=BETAnc, 
+         SIGMA_true=SIGMA, 
+         A0_true=A0_true, 
+         True_IRF=True_IRF,
+         V_true=V,       # Save the deterministic terms too!
+         p_true=p)
+
+print(f"DGP parameters successfully saved to: {export_path}")
