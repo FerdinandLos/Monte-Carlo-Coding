@@ -1,0 +1,69 @@
+\documentclass[12pt, a4paper]{article}
+
+% Standard packages for economics papers
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{setspace}
+\onehalfspacing % Common for readability; use \doublespacing if submitting for review
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+% BibLaTeX setup for Zotero Better BibLaTeX
+\usepackage[style=authoryear, backend=biber, natbib=true, maxcitenames=2]{biblatex}
+\addbibresource{Monte Carlo Simulations.bib}
+
+% Title and Author Information
+\title{BVAR vs. Information Criteria: A Monte Carlo Simulation Study}
+\author{
+    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de}} \and
+    Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+This is the abstract for your paper. Briefly state the purpose of the research, the principal results, and major conclusions. The abstract should be self-contained and citation-free.
+\vspace{1em}\\
+\noindent\textbf{Keywords:} Keyword 1, Keyword 2, Keyword 3 \\
+\noindent\textbf{JEL Codes:} C15, C32 % Update with relevant JEL classification codes
+\end{abstract}
+
+\newpage
+
+\section{Introduction}
+\label{sec:introduction}
+
+This is the introduction. You can easily cite your references from your Zotero Better BibLaTeX file using standard Natbib commands like \citet{citation_key} for textual citations or \citep{citation_key} for parenthetical citations. 
+
+\section{Methodology}
+\label{sec:methodology}
+
+Describe your structural VAR (SVAR) models and the Monte Carlo Data Generating Processes (DGPs) here.
+
+\subsection{Data Generating Process}
+Explain the true DGP based on Johansen and Juselius (1990), Ramey (2011), or Kilian and Murphy (2014).
+
+\section{Simulation Results}
+\label{sec:results}
+
+Present the results of your Monte Carlo simulations. 
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Summarize the main findings and implications for applied macroeconomic research.
+
+\newpage
+% Print the bibliography
+\printbibliography
+
+\end{document}
