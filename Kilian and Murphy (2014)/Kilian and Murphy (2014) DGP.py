@@ -1,8 +1,27 @@
 # Simple file to execute the VAR fitting
+import os
+
+# ---------------- Reproducibility / Seeding ----------------
+# Set a global seed and a few environment variables to make
+# pseudorandom draws repeatable across runs on the same setup.
+# Note: For strict byte-for-byte reproducibility also set
+# PYTHONHASHSEED before interpreter start and pin package versions.
+SEED = 12345
+# Set Python hash seed (best set before interpreter start to be fully deterministic)
+os.environ.setdefault('PYTHONHASHSEED', str(SEED))
+# Limit threaded BLAS behaviour to reduce nondeterminism across runs
+os.environ.setdefault('OMP_NUM_THREADS', '1')
+os.environ.setdefault('MKL_NUM_THREADS', '1')
+
+import random
 import numpy as np
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
+
+# Apply seeds to Python RNGs used in this script
+random.seed(SEED)
+np.random.seed(SEED)
+# -----------------------------------------------------------
 
 # First define a function to fit a VAR with seasonal adjustment (SA) dummy variables
 def lsvarcSA2(y, p):
@@ -25,6 +44,7 @@ def lsvarcSA2(y, p):
     """
     # 1. Setup Regressors and Regressand
     t, K = y.shape
+    print(f"lsvarcSA2 start: t={t}, K={K}, p={p}", flush=True)
     
     # Transpose y to match MATLAB's (K, t) format internally
     y = y.T
@@ -35,6 +55,7 @@ def lsvarcSA2(y, p):
     # Stack lagged values vertically
     for i in range(1, p):
         Y = np.vstack([Y, y[:, p-1-i : t-i]])
+    print(f"lsvarcSA2 after lag stacking: Y.shape={Y.shape}", flush=True)
         
     # 2. Create Seasonal Adjustment (SA) Dummies
     # x is a 12x11 matrix: an 11x11 identity matrix on top of a 1x11 row of zeros
@@ -56,16 +77,21 @@ def lsvarcSA2(y, p):
         
     # Add a column of ones (constant) at the beginning
     X2 = np.hstack([np.ones((t - p, 1)), X2])
+    print(f"lsvarcSA2 after dummy creation: X2.shape={X2.shape}", flush=True)
     
     # 3. Combine Dummies and Lags to form Regressor Matrix X
     X = np.vstack([X2.T, Y[:, :t-p]])
     Y2 = y[:, p:t]
+    print(f"lsvarcSA2 after X/Y2 creation: X.shape={X.shape}, Y2.shape={Y2.shape}", flush=True)
     
     # 4. Run Least Squares (LS) Regression
     # Python matrix multiplication (@) and inversion
     B = Y2 @ X.T @ np.linalg.pinv(X @ X.T)
+    print(f"lsvarcSA2 after B: B.shape={B.shape}", flush=True)
     U = Y2 - B @ X
+    print(f"lsvarcSA2 after U: U.shape={U.shape}", flush=True)
     SIGMA = (U @ U.T) / (t - p - p * K - 12)
+    print(f"lsvarcSA2 after SIGMA: SIGMA.shape={SIGMA.shape}", flush=True)
     
     # 5. Extract Coefficients
     V = B[:, 0:12] 
@@ -81,9 +107,19 @@ try:
 except NameError:
     script_dir = os.getcwd()
 
-# 2. Join that directory with the subfolder and file names
-km_data_path = os.path.join(script_dir, 'km-ascii-data', 'kmData.txt')
-world_prod_path = os.path.join(script_dir, 'km-ascii-data', 'worldprod.txt')
+# 2. Resolve the Kilian & Murphy folder consistently regardless of how
+# the script is launched (debugger vs manual). If `script_dir` already
+# points at the 'Kilian and Murphy (2014)' folder, use it directly;
+# otherwise assume `script_dir` is the repo root and append the folder.
+KM_FOLDER = 'Kilian and Murphy (2014)'
+if os.path.basename(script_dir) == KM_FOLDER:
+    km_base = script_dir
+else:
+    km_base = os.path.join(script_dir, KM_FOLDER)
+
+# 3. Join that base with the subfolder and file names
+km_data_path = os.path.join(km_base, 'km-ascii-data', 'kmData.txt')
+world_prod_path = os.path.join(km_base, 'km-ascii-data', 'worldprod.txt')
 
 # 3. Load the data
 km_data_array = np.loadtxt(km_data_path)
@@ -97,47 +133,70 @@ print("Data loaded successfully!")
 print("First 5 rows of KM Data:")
 print(km_data_array[:5])
 
-# Estimate the VAR model using a certain lag order (e.g., p=2)
-# NOTE: Swapped BETAnc to A
-A, B, X, SIGMA, U, V = lsvarcSA2(km_data_array, 2)
-
-# --- SUMMARY AND EXPLANATIONS OF ESTIMATED PARAMETERS ---
+# Define variable names
 var_names = ["Oil Production", "Real Activity", "Real Oil Price", "Inventories"]
-p = 2 
 
-print("\n" + "="*50)
-print(" VAR MODEL ESTIMATION SUMMARY")
-print("="*50)
+# --- GENERATE DGPs WITH 2 LAGS AND 24 LAGS ---
+dgp_configs = [
+    {"p": 2, "name": "2_lags"},
+    {"p": 24, "name": "24_lags"}
+]
 
-# 1. SIGMA
-sigma_df = pd.DataFrame(SIGMA, index=var_names, columns=var_names)
-print("\n### 1. Residual Covariance Matrix (SIGMA) ###")
-print("Dimensions:", SIGMA.shape)
-print("-" * 50)
-print(sigma_df.round(4)) 
+dgp_results = {}
 
-# 2. V
-v_cols = ["Constant"] + [f"Month_{i}_Dummy" for i in range(1, 12)]
-v_df = pd.DataFrame(V, index=var_names, columns=v_cols)
-print("\n### 2. Deterministic Terms (V) ###")
-print("Dimensions:", V.shape)
-print("-" * 50)
-print(v_df.iloc[:, :4].round(4), "...\n(Showing first 4 of 12 columns)")
+for config in dgp_configs:
+    p = config["p"]
+    config_name = config["name"]
+    
+    print("\n" + "="*60)
+    print(f" VAR MODEL ESTIMATION SUMMARY (p={p})")
+    print("="*60)
+    print(f"Starting lsvarcSA2 for p={p}", flush=True)
+    
+    # Estimate the VAR model using the specified lag order
+    A, B, X, SIGMA, U, V = lsvarcSA2(km_data_array, p)
+    print(f"Returned from lsvarcSA2 for p={p}", flush=True)
+    
+    # Store results for later use
+    dgp_results[config_name] = {
+        "A": A,
+        "B": B,
+        "X": X,
+        "SIGMA": SIGMA,
+        "U": U,
+        "V": V,
+        "p": p
+    }
+    
+    # 1. SIGMA
+    sigma_df = pd.DataFrame(SIGMA, index=var_names, columns=var_names)
+    print("\n### 1. Residual Covariance Matrix (SIGMA) ###")
+    print("Dimensions:", SIGMA.shape)
+    print("-" * 60)
+    print(sigma_df.round(4)) 
 
-# 3. A (The VAR Lag Coefficients)
-lag_cols = []
-for lag in range(1, p + 1):
-    for var in var_names:
-        short_name = var.replace("Production", "Prod").replace("Activity", "Act")
-        lag_cols.append(f"Lag{lag}_{short_name}")
+    # 2. V
+    v_cols = ["Constant"] + [f"Month_{i}_Dummy" for i in range(1, 12)]
+    v_df = pd.DataFrame(V, index=var_names, columns=v_cols)
+    print("\n### 2. Deterministic Terms (V) ###")
+    print("Dimensions:", V.shape)
+    print("-" * 60)
+    print(v_df.iloc[:, :4].round(4), "...\n(Showing first 4 of 12 columns)")
 
-a_df = pd.DataFrame(A, index=var_names, columns=lag_cols)
+    # 3. A (The VAR Lag Coefficients)
+    lag_cols = []
+    for lag in range(1, p + 1):
+        for var in var_names:
+            short_name = var.replace("Production", "Prod").replace("Activity", "Act")
+            lag_cols.append(f"Lag{lag}_{short_name}")
 
-print("\n### 3. VAR Slope Coefficients (A) ###")
-print("Dimensions:", A.shape)
-print("-" * 50)
-print(a_df.T.round(4)) 
-print("="*50 + "\n")
+    a_df = pd.DataFrame(A, index=var_names, columns=lag_cols)
+
+    print("\n### 3. VAR Slope Coefficients (A) ###")
+    print("Dimensions:", A.shape)
+    print("-" * 60)
+    print(a_df.T.round(4)) 
+    print("="*60 + "\n")
 
 # -------------------------------------------------------------------
 # 1. DEFINE THE KILIAN & MURPHY (2014) SIGN RESTRICTIONS
@@ -240,135 +299,194 @@ def draw_sign_restrictions(A, SIGMA, signs, p, K, Q_avg, h_max=24, n_draws=1000)
     return np.array(valid_IRFs), np.array(valid_B_tildes)
 
 # -------------------------------------------------------------------
-# 4. EXECUTE AND FIND THE MEDIAN TARGET (B_tilde_true)
+# 4. EXECUTE AND FIND THE MEDIAN TARGET (B_tilde_true) FOR BOTH LAGS
 # -------------------------------------------------------------------
-# IMPORTANT: Change p to 24 to capture long-term market dynamics!
-p_true = 24 
 h_max = 24  
 n_draws = 1000 
-
-# Re-estimate the OLS VAR using 24 lags instead of 2
-print(f"\nRe-estimating VAR with {p_true} lags...")
-A_24, B_24, X_24, SIGMA_24, U_24, V_24 = lsvarcSA2(km_data_array, p_true)
-K = SIGMA_24.shape[0]
-
-# Calculate historical average of global oil production for the elasticity formula
 Q_avg = np.mean(world_prod_array)
 
-# Run the algorithm using the 24-lag matrices and the Q_avg
-accepted_irfs, accepted_B_tildes = draw_sign_restrictions(
-    A=A_24, 
-    SIGMA=SIGMA_24, 
-    signs=sign_matrix, 
-    p=p_true, 
-    K=K, 
-    Q_avg=Q_avg, 
-    h_max=h_max, 
-    n_draws=n_draws
-)
+# Process each lag configuration
+for config in dgp_configs:
+    p = config["p"]
+    config_name = config["name"]
+    
+    print(f"\n{'='*60}")
+    print(f" PROCESSING {p}-LAG DGP")
+    print(f"{'='*60}\n")
+    
+    # Get pre-estimated results for this lag configuration
+    A = dgp_results[config_name]["A"]
+    SIGMA = dgp_results[config_name]["SIGMA"]
+    V = dgp_results[config_name]["V"]
+    K = SIGMA.shape[0]
+    
+    # Run the algorithm using the appropriate lag matrices
+    print(f"Running sign restriction algorithm for p={p}...")
+    accepted_irfs, accepted_B_tildes = draw_sign_restrictions(
+        A=A, 
+        SIGMA=SIGMA, 
+        signs=sign_matrix, 
+        p=p, 
+        K=K, 
+        Q_avg=Q_avg, 
+        h_max=h_max, 
+        n_draws=n_draws
+    )
 
-# Step 1: Calculate the Pointwise Median (The invalid benchmark)
-pointwise_median_irf = np.median(accepted_irfs, axis=0)
+    # Step 1: Calculate the Pointwise Median (The invalid benchmark)
+    pointwise_median_irf = np.median(accepted_irfs, axis=0)
 
-# Step 2: Find the distance of all real models to that benchmark
-distances = np.sum((accepted_irfs - pointwise_median_irf)**2, axis=(1, 2, 3))
-best_model_idx = np.argmin(distances)
+    # Step 2: Find the distance of all real models to that benchmark
+    distances = np.sum((accepted_irfs - pointwise_median_irf)**2, axis=(1, 2, 3))
+    best_model_idx = np.argmin(distances)
 
-# Step 3: Lock in your exact True DGP matrices (The Median Target Model)
-B_tilde_true = accepted_B_tildes[best_model_idx]
-True_IRF = accepted_irfs[best_model_idx]
+    # Step 3: Lock in your exact True DGP matrices (The Median Target Model)
+    B_tilde_true = accepted_B_tildes[best_model_idx]
+    True_IRF = accepted_irfs[best_model_idx]
 
-print("\n=== DGP PARAMETERS ESTABLISHED ===")
-print("True B_tilde Matrix Shape:", B_tilde_true.shape)
-print("True IRF Shape:", True_IRF.shape)
+    print(f"\n=== DGP PARAMETERS ESTABLISHED ({p} LAGS) ===")
+    print(f"True B_tilde Matrix Shape: {B_tilde_true.shape}")
+    print(f"True IRF Shape: {True_IRF.shape}")
 
-# --- EXPORT DGP PARAMETERS FOR MONTE CARLO ---
-export_folder = os.path.join(script_dir, 'DGP files')
-os.makedirs(export_folder, exist_ok=True)
-export_path = os.path.join(export_folder, 'true_dgp_parameters.npz')
+    # --- EXPORT DGP PARAMETERS FOR MONTE CARLO ---
+    export_folder = os.path.join(km_base, 'DGP files')
+    os.makedirs(export_folder, exist_ok=True)
+    export_path = os.path.join(export_folder, f'true_dgp_parameters_{config_name}.npz')
 
-np.savez(export_path, 
-         A_true=A_24,            
-         SIGMA_true=SIGMA_24,    
-         B_tilde_true=B_tilde_true, 
-         True_IRF=True_IRF,   
-         V_true=V_24,            
-         p_true=p_true)            
+    np.savez(export_path, 
+             A_true=A,            
+             SIGMA_true=SIGMA,    
+             B_tilde_true=B_tilde_true, 
+             True_IRF=True_IRF,   
+             V_true=V,            
+             p_true=p)            
 
-print(f"DGP parameters successfully saved to: {export_path}")
+    print(f"DGP parameters successfully saved to: {export_path}")
+    
+    # Store for visualization
+    dgp_results[config_name]["B_tilde_true"] = B_tilde_true
+    dgp_results[config_name]["True_IRF"] = True_IRF
 
 
+# --- VISUALIZE THE TRUE DGP PARAMETERS FOR BOTH LAG CONFIGURATIONS ---
+export_folder_viz = os.path.join(km_base, 'DGP files', 'Visualizations')
+os.makedirs(export_folder_viz, exist_ok=True)
 
-# --- VISUALIZE THE TRUE DGP PARAMETERS ---
-export_folder_viz = os.path.join(script_dir, 'DGP files', 'Visualizations')
-print("Generating visualizations...")
+print("\n" + "="*60)
+print(" GENERATING VISUALIZATIONS")
+print("="*60)
 
-# 1. Plot the True Impulse Response Functions (IRFs)
-fig_irf, axes_irf = plt.subplots(nrows=K, ncols=K, figsize=(15, 12))
-shock_names = ["Supply Shock", "Flow Demand", "Spec. Demand", "Residual Shock"]
+for config in dgp_configs:
+    config_name = config["name"]
+    p = config["p"]
+    
+    print(f"\nGenerating visualizations for {p}-lag DGP...")
+    
+    # Extract results for this configuration
+    A = dgp_results[config_name]["A"]
+    V = dgp_results[config_name]["V"]
+    SIGMA = dgp_results[config_name]["SIGMA"]
+    B_tilde_true = dgp_results[config_name]["B_tilde_true"]
+    True_IRF = dgp_results[config_name]["True_IRF"]
+    K = SIGMA.shape[0]
+    
+    # --- VISUALIZE THE TRUE DGP IRFS (CUMULATIVE) ---
+    fig_irf, axes_irf = plt.subplots(nrows=K, ncols=K, figsize=(15, 12))
 
-for i in range(K): # Responding variable (Rows)
-    for j in range(K): # Shock (Columns)
-        # Plot the line
-        axes_irf[i, j].plot(True_IRF[:, i, j], color='darkblue', linewidth=2)
-        # Add a zero line for reference
-        axes_irf[i, j].axhline(0, color='black', linestyle='--', linewidth=1)
-        
-        # Add titles to the top row and labels to the left column
-        if i == 0:
-            axes_irf[i, j].set_title(f"Shock: {shock_names[j]}", fontweight='bold')
-        if j == 0:
-            axes_irf[i, j].set_ylabel(f"Response:\n{var_names[i]}", fontweight='bold')
+    shock_names = ["Flow Supply Shock", "Flow Demand Shock", "Speculative Demand Shock", "Residual Shock"]
+    var_names_plot = ["Oil Production", "Real Activity", "Real Oil Price", "Inventories"]
+
+    for i in range(K): # Responding variable (Rows)
+        for j in range(K): # Shock (Columns)
             
-        axes_irf[i, j].grid(alpha=0.3)
+            # Plot the line (True_IRF is already cumulative for Prod and Inv from our previous loop!)
+            axes_irf[i, j].plot(True_IRF[:, i, j], color='darkblue', linewidth=2)
+            
+            # Add a zero baseline for visual reference
+            axes_irf[i, j].axhline(0, color='black', linestyle='--', linewidth=1)
+            
+            # Set titles for the top row (Shocks)
+            if i == 0:
+                axes_irf[i, j].set_title(f"{shock_names[j]}", fontweight='bold')
+                
+            # Set y-labels for the left column (Variables)
+            if j == 0:
+                axes_irf[i, j].set_ylabel(f"{var_names_plot[i]}", fontweight='bold')
+                
+            # Add a light grid to match the paper's readability
+            axes_irf[i, j].grid(alpha=0.3)
 
-fig_irf.suptitle("True Structural Impulse Responses (Median Target Model)", fontsize=16, y=1.02)
-plt.tight_layout()
+    fig_irf.suptitle(f"True Structural Impulse Responses ({p}-Lag Model, Median Target Model)", fontsize=16, y=1.02)
+    plt.tight_layout()
 
-# Save and show the IRF plot
-irf_plot_path = os.path.join(export_folder_viz, 'True_IRF_plot.png')
-plt.savefig(irf_plot_path, bbox_inches='tight', dpi=300)
-plt.show()
+    # Save the plot explicitly noting lag order and that it is the cumulative version
+    irf_plot_path = os.path.join(export_folder_viz, f'True_IRF_plot_Cumulative_{config_name}.png')
+    plt.savefig(irf_plot_path, bbox_inches='tight', dpi=300)
+    plt.close()
 
-# --- TEXT SUMMARY OF TRUE DGP PARAMETERS ---
-print("\n" + "="*50)
-print(" TRUE DGP PARAMETERS EXPORT SUMMARY")
-print("="*50)
+    print(f"Cumulative IRF plot saved to: {irf_plot_path}")
+    
+    # --- TEXT SUMMARY OF TRUE DGP PARAMETERS ---
+    print("\n" + "="*60)
+    print(f" TRUE DGP PARAMETERS EXPORT SUMMARY ({p} LAGS)")
+    print("="*60)
 
-# 1. SIGMA_true
-sigma_true_df = pd.DataFrame(SIGMA_true, index=var_names, columns=var_names)
-print("\n### 1. True Residual Covariance Matrix (SIGMA_true) ###")
-print("Dimensions:", SIGMA.shape)
-print("-" * 50)
-print(sigma_true_df.round(4)) 
+    # 1. SIGMA_true
+    sigma_true_df = pd.DataFrame(SIGMA, index=var_names, columns=var_names)
+    print("\n### 1. True Residual Covariance Matrix (SIGMA_true) ###")
+    print("Dimensions:", SIGMA.shape)
+    print("-" * 60)
+    print(sigma_true_df.round(4)) 
 
-# 2. V_true
-v_cols = ["Constant"] + [f"Month_{i}_Dummy" for i in range(1, 12)]
-v_true_df = pd.DataFrame(V, index=var_names, columns=v_cols)
-print("\n### 2. True Deterministic Terms (V_true) ###")
-print("Dimensions:", V.shape)
-print("-" * 50)
-print(v_true_df.iloc[:, :4].round(4), "...\n(Showing first 4 of 12 columns)")
+    # 2. V_true
+    v_cols = ["Constant"] + [f"Month_{i}_Dummy" for i in range(1, 12)]
+    v_true_df = pd.DataFrame(V, index=var_names, columns=v_cols)
+    print("\n### 2. True Deterministic Terms (V_true) ###")
+    print("Dimensions:", V.shape)
+    print("-" * 60)
+    print(v_true_df.iloc[:, :4].round(4), "...\n(Showing first 4 of 12 columns)")
 
-# 3. A_true
-lag_cols = []
-for lag in range(1, p + 1):
-    for var in var_names:
-        short_name = var.replace("Production", "Prod").replace("Activity", "Act")
-        lag_cols.append(f"Lag{lag}_{short_name}")
+    # 3. A_true
+    lag_cols = []
+    for lag in range(1, p + 1):
+        for var in var_names:
+            short_name = var.replace("Production", "Prod").replace("Activity", "Act")
+            lag_cols.append(f"Lag{lag}_{short_name}")
 
-a_true_df = pd.DataFrame(A, index=var_names, columns=lag_cols)
-print("\n### 3. True VAR Slope Coefficients (A_true) ###")
-print("Dimensions:", A.shape)
-print("-" * 50)
-print(a_true_df.T.round(4)) 
+    a_true_df = pd.DataFrame(A, index=var_names, columns=lag_cols)
+    print("\n### 3. True VAR Slope Coefficients (A_true) ###")
+    print("Dimensions:", A.shape)
+    print("-" * 60)
+    print(a_true_df.T.iloc[:20].round(4))  # Show first 20 rows
+    print(f"... ({len(a_true_df.T)} total rows)")
 
-# 4. B_tilde_true (Structural Impact Matrix)
-shock_names = ["Supply Shock", "Flow Demand", "Spec. Demand", "Residual Shock"]
-b_tilde_df = pd.DataFrame(B_tilde_true, index=var_names, columns=shock_names)
+    # 4. B_tilde_true (Structural Impact Matrix)
+    shock_names = ["Supply Shock", "Flow Demand", "Spec. Demand", "Residual Shock"]
+    b_tilde_df = pd.DataFrame(B_tilde_true, index=var_names, columns=shock_names)
 
-print("\n### 4. True Structural Impact Matrix (B_tilde_true) ###")
-print("Dimensions:", B_tilde_true.shape)
-print("-" * 50)
-print(b_tilde_df.round(4))
-print("="*50 + "\n")
+    print("\n### 4. True Structural Impact Matrix (B_tilde_true) ###")
+    print("Dimensions:", B_tilde_true.shape)
+    print("-" * 60)
+    print(b_tilde_df.round(4))
+    print("="*60 + "\n")
+    
+    print(f"✓ {p}-lag DGP processing complete!\n")
+
+
+print("\n" + "="*60)
+print(" FINAL SUMMARY: DGP GENERATION COMPLETE")
+print("="*60)
+print("\nGenerated Two DGP Configurations:")
+print("  1. 2-lag DGP:  saved as 'true_dgp_parameters_2_lags.npz'")
+print("  2. 24-lag DGP: saved as 'true_dgp_parameters_24_lags.npz'")
+print("\nBoth DGP configurations include:")
+print("  • A_true:         VAR slope coefficients")
+print("  • SIGMA_true:     Residual covariance matrix")
+print("  • B_tilde_true:   Structural impact matrix (from sign restrictions)")
+print("  • True_IRF:       Impulse response functions (24 horizon)")
+print("  • V_true:         Deterministic terms (constant + seasonal dummies)")
+print("  • p_true:         Lag order")
+print("\nVisualizations saved in 'DGP files/Visualizations/':")
+print("  • True_IRF_plot_Cumulative_2_lags.png")
+print("  • True_IRF_plot_Cumulative_24_lags.png")
+print("\n" + "="*60)
