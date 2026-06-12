@@ -1,155 +1,334 @@
-import numpy as np
 import os
-import random
+import multiprocessing
+import numpy as np
+import pandas as pd
+from numba import njit
+import time
+from joblib import Parallel, delayed
 
-# ---------------- Reproducibility / Seeding ----------------
-# Set a global seed and a few environment variables to make
-# pseudorandom draws repeatable across runs on the same setup.
-# Note: For strict byte-for-byte reproducibility also set
-# PYTHONHASHSEED before interpreter start and pin package versions.
+# ---------------- Reproducibility & Environment ----------------
 SEED = 12345
-# Set Python hash seed (best set before interpreter start to be fully deterministic)
 os.environ.setdefault('PYTHONHASHSEED', str(SEED))
-# Limit threaded BLAS behaviour to reduce nondeterminism across runs
-os.environ.setdefault('OMP_NUM_THREADS', '1')
-os.environ.setdefault('MKL_NUM_THREADS', '1')
+os.environ.setdefault('NUMBA_NUM_THREADS', '1') # Keep Numba strictly single-threaded
 
-# Apply seeds to Python RNGs used in this script
-random.seed(SEED)
-np.random.seed(SEED)
-
-# 1. Setup the path
-# 1. Get the exact folder where this specific .py file lives
-try:
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-except NameError:
-    script_dir = os.getcwd()
-
-# 2. Resolve the Kilian & Murphy folder consistently regardless of how
-# the script is launched (debugger vs manual). If `script_dir` already
-# points at the 'Kilian and Murphy (2014)' folder, use it directly;
-# otherwise assume `script_dir` is the repo root and append the folder.
-KM_FOLDER = 'Kilian and Murphy (2014)'
-if os.path.basename(script_dir) == KM_FOLDER:
-    km_base = script_dir
-else:
-    km_base = os.path.join(script_dir, KM_FOLDER)
-
-
-# Get dgp and dataset
-dgp_path = os.path.join(km_base, 'DGP files', 'true_dgp_parameters_2_lags.npz')
-km_data_path = os.path.join(km_base, 'km-ascii-data', 'kmData.txt')
-# 2. Load the parameters
-dgp = np.load(dgp_path)
-km_data_array = np.loadtxt(km_data_path)
-
-print(dgp.files)
-
-A_true = dgp['A_true']
-SIGMA_true = dgp['SIGMA_true']
-B_tilde_true = dgp['B_tilde_true']
-True_IRF = dgp['True_IRF']
-V_true = dgp['V_true']
-p_true = dgp['p_true']
-
-print("Loaded True DGP Parameters!")
-print("True IRF Shape:", True_IRF.shape)
-
-# ... Start your Monte Carlo loop down here ...
-
-# 1. Define a function to create the random samples from the DGP parameters
-def simulate_var_dgp(A, V, B_tilde, p, T_target, burn_in=100):
-    """
-    Simulates a random path from the true VAR Data Generating Process.
-    
-    Parameters:
-    A        : VAR slope coefficients (K x K*p)
-    V        : Deterministic terms (Constant + 11 Seasonal Dummies) (K x 12)
-    B_tilde  : True structural impact matrix from the median target (K x K)
-    p        : Lag order
-    T_target : The target length of the simulated time series (usually matches your real data length)
-    burn_in  : Number of initial periods to simulate and discard to remove initial condition bias
-    """
+# -------------------------------------------------------------------
+# 1. NUMBA-OPTIMIZED DATA GENERATING PROCESS (DGP)
+# -------------------------------------------------------------------
+@njit
+def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in):
     K = A.shape[0]
     T_total = T_target + burn_in
     
-    # 1. Generate True Structural Shocks
-    # Standard normal distribution: N(0, 1)
     structural_shocks = np.random.randn(K, T_total)
-    
-    # 2. Convert to Reduced-Form Residuals
-    # u_t = B_tilde @ epsilon_t
     reduced_residuals = B_tilde @ structural_shocks
-    
-    # 3. Initialize the simulated data matrix with zeros
     y_sim = np.zeros((K, T_total))
     
-    # 4. Recursively build the time series
     for t in range(p, T_total):
-        # --- A. Calculate deterministic component (V @ d_t) ---
         d_t = np.zeros((12, 1))
-        d_t[0, 0] = 1.0  # The Constant is always 1
-        
-        # Figure out the seasonal month index (0 to 11)
+        d_t[0, 0] = 1.0  
         month_idx = t % 12
         if month_idx < 11:
-            # Activate the specific Jan-Nov dummy
             d_t[month_idx + 1, 0] = 1.0
             
         deterministic_term = V @ d_t
         
-        # --- B. Calculate the autoregressive (lag) component ---
-        lag_stack = []
+        y_lags = np.zeros((K * p, 1))
         for lag in range(1, p + 1):
-            lag_stack.append(y_sim[:, t - lag])
+            for k in range(K):
+                y_lags[(lag-1)*K + k, 0] = y_sim[k, t - lag]
             
-        # Reshape the stacked lags to (K*p, 1) to multiply with A
-        y_lags = np.hstack(lag_stack).reshape(-1, 1) 
         autoregressive_term = A @ y_lags
+        y_t = deterministic_term + autoregressive_term + reduced_residuals[:, t:t+1]
+        y_sim[:, t] = y_t[:, 0]
         
-        # --- C. Combine everything to get y_t ---
-        y_t = deterministic_term + autoregressive_term + reduced_residuals[:, t].reshape(-1, 1)
-        
-        # Store the calculated time step
-        y_sim[:, t] = y_t.flatten()
-        
-    # 5. Discard the burn-in period and return the target length
-    return y_sim[:, burn_in:].T # Transposed to return shape (T_target, K) to match your input format
-
+    return np.ascontiguousarray(y_sim[:, burn_in:].T)
 
 # -------------------------------------------------------------------
-# 5. MONTE CARLO SIMULATION LOOP
+# 2. FAST VAR ESTIMATOR
 # -------------------------------------------------------------------
-N_iterations = 1000
-T_real = km_data_array.shape[0]
-
-print("\n" + "="*60)
-print(f" STARTING MONTE CARLO SIMULATION ({N_iterations} ITERATIONS)")
-print("="*60)
-
-# We will use the 24-lag DGP as the "True" reality for this example
-config_name = "24_lags"
-A_true = dgp_results[config_name]["A"]
-V_true = dgp_results[config_name]["V"]
-B_tilde_true = dgp_results[config_name]["B_tilde_true"]
-p_true = dgp_results[config_name]["p"]
-
-# Initialize storage for your evaluation metrics (e.g., MSE)
-var_mse_scores = []
-bvar_mse_scores = []
-
-for i in range(N_iterations):
-    # 1. Generate an alternate reality dataset
-    simulated_data = simulate_var_dgp(A_true, V_true, B_tilde_true, p_true, T_target=T_real)
+def lsvarcSA2_silent(y, p):
+    t, K = y.shape
+    y = y.T
+    Y = y[:, p-1:t]
     
-    # 2. Fit Standard VAR (acting as if we don't know the true parameters)
-    # A_est, B_est, X_est, SIGMA_est, U_est, V_est = lsvarcSA2(simulated_data, p_true)
+    for i in range(1, p):
+        Y = np.vstack([Y, y[:, p-1-i : t-i]])
+        
+    x = np.vstack([np.eye(11), np.zeros((1, 11))])
+    n_years = int((t - p) // 12)
+    remainder = int((t - p) % 12)
     
-    # 3. Fit BVAR on the same simulated_data
-    # ... (Your BVAR implementation here) ...
+    X2 = np.tile(x, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
+    if remainder > 0:
+        last = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
+        X2 = np.vstack([X2, last])
+        
+    X2 = np.hstack([np.ones((t - p, 1)), X2])
+    X = np.vstack([X2.T, Y[:, :t-p]])
+    Y2 = y[:, p:t]
     
-    # 4. Calculate Mean Squared Error for both models' forecasts
-    # ... 
+    B = np.linalg.lstsq(X.T, Y2.T, rcond=None)[0].T
+    U = Y2 - B @ X
     
-    if (i + 1) % 100 == 0:
-        print(f"Completed {i + 1} / {N_iterations} Monte Carlo iterations...")
+    SIGMA = np.ascontiguousarray((U @ U.T) / (t - p - p * K - 12))
+    A = np.ascontiguousarray(B[:, 12 : K*p + 12])
+    
+    return A, SIGMA
+
+# -------------------------------------------------------------------
+# 3. JIT-COMPILED STRUCTURAL IDENTIFICATION CORE
+# -------------------------------------------------------------------
+@njit
+def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
+    Phi = np.zeros((h_max, K, K))
+    Phi[0] = np.eye(K)
+    for h in range(1, h_max):
+        for j in range(1, min(h, p) + 1):
+            A_j = A[:, (j-1)*K : j*K]
+            Phi[h] += A_j @ Phi[h-j]
+            
+    IRF = np.zeros((h_max, K, K))
+    for h in range(h_max):
+        IRF[h] = Phi[h] @ B_tilde
+    return IRF
+
+@njit
+def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops):
+    valid_IRFs = np.zeros((target_draws, h_max, K, K))
+    attempts = 0
+    accepted = 0
+    
+    while accepted < target_draws and attempts < max_loops:
+        attempts += 1
+        W = np.random.randn(K, K)
+        Q, R = np.linalg.qr(W)
+        for i in range(K):
+            if R[i, i] < 0:
+                Q[:, i] = -Q[:, i]
+                
+        B_tilde = P @ Q
+        
+        match = True
+        for i in range(K):
+            for j in range(K):
+                if not np.isnan(signs[i, j]):
+                    if np.sign(B_tilde[i, j]) != signs[i, j]:
+                        match = False
+                        break
+            if not match: break
+        if not match: continue 
+            
+        supply_elasticity = B_tilde[0, 1] / B_tilde[2, 1]
+        num = (Q_avg * (B_tilde[0, 0] / 100.0)) - B_tilde[3, 0]
+        den = Q_avg * (B_tilde[2, 0] / 100.0)
+        demand_elasticity = num / den
+        
+        if (0.0 <= supply_elasticity <= 0.025) and (-0.8 <= demand_elasticity <= 0.0):
+            irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
+            irf_cumulative = irf.copy()
+            
+            for h in range(1, h_max):
+                for k in range(K):
+                    irf_cumulative[h, 0, k] = irf_cumulative[h-1, 0, k] + irf[h, 0, k]
+                    irf_cumulative[h, 3, k] = irf_cumulative[h-1, 3, k] + irf[h, 3, k]
+            
+            valid_IRFs[accepted] = irf_cumulative
+            accepted += 1
+            
+    return valid_IRFs, attempts, accepted
+
+def get_median_target_model(valid_irfs):
+    pointwise_median_irf = np.median(valid_irfs, axis=0)
+    distances = np.sum((valid_irfs - pointwise_median_irf)**2, axis=(1, 2, 3))
+    best_model_idx = np.argmin(distances)
+    return valid_irfs[best_model_idx]
+
+# -------------------------------------------------------------------
+# 4. THE SINGLE MONTE CARLO ITERATION (SAFE EXECUTION)
+# -------------------------------------------------------------------
+def single_monte_carlo_iteration(args):
+    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, T_real, p_max = args
+    
+    try:
+        np.random.seed(iteration_seed)
+        K = true_A.shape[0]
+        
+        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 100)
+        
+        best_aic = float('inf')
+        p_hat = 1
+        N_eff = T_real - p_max 
+        
+        for p_test in range(1, p_max + 1):
+            y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
+            _, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test)
+            
+            if not np.all(np.isfinite(SIGMA_temp)):
+                continue
+                
+            sign_det, logdet = np.linalg.slogdet(SIGMA_temp)
+            if sign_det > 0: 
+                aic_val = logdet + (2.0 / N_eff) * (K**2 * p_test)
+                if aic_val < best_aic:
+                    best_aic = aic_val
+                    p_hat = p_test
+                    
+        A_aic, SIGMA_aic = lsvarcSA2_silent(simulated_data, p_hat)
+        if not np.all(np.isfinite(SIGMA_aic)):
+            return iter_idx, None, None, 0, -1
+            
+        P_aic = np.ascontiguousarray(np.linalg.cholesky(SIGMA_aic))
+        
+        valid_irfs_aic, attempts_aic, accepted_aic = fast_draw_core(A_aic, P_aic, signs, p_hat, K, Q_avg, h_max, mc_draws, 1000000)
+        if accepted_aic < mc_draws:
+            return iter_idx, None, None, 0, -1
+            
+        Target_IRF_aic = get_median_target_model(valid_irfs_aic)
+        SE_aic = (Target_IRF_aic - true_IRF_target)**2 
+        
+        if p_hat == true_p:
+            SE_p0 = SE_aic.copy()
+            attempts_p0 = 0
+        else:
+            A_p0, SIGMA_p0 = lsvarcSA2_silent(simulated_data, true_p)
+            if not np.all(np.isfinite(SIGMA_p0)):
+                return iter_idx, None, None, 0, -1
+                
+            P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
+            valid_irfs_p0, attempts_p0, accepted_p0 = fast_draw_core(A_p0, P_p0, signs, true_p, K, Q_avg, h_max, mc_draws, 1000000)
+            if accepted_p0 < mc_draws:
+                return iter_idx, None, None, 0, -1
+                
+            Target_IRF_p0 = get_median_target_model(valid_irfs_p0)
+            SE_p0 = (Target_IRF_p0 - true_IRF_target)**2
+            
+        return iter_idx, SE_aic, SE_p0, attempts_aic + attempts_p0, p_hat
+        
+    except Exception as e:
+        return iter_idx, None, None, 0, -1
+
+# -------------------------------------------------------------------
+# 5. PARALLEL ORCHESTRATION 
+# -------------------------------------------------------------------
+def main():
+    try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+    except NameError:
+        script_dir = os.getcwd()
+
+    KM_FOLDER = 'Kilian and Murphy (2014)'
+    km_base = script_dir if os.path.basename(script_dir) == KM_FOLDER else os.path.join(script_dir, KM_FOLDER)
+    
+    dgp_path = os.path.join(km_base, 'DGP files', 'true_dgp_parameters_2_lags.npz')
+    
+    if not os.path.exists(dgp_path):
+        print(f"ERROR: Could not find DGP file at {dgp_path}")
+        return
+
+    dgp = np.load(dgp_path)
+    true_A = np.ascontiguousarray(dgp['A_true'])
+    true_V = np.ascontiguousarray(dgp['V_true'])
+    true_B_tilde = np.ascontiguousarray(dgp['B_tilde_true'])
+    true_IRF = np.ascontiguousarray(dgp['True_IRF'])
+    true_p = int(dgp['p_true'])
+    
+    K = 4
+    T_real = 414 
+    Q_avg = 72.3 
+    h_max = 24
+    p_max = max(6, true_p) 
+    
+    N_iterations = 100  
+    mc_draws = 100      
+    
+    sign_matrix = np.ascontiguousarray(np.array([
+        [-1,       1,      1,      np.nan],  
+        [-1,       1,     -1,      np.nan],  
+        [ 1,       1,      1,      np.nan],  
+        [np.nan, np.nan,   1,      np.nan]   
+    ], dtype=np.float64))
+
+    print("\n" + "="*60)
+    print(f" STARTING MONTE CARLO SIMULATION (JOBLIB BACKEND)")
+    print(f" True DGP: {true_p} Lags | Max Evaluated Lag: {p_max}")
+    print(f" Iterations: {N_iterations} | Draws per iteration: {mc_draws}")
+    print("="*60)
+
+    tasks = []
+    for i in range(N_iterations):
+        tasks.append((
+            i, SEED + i, true_A, true_V, true_B_tilde, true_p, true_IRF, 
+            sign_matrix, Q_avg, h_max, mc_draws, T_real, p_max
+        ))
+
+    n_cores = multiprocessing.cpu_count()
+    start_time = time.time()
+    
+    print(f"Dispatching to {n_cores} CPU cores...\n")
+    results = Parallel(n_jobs=n_cores, backend='loky')(
+        delayed(single_monte_carlo_iteration)(task) for task in tasks
+    )
+
+    all_SE_aic = []
+    all_SE_p0 = []
+    all_p_hats = []
+    total_rejection_attempts = 0
+    discarded_draws = 0
+
+    for iter_idx, SE_aic, SE_p0, attempts, p_hat in results:
+        if SE_aic is None:
+            discarded_draws += 1
+            continue
+            
+        all_SE_aic.append(SE_aic)
+        all_SE_p0.append(SE_p0)
+        all_p_hats.append(p_hat)
+        total_rejection_attempts += attempts
+
+    exec_time = time.time() - start_time
+
+    # -------------------------------------------------------------------
+    # RELATIVE MSE AGGREGATION (IVANOV & KILIAN)
+    # -------------------------------------------------------------------
+    if len(all_SE_aic) == 0:
+        print("ERROR: All simulated realities failed mathematically.")
+        return
+
+    MSE_aic = np.mean(all_SE_aic, axis=0)
+    MSE_p0 = np.mean(all_SE_p0, axis=0)
+    
+    MSE_Ratio = MSE_aic / (MSE_p0 + 1e-12)
+    standardized_relative_mse = np.exp(np.mean(np.log(MSE_Ratio)))
+    correct_lag_percent = (all_p_hats.count(true_p) / len(all_p_hats)) * 100
+
+    print("\n" + "="*60)
+    print(" MONTE CARLO SIMULATION RESULTS (AIC vs TRUE DGP)")
+    print("="*60)
+    
+    summary_data = {
+        "Metric": [
+            "Successful Iterations",
+            "Discarded Iterations (Math Failures)",
+            "AIC True Lag Detection Rate (%)",
+            "Average MSE Ratio (AIC / p0) [Geometric Mean]", 
+            "Total Rejection Draws Executed",
+            "Execution Time (Seconds)"
+        ],
+        "Value": [
+            len(all_SE_aic),
+            discarded_draws,
+            round(correct_lag_percent, 2),
+            round(standardized_relative_mse, 6),
+            total_rejection_attempts,
+            round(exec_time, 2)
+        ]
+    }
+    
+    results_df = pd.DataFrame(summary_data).set_index("Metric")
+    print("\n### Performance Summary Matrix ###")
+    print("-" * 60)
+    print(results_df)
+    print("-" * 60)
+
+if __name__ == '__main__':
+    main()
