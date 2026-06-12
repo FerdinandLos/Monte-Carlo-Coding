@@ -1,0 +1,4 @@
+Metric,AIC,SIC (BIC),HQC,BVAR (Minn.)
+True Lag Detection Rate (%),3.4,0.0,0.2,N/A
+Average MSE Ratio (Model / True DGP),1.851725,1.101381,1.067999,1.347982
+Mean Evaluated Lag Order,8.93,1.25,1.86,12.0

@@ -1,0 +1,6 @@
+Metric,Result
+Geometric Mean of MSE Ratio (Pointwise / Target),1.076097
+5th Percentile of Ratio (Best Case for Pointwise),0.546614
+95th Percentile of Ratio (Worst Case for Pointwise),2.722688
+Pointwise Median Absolute Win Rate (%),49.7
+Verdict,Target is Better

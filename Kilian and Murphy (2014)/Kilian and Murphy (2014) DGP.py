@@ -212,8 +212,10 @@ def main():
     var_names = ["Oil Production", "Real Activity", "Real Oil Price", "Inventories"]
 
     dgp_configs = [
-        {"p": 2, "name": "2_lags"},
-        {"p": 24, "name": "24_lags"}
+        {"p": 4, "name": "4_lags"},
+        {"p": 6, "name": "6_lags"},
+        {"p": 8, "name": "8_lags"},
+        {"p": 10, "name": "10_lags"}
     ]
 
     dgp_results = {}

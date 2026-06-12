@@ -15,7 +15,9 @@ os.environ.setdefault('NUMBA_NUM_THREADS', '1')
 # 1. NUMBA-OPTIMIZED DATA GENERATING PROCESS (DGP)
 # -------------------------------------------------------------------
 @njit
-def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in):
+def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
+    np.random.seed(seed_val)
+    
     K = A.shape[0]
     T_total = T_target + burn_in
     
@@ -75,7 +77,7 @@ def lsvarcSA2_silent(y, p):
     return A, SIGMA
 
 # -------------------------------------------------------------------
-# 3. PURE SIGN RESTRICTION CORE (ELASTICITY REMOVED)
+# 3. PURE SIGN RESTRICTION CORE
 # -------------------------------------------------------------------
 @njit
 def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
@@ -92,7 +94,9 @@ def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
     return IRF
 
 @njit
-def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops):
+def fast_draw_core(A, P, signs, p, K, h_max, target_draws, max_loops, seed_val):
+    np.random.seed(seed_val)
+    
     valid_IRFs = np.zeros((target_draws, h_max, K, K))
     attempts = 0
     accepted = 0
@@ -117,10 +121,6 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops):
             if not match: break
         if not match: continue 
             
-        # ---------------------------------------------------------
-        # PURE SIGN RESTRICTIONS: Elasticity Checks Removed!
-        # If it reaches here, the signs match, so we instantly accept it.
-        # ---------------------------------------------------------
         irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
         irf_cumulative = irf.copy()
         
@@ -134,95 +134,55 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops):
             
     return valid_IRFs, attempts, accepted
 
-def get_median_target_model(valid_irfs, accepted_count):
-    valid_irfs_sliced = valid_irfs[:accepted_count]
-    pointwise_median_irf = np.median(valid_irfs_sliced, axis=0)
-    distances = np.sum((valid_irfs_sliced - pointwise_median_irf)**2, axis=(1, 2, 3))
-    best_model_idx = np.argmin(distances)
-    return valid_irfs_sliced[best_model_idx]
-
 # -------------------------------------------------------------------
-# 4. THE SINGLE MONTE CARLO ITERATION (WITH STABILIZATION)
+# 4. THE ISOLATED AGGREGATION COMPARISON
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
-    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
+    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, h_max, mc_draws, max_loops, T_real = args
     
     try:
-        np.random.seed(iteration_seed)
         K = true_A.shape[0]
         
-        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 100)
+        # 1. Generate Data
+        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 100, iteration_seed)
         
-        best_aic = float('inf')
-        p_hat = 1
-        N_eff = T_real - p_max 
+        # 2. Estimate Model strictly at True DGP Lag Order
+        A_est, SIGMA_est = lsvarcSA2_silent(simulated_data, true_p)
         
-        for p_test in range(1, p_max + 1):
-            y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
-            _, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test)
-            
-            if not np.all(np.isfinite(SIGMA_temp)):
-                continue
-                
-            sign_det, logdet_ols = np.linalg.slogdet(SIGMA_temp)
-            if sign_det > 0: 
-                # ---- THE FIX: Remove the Ghost Penalty ----
-                # Convert the OLS determinant to the ML determinant
-                df_correction = N_eff - (p_test * K) - 12
-                logdet_ml = logdet_ols + K * np.log(df_correction / N_eff)
-                
-                # Standard AIC formula
-                aic_val = logdet_ml + (2.0 / N_eff) * (K**2 * p_test)
-                
-                if aic_val < best_aic:
-                    best_aic = aic_val
-                    p_hat = p_test
-                    
-        # 1. Evaluate AIC Selected Model
-        A_aic, SIGMA_aic = lsvarcSA2_silent(simulated_data, p_hat)
-        
-        # Robust Cholesky: Adds a tiny ridge penalty to force non-singular matrices to behave
         try:
-            P_aic = np.ascontiguousarray(np.linalg.cholesky(SIGMA_aic))
+            P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
         except np.linalg.LinAlgError:
-            SIGMA_aic += np.eye(K) * 1e-8 
-            P_aic = np.ascontiguousarray(np.linalg.cholesky(SIGMA_aic))
+            SIGMA_est += np.eye(K) * 1e-8 
+            P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
             
-        valid_irfs_aic, attempts_aic, accepted_aic = fast_draw_core(A_aic, P_aic, signs, p_hat, K, Q_avg, h_max, mc_draws, max_loops)
+        # 3. Draw Structural Models
+        seed_for_matrices = iteration_seed + true_p
+        valid_irfs, attempts, accepted = fast_draw_core(A_est, P_est, signs, true_p, K, h_max, mc_draws, max_loops, seed_for_matrices)
         
-        if accepted_aic < mc_draws:
-            return iter_idx, None, None, 0, -1, f"Empty Set (AIC p={p_hat})"
+        if accepted < mc_draws:
+            return iter_idx, None, None, 0, "Empty Set"
             
-        Target_IRF_aic = get_median_target_model(valid_irfs_aic, accepted_aic)
-        SE_aic = (Target_IRF_aic - true_IRF_target)**2 
+        valid_irfs_sliced = valid_irfs[:accepted]
         
-        # 2. Evaluate True p0 Model
-        if p_hat == true_p:
-            SE_p0 = SE_aic.copy()
-            attempts_p0 = 0
-        else:
-            A_p0, SIGMA_p0 = lsvarcSA2_silent(simulated_data, true_p)
+        # -----------------------------------------------------------
+        # AGGREGATION METHOD 1: POINTWISE MEDIAN (Synthetic Model)
+        # -----------------------------------------------------------
+        pointwise_median_irf = np.median(valid_irfs_sliced, axis=0)
+        SE_pointwise = (pointwise_median_irf - true_IRF_target)**2 
+        
+        # -----------------------------------------------------------
+        # AGGREGATION METHOD 2: MEDIAN TARGET (Fry & Pagan Fix)
+        # -----------------------------------------------------------
+        distances = np.sum((valid_irfs_sliced - pointwise_median_irf)**2, axis=(1, 2, 3))
+        best_model_idx = np.argmin(distances)
+        target_irf = valid_irfs_sliced[best_model_idx]
+        SE_target = (target_irf - true_IRF_target)**2
             
-            try:
-                P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
-            except np.linalg.LinAlgError:
-                SIGMA_p0 += np.eye(K) * 1e-8 
-                P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
-                
-            valid_irfs_p0, attempts_p0, accepted_p0 = fast_draw_core(A_p0, P_p0, signs, true_p, K, Q_avg, h_max, mc_draws, max_loops)
-            
-            if accepted_p0 < mc_draws:
-                return iter_idx, None, None, 0, -1, f"Empty Set (True p={true_p})"
-                
-            Target_IRF_p0 = get_median_target_model(valid_irfs_p0, accepted_p0)
-            SE_p0 = (Target_IRF_p0 - true_IRF_target)**2
-            
-        return iter_idx, SE_aic, SE_p0, attempts_aic + attempts_p0, p_hat, "Success"
+        return iter_idx, SE_pointwise, SE_target, attempts, "Success"
         
     except Exception as e:
-        # LOUD ERROR LOGGING: If something fails, it screams it to the console!
         print(f"\n[WORKER CRASH] Iteration {iter_idx}: {type(e).__name__} - {str(e)}")
-        return iter_idx, None, None, 0, -1, f"Python Error: {str(e)}"
+        return iter_idx, None, None, 0, f"Python Error: {str(e)}"
 
 # -------------------------------------------------------------------
 # 5. PARALLEL ORCHESTRATION 
@@ -251,12 +211,10 @@ def main():
     
     K = 4
     T_real = 414 
-    Q_avg = 72.3 
     h_max = 24
-    p_max = max(6, true_p) 
     
-    N_iterations = 100  
-    mc_draws = 10           # Look for 10 valid models
+    N_iterations = 1000  
+    mc_draws = 100               
     max_loops = 5000000     
     
     sign_matrix = np.ascontiguousarray(np.array([
@@ -267,8 +225,8 @@ def main():
     ], dtype=np.float64))
 
     print("\n" + "="*60)
-    print(f" STARTING MONTE CARLO (PURE SIGN RESTRICTIONS)")
-    print(f" True DGP: {true_p} Lags | Max Evaluated Lag: {p_max}")
+    print(f" STARTING MONTE CARLO: EMPIRICAL DISTRIBUTION TEST")
+    print(f" Fixed Lag Order: {true_p} Lags")
     print(f" Iterations: {N_iterations} | Draws per iteration target: {mc_draws}")
     print("="*60)
 
@@ -276,7 +234,7 @@ def main():
     for i in range(N_iterations):
         tasks.append((
             i, SEED + i, true_A, true_V, true_B_tilde, true_p, true_IRF, 
-            sign_matrix, Q_avg, h_max, mc_draws, max_loops, T_real, p_max
+            sign_matrix, h_max, mc_draws, max_loops, T_real
         ))
 
     n_cores = multiprocessing.cpu_count()
@@ -287,22 +245,20 @@ def main():
         delayed(single_monte_carlo_iteration)(task) for task in tasks
     )
 
-    all_SE_aic = []
-    all_SE_p0 = []
-    all_p_hats = []
+    all_SE_pointwise = []
+    all_SE_target = []
     total_rejection_attempts = 0
     discarded_draws = 0
     failure_log = {}
 
-    for iter_idx, SE_aic, SE_p0, attempts, p_hat, status in results:
+    for iter_idx, SE_pointwise, SE_target, attempts, status in results:
         if status != "Success":
             discarded_draws += 1
             failure_log[status] = failure_log.get(status, 0) + 1
             continue
             
-        all_SE_aic.append(SE_aic)
-        all_SE_p0.append(SE_p0)
-        all_p_hats.append(p_hat)
+        all_SE_pointwise.append(SE_pointwise)
+        all_SE_target.append(SE_target)
         total_rejection_attempts += attempts
 
     exec_time = time.time() - start_time
@@ -310,52 +266,68 @@ def main():
     # -------------------------------------------------------------------
     # DIAGNOSTIC REPORTING
     # -------------------------------------------------------------------
-    print("\n" + "="*60)
-    print(" MONTE CARLO DIAGNOSTIC REPORT")
-    print("="*60)
-    print(f"Successful Iterations: {len(all_SE_aic)}")
-    print(f"Discarded Iterations:  {discarded_draws}")
-    
-    if discarded_draws > 0:
-        print("\nBreakdown of Failures:")
-        for reason, count in failure_log.items():
-            print(f" - {count} times: {reason}")
-            
-    if len(all_SE_aic) == 0:
-        print("\nCONCLUSION: Failed entirely. Check terminal for [WORKER CRASH] messages.")
+    if len(all_SE_pointwise) == 0:
+        print("\nCONCLUSION: Failed entirely. Check terminal for errors.")
         return
 
     # -------------------------------------------------------------------
-    # RELATIVE MSE AGGREGATION (IVANOV & KILIAN)
+    # EMPIRICAL DISTRIBUTION AGGREGATION
     # -------------------------------------------------------------------
-    MSE_aic = np.mean(all_SE_aic, axis=0)
-    MSE_p0 = np.mean(all_SE_p0, axis=0)
+    # 1. Sum the errors across the IRF tensor to get a single scalar MSE per iteration
+    # Shape transitions from (N_iters, 24, 4, 4) to (N_iters,)
+    MSE_pointwise_per_iter = np.sum(all_SE_pointwise, axis=(1, 2, 3))
+    MSE_target_per_iter = np.sum(all_SE_target, axis=(1, 2, 3))
     
-    MSE_Ratio = MSE_aic / (MSE_p0 + 1e-12)
-    standardized_relative_mse = np.exp(np.mean(np.log(MSE_Ratio)))
-    correct_lag_percent = (all_p_hats.count(true_p) / len(all_p_hats)) * 100
+    # 2. Calculate the ratio for EVERY single iteration independently
+    # Ratio < 1 means Pointwise is better. Ratio > 1 means Target is better.
+    Ratio_Distribution = MSE_pointwise_per_iter / (MSE_target_per_iter + 1e-12)
+    
+    # 3. Extract the Statistical Metrics from the Distribution
+    geom_mean_ratio = np.exp(np.mean(np.log(Ratio_Distribution)))
+    percentile_05 = np.percentile(Ratio_Distribution, 5)
+    percentile_95 = np.percentile(Ratio_Distribution, 95)
+    
+    # 4. Calculate "Win Rate" (How often did Pointwise actually have a lower error?)
+    pointwise_win_rate = np.mean(Ratio_Distribution < 1.0) * 100
 
     print("\n" + "="*60)
-    print(" SIMULATION RESULTS (AIC vs TRUE DGP)")
+    print(" SIMULATION RESULTS: EMPIRICAL DISTRIBUTION MATRIX")
     print("="*60)
     
     summary_data = {
         "Metric": [
-            "AIC True Lag Detection Rate (%)",
-            "Average MSE Ratio (AIC / p0) [Geometric Mean]", 
-            "Total Rejection Draws Executed",
-            "Execution Time (Seconds)"
+            "Geometric Mean of MSE Ratio (Pointwise / Target)",
+            "5th Percentile of Ratio (Best Case for Pointwise)",
+            "95th Percentile of Ratio (Worst Case for Pointwise)",
+            "Pointwise Median Absolute Win Rate (%)",
+            "Verdict"
         ],
-        "Value": [
-            round(correct_lag_percent, 2),
-            round(standardized_relative_mse, 6),
-            total_rejection_attempts,
-            round(exec_time, 2)
+        "Result": [
+            round(geom_mean_ratio, 6),
+            round(percentile_05, 6),
+            round(percentile_95, 6),
+            round(pointwise_win_rate, 2),
+            "Target is Better" if geom_mean_ratio > 1 else "Pointwise is Better"
         ]
     }
     
     results_df = pd.DataFrame(summary_data).set_index("Metric")
     print(results_df)
+    
+    print("\n" + "-"*60)
+    print(f"Total Rejection Draws Executed: {total_rejection_attempts:,}")
+    print(f"Total Execution Time:           {round(exec_time, 2)} Seconds")
+    print("-"*60)
+
+    # -------------------------------------------------------------------
+    # SAVE RESULTS TO DISK
+    # -------------------------------------------------------------------
+    results_dir = os.path.join(km_base, 'Results')
+    os.makedirs(results_dir, exist_ok=True)
+    filename = f"Pointwise_vs_Target_Results_p{true_p}_iters{N_iterations}_draws{mc_draws}.csv"
+    save_path = os.path.join(results_dir, filename)
+    results_df.to_csv(save_path)
+    print(f"\n[SUCCESS] Matrix saved to: {save_path}")
 
 if __name__ == '__main__':
     main()
