@@ -1,0 +1,5 @@
+True DGP (p0),Geom Mean Ratio (P/T),5th Percentile,95th Percentile,Pointwise Win Rate (%),Verdict
+4,0.986794,0.503625,2.568357,56.0,Pointwise is Better
+6,0.869778,0.532442,1.63792,69.0,Pointwise is Better
+8,0.871069,0.436973,1.951345,65.0,Pointwise is Better
+10,0.843419,0.42648,1.739992,71.0,Pointwise is Better

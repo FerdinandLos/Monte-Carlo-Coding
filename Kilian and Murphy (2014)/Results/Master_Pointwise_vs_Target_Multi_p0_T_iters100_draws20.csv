@@ -1,0 +1,21 @@
+True DGP (p0),Sample Size (T),Geom Mean Ratio (P/T),5th Percentile,95th Percentile,Pointwise Win Rate (%),Verdict
+4,80,0.712277,0.426962,1.14054,86.0,Pointwise is Better
+4,100,0.772264,0.407009,1.386082,74.0,Pointwise is Better
+4,120,0.732417,0.453336,1.209677,86.0,Pointwise is Better
+4,160,0.807825,0.419485,1.422664,67.0,Pointwise is Better
+4,200,0.767971,0.394309,1.542932,76.0,Pointwise is Better
+6,80,0.729087,0.463884,1.111493,89.0,Pointwise is Better
+6,100,0.735682,0.342025,1.281318,84.0,Pointwise is Better
+6,120,0.771326,0.448405,1.258145,83.0,Pointwise is Better
+6,160,0.775052,0.419341,1.573523,75.0,Pointwise is Better
+6,200,0.801399,0.464835,1.520612,70.0,Pointwise is Better
+8,80,0.749456,0.485341,1.096011,87.0,Pointwise is Better
+8,100,0.736731,0.410426,1.14779,86.0,Pointwise is Better
+8,120,0.733146,0.404201,1.239624,81.0,Pointwise is Better
+8,160,0.800651,0.458484,1.41868,75.0,Pointwise is Better
+8,200,0.766261,0.485401,1.407683,84.0,Pointwise is Better
+10,80,0.711038,0.404979,0.971816,96.0,Pointwise is Better
+10,100,0.728761,0.47844,1.130224,86.0,Pointwise is Better
+10,120,0.727118,0.412591,1.118527,87.0,Pointwise is Better
+10,160,0.740205,0.434549,1.278408,79.0,Pointwise is Better
+10,200,0.782983,0.445345,1.513956,76.0,Pointwise is Better

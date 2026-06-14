@@ -46,7 +46,7 @@ def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
     return np.ascontiguousarray(y_sim[:, burn_in:].T)
 
 # -------------------------------------------------------------------
-# 2. FAST VAR ESTIMATORS (OLS & BVAR)
+# 2. FAST VAR ESTIMATORS (OLS & BVARs)
 # -------------------------------------------------------------------
 def lsvarcSA2_silent(y, p):
     t, K = y.shape
@@ -77,10 +77,6 @@ def lsvarcSA2_silent(y, p):
     return A, SIGMA
 
 def bvar_minnesota_silent(y, p, tau=0.2, c=1e5):
-    """
-    Estimates a Bayesian VAR with a Minnesota Prior using Dummy Observations.
-    Shrinks coefficients towards zero (White Noise prior) with standard lag decay.
-    """
     t, K = y.shape
     y_T = y.T
     Y_mat = y_T[:, p-1:t]
@@ -98,16 +94,10 @@ def bvar_minnesota_silent(y, p, tau=0.2, c=1e5):
         X2 = np.vstack([X2, last])
         
     X2 = np.hstack([np.ones((t - p, 1)), X2])
-    
-    # Standard OLS matrices
     X_ols = np.vstack([X2.T, Y_mat[:, :t-p]]).T 
     Y_ols = y_T[:, p:t].T 
-    
-    # Calculate variable standard deviations for prior scaling
     s = np.std(y, axis=0) 
     
-    # Construct Dummy Observations
-    # 1. Lags (Shrinks AR coefficients to zero, tighter for longer lags)
     Y_d1 = np.zeros((K * p, K))
     X_d1 = np.zeros((K * p, 12 + K * p))
     row = 0
@@ -116,21 +106,83 @@ def bvar_minnesota_silent(y, p, tau=0.2, c=1e5):
             X_d1[row, 12 + (lag - 1) * K + j] = (s[j] * lag) / tau
             row += 1
             
-    # 2. Deterministic Terms (Diffuse prior)
     Y_d2 = np.zeros((12, K))
     X_d2 = np.zeros((12, 12 + K * p))
     for i in range(12):
         X_d2[i, i] = 1.0 / c
         
-    # 3. Covariance
     Y_d3 = np.diag(s)
     X_d3 = np.zeros((K, 12 + K * p))
     
-    # Append dummies to the real data
     Y_aug = np.vstack([Y_ols, Y_d1, Y_d2, Y_d3])
     X_aug = np.vstack([X_ols, X_d1, X_d2, X_d3])
     
-    # OLS on augmented data mathematically equals the Bayesian Posterior Mean
+    B = np.linalg.lstsq(X_aug, Y_aug, rcond=None)[0].T 
+    U = Y_ols.T - B @ X_ols.T 
+    
+    SIGMA = np.ascontiguousarray((U @ U.T) / (t - p - p * K - 12))
+    A = np.ascontiguousarray(B[:, 12 : K*p + 12])
+    
+    return A, SIGMA
+
+def bvar_conjugate_silent(y, p, tau=0.2, c=1e5, mu=1.0, delta=1.0):
+    t, K = y.shape
+    y_T = y.T
+    Y_mat = y_T[:, p-1:t]
+    
+    for i in range(1, p):
+        Y_mat = np.vstack([Y_mat, y_T[:, p-1-i : t-i]])
+        
+    x = np.vstack([np.eye(11), np.zeros((1, 11))])
+    n_years = int((t - p) // 12)
+    remainder = int((t - p) % 12)
+    
+    X2 = np.tile(x, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
+    if remainder > 0:
+        last = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
+        X2 = np.vstack([X2, last])
+        
+    X2 = np.hstack([np.ones((t - p, 1)), X2])
+    X_ols = np.vstack([X2.T, Y_mat[:, :t-p]]).T 
+    Y_ols = y_T[:, p:t].T 
+    
+    s = np.std(y, axis=0) 
+    y_bar = np.mean(y[:p, :], axis=0) 
+    
+    Y_d1 = np.zeros((K * p, K))
+    X_d1 = np.zeros((K * p, 12 + K * p))
+    row = 0
+    for lag in range(1, p + 1):
+        for j in range(K):
+            X_d1[row, 12 + (lag - 1) * K + j] = (s[j] * lag) / tau
+            row += 1
+            
+    Y_d2 = np.zeros((12, K))
+    X_d2 = np.zeros((12, 12 + K * p))
+    for i in range(12):
+        X_d2[i, i] = 1.0 / c
+        
+    Y_d3 = np.diag(s)
+    X_d3 = np.zeros((K, 12 + K * p))
+    
+    Y_d4 = np.zeros((K, K))
+    X_d4 = np.zeros((K, 12 + K * p))
+    for i in range(K):
+        Y_d4[i, i] = y_bar[i] / mu
+        for lag in range(1, p + 1):
+            X_d4[i, 12 + (lag - 1) * K + i] = y_bar[i] / mu
+            
+    Y_d5 = np.zeros((1, K))
+    X_d5 = np.zeros((1, 12 + K * p))
+    for i in range(K):
+        Y_d5[0, i] = y_bar[i] / delta
+        for lag in range(1, p + 1):
+            X_d5[0, 12 + (lag - 1) * K + i] = y_bar[i] / delta
+    X_d5[0, 0] = 1.0 / delta 
+    
+    Y_aug = np.vstack([Y_ols, Y_d1, Y_d2, Y_d3, Y_d4, Y_d5])
+    X_aug = np.vstack([X_ols, X_d1, X_d2, X_d3, X_d4, X_d5])
+    
     B = np.linalg.lstsq(X_aug, Y_aug, rcond=None)[0].T 
     U = Y_ols.T - B @ X_ols.T 
     
@@ -158,6 +210,9 @@ def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
 
 @njit
 def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops, seed_val):
+    if target_draws <= 0:
+        return np.zeros((1, h_max, K, K)), 0, 0
+        
     np.random.seed(seed_val)
     valid_IRFs = np.zeros((target_draws, h_max, K, K))
     attempts = 0
@@ -204,7 +259,7 @@ def get_median_target_model(valid_irfs, accepted_count):
     return valid_irfs_sliced[best_model_idx]
 
 # -------------------------------------------------------------------
-# 4. THE SINGLE MONTE CARLO ITERATION (IC vs BVAR)
+# 4. THE SINGLE MONTE CARLO ITERATION
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
@@ -217,13 +272,18 @@ def single_monte_carlo_iteration(args):
         p_hat_aic, p_hat_sic, p_hat_hqc = 1, 1, 1
         N_eff = T_real - p_max 
         
-        # 1. EVALUATE LAG ORDERS (Information Criteria)
+        ols_cache = {}
+        bic_scores = {} # Store raw BIC scores for BMA weighting
+        
+        # 1. EVALUATE LAG ORDERS 
         for p_test in range(1, p_max + 1):
             y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
-            _, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test)
+            A_temp, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test)
             
             if not np.all(np.isfinite(SIGMA_temp)):
                 continue
+                
+            ols_cache[p_test] = (A_temp.copy(), SIGMA_temp.copy())
                 
             sign_det, logdet_ols = np.linalg.slogdet(SIGMA_temp)
             if sign_det > 0: 
@@ -236,6 +296,8 @@ def single_monte_carlo_iteration(args):
                 sic_val = logdet_ml + (np.log(N_eff) / N_eff) * num_params
                 hqc_val = logdet_ml + (2.0 * np.log(np.log(N_eff)) / N_eff) * num_params
                 
+                bic_scores[p_test] = sic_val # Store for BMA
+                
                 if aic_val < best_aic:
                     best_aic = aic_val
                     p_hat_aic = p_test
@@ -246,7 +308,24 @@ def single_monte_carlo_iteration(args):
                     best_hqc = hqc_val
                     p_hat_hqc = p_test
                     
-        # 2. CACHE-BASED OLS EVALUATION
+        # -------------------------------------------------------------
+        # 2. BAYESIAN MODEL AVERAGING (BIC WEIGHTS)
+        # -------------------------------------------------------------
+        if not bic_scores:
+            raise ValueError("No valid OLS estimations found.")
+            
+        min_bic = min(bic_scores.values())
+        raw_weights = {p: np.exp(-0.5 * (score - min_bic)) for p, score in bic_scores.items()}
+        weight_sum = sum(raw_weights.values())
+        
+        # Filter out negligible models (weight < 1%) to optimize speed
+        kept_lags = [p for p, w in raw_weights.items() if (w / weight_sum) > 0.01]
+        kept_weight_sum = sum(raw_weights[p] for p in kept_lags)
+        final_bic_weights = {p: raw_weights[p] / kept_weight_sum for p in kept_lags}
+
+        # -------------------------------------------------------------
+        # 3. CACHE-BASED OLS EVALUATION (Standard ICs)
+        # -------------------------------------------------------------
         computed_SEs = {}
         total_attempts = 0
         
@@ -255,8 +334,7 @@ def single_monte_carlo_iteration(args):
             if p_target in computed_SEs:
                 return computed_SEs[p_target].copy()
                 
-            A_est, SIGMA_est = lsvarcSA2_silent(simulated_data, p_target)
-            
+            A_est, SIGMA_est = ols_cache[p_target]
             try:
                 P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
             except np.linalg.LinAlgError:
@@ -281,38 +359,83 @@ def single_monte_carlo_iteration(args):
             SE_hqc = get_se_for_p(p_hat_hqc)
             SE_p0 = get_se_for_p(true_p)
         except ValueError as e:
-            return iter_idx, None, None, None, None, None, 0, (None, None, None), str(e)
+            return iter_idx, None, None, None, None, None, None, None, 0, (None, None, None), str(e)
             
-        # 3. BVAR MINNESOTA EVALUATION (Fixed at p_max)
-        A_bvar, SIGMA_bvar = bvar_minnesota_silent(simulated_data, p_max, tau=0.2)
+        # -------------------------------------------------------------
+        # 4. DRAW BMA POOL
+        # -------------------------------------------------------------
+        bma_pool = []
+        bma_accepted_total = 0
         
+        for p_bma in kept_lags:
+            # Proportional drawing based on BIC weight
+            target_draws_p = int(round(mc_draws * final_bic_weights[p_bma]))
+            if target_draws_p == 0:
+                continue
+                
+            A_est, SIGMA_est = ols_cache[p_bma]
+            try:
+                P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            except np.linalg.LinAlgError:
+                SIGMA_est += np.eye(K) * 1e-8 
+                P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+                
+            seed_bma = iteration_seed + 5000 + p_bma
+            v_irfs, attempts, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, target_draws_p, max_loops, seed_bma)
+            total_attempts += attempts
+            
+            if acc > 0:
+                bma_pool.append(v_irfs[:acc])
+                bma_accepted_total += acc
+                
+        if bma_accepted_total == 0:
+            return iter_idx, None, None, None, None, None, None, None, 0, (None, None, None), "Empty Set (BMA)"
+            
+        # Stack all drawn proportional models into a single pooled universe
+        pooled_bma_irfs = np.vstack(bma_pool)
+        target_irf_bma = get_median_target_model(pooled_bma_irfs, bma_accepted_total)
+        SE_bma = (target_irf_bma - true_IRF_target)**2
+
+        # -------------------------------------------------------------
+        # 5. BVAR EVALUATIONS
+        # -------------------------------------------------------------
+        A_bvar_minn, SIGMA_bvar_minn = bvar_minnesota_silent(simulated_data, p_max, tau=0.2)
         try:
-            P_bvar = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar))
+            P_bvar_minn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar_minn))
         except np.linalg.LinAlgError:
-            SIGMA_bvar += np.eye(K) * 1e-8 
-            P_bvar = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar))
+            SIGMA_bvar_minn += np.eye(K) * 1e-8 
+            P_bvar_minn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar_minn))
             
-        # Give BVAR a distinct deterministic seed so it doesn't cross-contaminate OLS PRNG streams
-        seed_for_bvar = iteration_seed + 1000 
-        valid_irfs_bvar, attempts_bvar, accepted_bvar = fast_draw_core(
-            A_bvar, P_bvar, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, seed_for_bvar
+        valid_irfs_bvar_minn, att_minn, acc_minn = fast_draw_core(
+            A_bvar_minn, P_bvar_minn, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 1000
         )
-        total_attempts += attempts_bvar
-        
-        if accepted_bvar < mc_draws:
-            return iter_idx, None, None, None, None, None, 0, (None, None, None), "Empty Set (BVAR)"
+        total_attempts += att_minn
+        if acc_minn < mc_draws:
+            return iter_idx, None, None, None, None, None, None, None, 0, (None, None, None), "Empty Set (BVAR Minn)"
+        SE_bvar_minn = (get_median_target_model(valid_irfs_bvar_minn, acc_minn) - true_IRF_target)**2 
+
+        A_bvar_conj, SIGMA_bvar_conj = bvar_conjugate_silent(simulated_data, p_max, tau=0.2, mu=1.0, delta=1.0)
+        try:
+            P_bvar_conj = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar_conj))
+        except np.linalg.LinAlgError:
+            SIGMA_bvar_conj += np.eye(K) * 1e-8 
+            P_bvar_conj = np.ascontiguousarray(np.linalg.cholesky(SIGMA_bvar_conj))
             
-        target_irf_bvar = get_median_target_model(valid_irfs_bvar, accepted_bvar)
-        SE_bvar = (target_irf_bvar - true_IRF_target)**2 
+        valid_irfs_bvar_conj, att_conj, acc_conj = fast_draw_core(
+            A_bvar_conj, P_bvar_conj, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 2000
+        )
+        total_attempts += att_conj
+        if acc_conj < mc_draws:
+            return iter_idx, None, None, None, None, None, None, None, 0, (None, None, None), "Empty Set (BVAR Conj)"
+        SE_bvar_conj = (get_median_target_model(valid_irfs_bvar_conj, acc_conj) - true_IRF_target)**2 
             
-        return iter_idx, SE_aic, SE_sic, SE_hqc, SE_bvar, SE_p0, total_attempts, (p_hat_aic, p_hat_sic, p_hat_hqc), "Success"
+        return iter_idx, SE_aic, SE_sic, SE_hqc, SE_bma, SE_bvar_minn, SE_bvar_conj, SE_p0, total_attempts, (p_hat_aic, p_hat_sic, p_hat_hqc), "Success"
         
     except Exception as e:
-        print(f"\n[WORKER CRASH] Iteration {iter_idx}: {type(e).__name__} - {str(e)}")
-        return iter_idx, None, None, None, None, None, 0, (None, None, None), f"Python Error: {str(e)}"
+        return iter_idx, None, None, None, None, None, None, None, 0, (None, None, None), f"Python Error: {str(e)}"
 
 # -------------------------------------------------------------------
-# 5. PARALLEL ORCHESTRATION 
+# 5. PARALLEL ORCHESTRATION WITH NESTED LOOP (p0 and T)
 # -------------------------------------------------------------------
 def main():
     try:
@@ -323,28 +446,11 @@ def main():
     KM_FOLDER = 'Kilian and Murphy (2014)'
     km_base = script_dir if os.path.basename(script_dir) == KM_FOLDER else os.path.join(script_dir, KM_FOLDER)
     
-    dgp_path = os.path.join(km_base, 'DGP files', 'true_dgp_parameters_4_lags.npz')
-    
-    if not os.path.exists(dgp_path):
-        print(f"ERROR: Could not find DGP file at {dgp_path}")
-        return
-
-    dgp = np.load(dgp_path)
-    true_A = np.ascontiguousarray(dgp['A_true'])
-    true_V = np.ascontiguousarray(dgp['V_true'])
-    true_B_tilde = np.ascontiguousarray(dgp['B_tilde_true'])
-    true_IRF = np.ascontiguousarray(dgp['True_IRF'])
-    true_p = int(dgp['p_true'])
-    
-    K = 4
-    T_real = 100 
     Q_avg = 72.3 
     h_max = 24
-    p_max = max(12, true_p) 
-    
-    N_iterations = 1000  
-    mc_draws = 50           
-    max_loops = 5000000     
+    N_iterations = 1000   # <--- Bump to 1000 for final run
+    mc_draws = 100        # <--- Target accepted models        
+    max_loops = 5000000 
     
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,       1,      1,      np.nan],  
@@ -353,150 +459,168 @@ def main():
         [np.nan, np.nan,   1,      np.nan]   
     ], dtype=np.float64))
 
-    print("\n" + "="*60)
-    print(f" STARTING MONTE CARLO: OLS (AIC/SIC/HQC) vs BVAR (Minnesota)")
-    print(f" Sample Size (T): {T_real} | True DGP: {true_p} Lags")
-    print(f" Iterations: {N_iterations} | Draws per iteration target: {mc_draws}")
-    print("="*60)
-
-    tasks = []
-    for i in range(N_iterations):
-        tasks.append((
-            i, SEED + i, true_A, true_V, true_B_tilde, true_p, true_IRF, 
-            sign_matrix, Q_avg, h_max, mc_draws, max_loops, T_real, p_max
-        ))
-
-    n_cores = multiprocessing.cpu_count()
-    start_time = time.time()
+    dgp_lag_orders = [4, 6, 8, 10]
+    sample_sizes = [80, 100, 120, 160, 200]
     
-    print(f"Dispatching to {n_cores} CPU cores...\n")
-    results = Parallel(n_jobs=n_cores, backend='loky')(
-        delayed(single_monte_carlo_iteration)(task) for task in tasks
-    )
+    master_results_list = []
+    
+    global_start_time = time.time()
+    n_cores = multiprocessing.cpu_count()
+    
+    print("\n" + "="*80)
+    print(f" STARTING MASTER ASYMPTOTIC MONTE CARLO: 6 Estimators")
+    print(f" Lags (p0) = {dgp_lag_orders} | Sample Sizes (T) = {sample_sizes}")
+    print(f" Iterations: {N_iterations} | Draws: {mc_draws} | Utilizing {n_cores} CPU Cores")
+    print("="*80)
 
-    all_SE_aic, all_SE_sic, all_SE_hqc, all_SE_bvar, all_SE_p0 = [], [], [], [], []
-    all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
-    total_rejection_attempts = 0
-    discarded_draws = 0
-    failure_log = {}
-
-    for iter_idx, SE_aic, SE_sic, SE_hqc, SE_bvar, SE_p0, attempts, p_hats, status in results:
-        if status != "Success":
-            discarded_draws += 1
-            failure_log[status] = failure_log.get(status, 0) + 1
+    for current_p0 in dgp_lag_orders:
+        dgp_path = os.path.join(km_base, 'DGP files', f'true_dgp_parameters_{current_p0}_lags.npz')
+        
+        if not os.path.exists(dgp_path):
+            print(f"\n[WARNING] Could not find {dgp_path}. Skipping p0={current_p0}...")
             continue
             
-        all_SE_aic.append(SE_aic)
-        all_SE_sic.append(SE_sic)
-        all_SE_hqc.append(SE_hqc)
-        all_SE_bvar.append(SE_bvar)
-        all_SE_p0.append(SE_p0)
+        print(f"\n---> Loading DGP for p0 = {current_p0} ...")
         
-        all_p_hats_aic.append(p_hats[0])
-        all_p_hats_sic.append(p_hats[1])
-        all_p_hats_hqc.append(p_hats[2])
-        total_rejection_attempts += attempts
+        dgp = np.load(dgp_path)
+        true_A = np.ascontiguousarray(dgp['A_true'])
+        true_V = np.ascontiguousarray(dgp['V_true'])
+        true_B_tilde = np.ascontiguousarray(dgp['B_tilde_true'])
+        true_IRF = np.ascontiguousarray(dgp['True_IRF'])
+        true_p = int(dgp['p_true'])
+        
+        p_max = max(12, true_p)
 
-    exec_time = time.time() - start_time
-
-    # -------------------------------------------------------------------
-    # DIAGNOSTIC REPORTING
-    # -------------------------------------------------------------------
-    print("\n" + "="*60)
-    print(" MONTE CARLO DIAGNOSTIC REPORT")
-    print("="*60)
-    print(f"Successful Iterations: {len(all_SE_aic)}")
-    print(f"Discarded Iterations:  {discarded_draws}")
-    
-    if discarded_draws > 0:
-        print("\nBreakdown of Failures:")
-        for reason, count in failure_log.items():
-            print(f" - {count} times: {reason}")
+        for current_T in sample_sizes:
+            print(f"     Running Simulation for T = {current_T} ...", end="", flush=True)
             
-    if len(all_SE_aic) == 0:
-        print("\nCONCLUSION: Failed entirely. Check terminal for [WORKER CRASH] messages.")
-        return
+            tasks = []
+            for i in range(N_iterations):
+                iteration_seed = SEED + i + (current_p0 * 10000) + (current_T * 100000)
+                tasks.append((
+                    i, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF, 
+                    sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max
+                ))
+
+            results = Parallel(n_jobs=n_cores, backend='loky')(
+                delayed(single_monte_carlo_iteration)(task) for task in tasks
+            )
+
+            all_SE_aic, all_SE_sic, all_SE_hqc, all_SE_bma, all_SE_p0 = [], [], [], [], []
+            all_SE_bvar_minn, all_SE_bvar_conj = [], []
+            all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
+            discarded_draws = 0
+
+            for iter_idx, SE_aic, SE_sic, SE_hqc, SE_bma, SE_bvar_minn, SE_bvar_conj, SE_p0, attempts, p_hats, status in results:
+                if status != "Success":
+                    discarded_draws += 1
+                    continue
+                    
+                all_SE_aic.append(SE_aic)
+                all_SE_sic.append(SE_sic)
+                all_SE_hqc.append(SE_hqc)
+                all_SE_bma.append(SE_bma)
+                all_SE_bvar_minn.append(SE_bvar_minn)
+                all_SE_bvar_conj.append(SE_bvar_conj)
+                all_SE_p0.append(SE_p0)
+                
+                all_p_hats_aic.append(p_hats[0])
+                all_p_hats_sic.append(p_hats[1])
+                all_p_hats_hqc.append(p_hats[2])
+
+            if len(all_SE_aic) == 0:
+                print(f" [FAILED] All iterations discarded.")
+                continue
+                
+            print(f" [SUCCESS] ({len(all_SE_aic)}/{N_iterations})")
+
+            # -------------------------------------------------------------------
+            # EMPIRICAL DISTRIBUTION AGGREGATION
+            # -------------------------------------------------------------------
+            MSE_aic_iter = np.sum(all_SE_aic, axis=(1, 2, 3))
+            MSE_sic_iter = np.sum(all_SE_sic, axis=(1, 2, 3))
+            MSE_hqc_iter = np.sum(all_SE_hqc, axis=(1, 2, 3))
+            MSE_bma_iter = np.sum(all_SE_bma, axis=(1, 2, 3))
+            MSE_bvar_minn_iter = np.sum(all_SE_bvar_minn, axis=(1, 2, 3))
+            MSE_bvar_conj_iter = np.sum(all_SE_bvar_conj, axis=(1, 2, 3))
+            MSE_p0_iter = np.sum(all_SE_p0, axis=(1, 2, 3))
+            
+            ratio_aic = MSE_aic_iter / (MSE_p0_iter + 1e-12)
+            ratio_sic = MSE_sic_iter / (MSE_p0_iter + 1e-12)
+            ratio_hqc = MSE_hqc_iter / (MSE_p0_iter + 1e-12)
+            ratio_bma = MSE_bma_iter / (MSE_p0_iter + 1e-12)
+            ratio_bvar_minn = MSE_bvar_minn_iter / (MSE_p0_iter + 1e-12)
+            ratio_bvar_conj = MSE_bvar_conj_iter / (MSE_p0_iter + 1e-12)
+            
+            def calculate_metrics(ratios_array, p_hats_list, true_p_val):
+                geom_mean = np.exp(np.mean(np.log(ratios_array)))
+                perc_05 = np.percentile(ratios_array, 5)
+                perc_95 = np.percentile(ratios_array, 95)
+                
+                if p_hats_list is not None:
+                    lag_rate = (p_hats_list.count(true_p_val) / len(p_hats_list)) * 100
+                    mean_lag = np.mean(p_hats_list)
+                else:
+                    lag_rate = np.nan
+                    mean_lag = p_max 
+                    
+                return round(geom_mean, 4), round(perc_05, 4), round(perc_95, 4), round(lag_rate, 2), round(mean_lag, 2)
+
+            metrics_aic = calculate_metrics(ratio_aic, all_p_hats_aic, true_p)
+            metrics_sic = calculate_metrics(ratio_sic, all_p_hats_sic, true_p)
+            metrics_hqc = calculate_metrics(ratio_hqc, all_p_hats_hqc, true_p)
+            metrics_bma = calculate_metrics(ratio_bma, None, true_p) # BMA blends lags
+            metrics_bvar_minn = calculate_metrics(ratio_bvar_minn, None, true_p)
+            metrics_bvar_conj = calculate_metrics(ratio_bvar_conj, None, true_p)
+
+            # Append to Master List 
+            models = [
+                ("AIC", metrics_aic), 
+                ("SIC (BIC)", metrics_sic), 
+                ("HQC", metrics_hqc), 
+                ("BMA (BIC-Weighted)", metrics_bma),
+                ("BVAR (Minn.)", metrics_bvar_minn),
+                ("BVAR (Conj.)", metrics_bvar_conj)
+            ]
+            
+            for model_name, m_data in models:
+                master_results_list.append({
+                    "True DGP (p0)": current_p0,
+                    "Sample Size (T)": current_T,
+                    "Estimator": model_name,
+                    "Lag Detection Rate (%)": m_data[3] if not np.isnan(m_data[3]) else "N/A",
+                    "Mean Evaluated Lag": m_data[4],
+                    "Geom Mean MSE Ratio": m_data[0],
+                    "5th Percentile": m_data[1],
+                    "95th Percentile": m_data[2]
+                })
+
+    total_time = time.time() - global_start_time
 
     # -------------------------------------------------------------------
-    # RELATIVE MSE AGGREGATION
+    # SAVE MASTER RESULTS TO DISK
     # -------------------------------------------------------------------
-    MSE_aic = np.mean(all_SE_aic, axis=0)
-    MSE_sic = np.mean(all_SE_sic, axis=0)
-    MSE_hqc = np.mean(all_SE_hqc, axis=0)
-    MSE_bvar = np.mean(all_SE_bvar, axis=0)
-    MSE_p0  = np.mean(all_SE_p0, axis=0)
-    
-    MSE_Ratio_aic = MSE_aic / (MSE_p0 + 1e-12)
-    MSE_Ratio_sic = MSE_sic / (MSE_p0 + 1e-12)
-    MSE_Ratio_hqc = MSE_hqc / (MSE_p0 + 1e-12)
-    MSE_Ratio_bvar = MSE_bvar / (MSE_p0 + 1e-12)
-    
-    std_rel_mse_aic = np.exp(np.mean(np.log(MSE_Ratio_aic)))
-    std_rel_mse_sic = np.exp(np.mean(np.log(MSE_Ratio_sic)))
-    std_rel_mse_hqc = np.exp(np.mean(np.log(MSE_Ratio_hqc)))
-    std_rel_mse_bvar = np.exp(np.mean(np.log(MSE_Ratio_bvar)))
-    
-    lag_rate_aic = (all_p_hats_aic.count(true_p) / len(all_p_hats_aic)) * 100
-    lag_rate_sic = (all_p_hats_sic.count(true_p) / len(all_p_hats_sic)) * 100
-    lag_rate_hqc = (all_p_hats_hqc.count(true_p) / len(all_p_hats_hqc)) * 100
+    if len(master_results_list) > 0:
+        final_df = pd.DataFrame(master_results_list)
+        
+        print("\n" + "="*80)
+        print(" MASTER ASYMPTOTIC SIMULATION RESULTS: 6 Estimators")
+        print("="*80)
+        print(final_df.to_string(index=False))
+        
+        print("\n" + "-"*80)
+        print(f"Total Master Execution Time: {round(total_time, 2)} Seconds")
+        print("-"*80)
 
-    print("\n" + "="*60)
-    print(" SIMULATION RESULTS: OLS (INFO CRITERIA) vs BVAR")
-    print("="*60)
-    
-    summary_data = {
-        "Metric": [
-            "True Lag Detection Rate (%)",
-            "Average MSE Ratio (Model / True DGP)", 
-            "Mean Evaluated Lag Order"
-        ],
-        "AIC": [
-            round(lag_rate_aic, 2),
-            round(std_rel_mse_aic, 6),
-            round(np.mean(all_p_hats_aic), 2)
-        ],
-        "SIC (BIC)": [
-            round(lag_rate_sic, 2),
-            round(std_rel_mse_sic, 6),
-            round(np.mean(all_p_hats_sic), 2)
-        ],
-        "HQC": [
-            round(lag_rate_hqc, 2),
-            round(std_rel_mse_hqc, 6),
-            round(np.mean(all_p_hats_hqc), 2)
-        ],
-        "BVAR (Minn.)": [
-            "N/A", # BVAR doesn't select lags, it shrinks them
-            round(std_rel_mse_bvar, 6),
-            float(p_max) # Always evaluated at maximum lag length
-        ]
-    }
-    
-    results_df = pd.DataFrame(summary_data).set_index("Metric")
-    print(results_df)
-    
-    print("\n" + "-"*60)
-    print(f"Total Rejection Draws Executed: {total_rejection_attempts:,}")
-    print(f"Total Execution Time:           {round(exec_time, 2)} Seconds")
-    print("-"*60)
-
-# -------------------------------------------------------------------
-    # 6. SAVE RESULTS TO DISK
-    # -------------------------------------------------------------------
-    # Construct the path to the Results folder
-    results_dir = os.path.join(km_base, 'Results')
-    
-    # Create the folder if it does not exist
-    os.makedirs(results_dir, exist_ok=True)
-    
-    # Dynamically generate the filename using the simulation parameters
-    filename = f"Simulation_Results_p{true_p}_iters{N_iterations}_draws{mc_draws}.csv"
-    save_path = os.path.join(results_dir, filename)
-    
-    # Save the dataframe to CSV
-    results_df.to_csv(save_path)
-    
-    print(f"\n[SUCCESS] Matrix saved to: {save_path}")
+        results_dir = os.path.join(km_base, 'Results')
+        os.makedirs(results_dir, exist_ok=True)
+        filename = f"Master_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"
+        save_path = os.path.join(results_dir, filename)
+        
+        final_df.to_csv(save_path, index=False)
+        print(f"\n[SUCCESS] Master Dataframe saved to: {save_path}")
+    else:
+        print("\n[ERROR] No data generated across any DGP. Check file paths and errors.")
 
 if __name__ == '__main__':
     main()

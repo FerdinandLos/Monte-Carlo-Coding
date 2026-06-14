@@ -13,6 +13,11 @@
 \usepackage{caption}
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
+% Papers to make the tables render correctly
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}  % Creates beautiful top/mid/bottom rules instead of ugly grids
+\usepackage{multirow}  % Allows the p0 values to span across the T rows seamlessly
+
 % BibLaTeX setup for Zotero Better BibLaTeX
 \usepackage[style=authoryear, backend=biber, natbib=true, maxcitenames=2]{biblatex}
 \addbibresource{Monte Carlo Simulations.bib}
@@ -42,7 +47,6 @@ This is the abstract for your paper. Briefly state the purpose of the research, 
 \section{Introduction}
 \label{sec:introduction}
 
-This is the introduction. You can easily cite your references from your Zotero Better BibLaTeX file using standard Natbib commands like \citet{citation_key} for textual citations or \citep{citation_key} for parenthetical citations. 
 
 \section{Methodology}
 \label{sec:methodology}
@@ -56,6 +60,9 @@ Explain the true DGP based on Johansen and Juselius (1990), Ramey (2011), or Kil
 \label{sec:results}
 
 Present the results of your Monte Carlo simulations. 
+
+\input{Tables/Table_Paper1_BVARs.tex}
+\input{Tables/Table_Paper2_BMA.tex}
 
 \section{Conclusion}
 \label{sec:conclusion}
