@@ -85,7 +85,7 @@ def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
     return IRF
 
 @njit
-def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws):
+def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
     """
     JIT-compiled inner loop. 
     Implements 'Fail Fast' by rejecting matrices before calculating full IRFs.
@@ -124,25 +124,18 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws):
         if not match:
             continue # Throw away the matrix immediately. Do not compute IRF!
             
-        # 3. FAIL FAST: Check Elasticity Bounds
-        supply_elasticity = B_tilde[0, 1] / B_tilde[2, 1]
-        numerator = (Q_avg * (B_tilde[0, 0] / 100.0)) - B_tilde[3, 0]
-        denominator = Q_avg * (B_tilde[2, 0] / 100.0)
-        demand_elasticity = numerator / denominator
+        # 3. Compute IRF (Elasticity Bounds Removed)
+        irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
         
-        if (0.0 <= supply_elasticity <= 0.025) and (-0.8 <= demand_elasticity <= 0.0):
-            # 4. ONLY NOW do we spend compute power calculating the 24-step IRF
-            irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
-            
-            irf_cumulative = irf.copy()
-            # Explicit loop for cumulative sum (safest approach in Numba 3D arrays)
-            for h in range(1, h_max):
-                irf_cumulative[h, 0, :] = irf_cumulative[h-1, 0, :] + irf[h, 0, :]
-                irf_cumulative[h, 3, :] = irf_cumulative[h-1, 3, :] + irf[h, 3, :]
-            
-            valid_IRFs[accepted] = irf_cumulative
-            valid_B_tildes[accepted] = B_tilde
-            accepted += 1
+        irf_cumulative = irf.copy()
+        # Explicit loop for cumulative sum (safest approach in Numba 3D arrays)
+        for h in range(1, h_max):
+            irf_cumulative[h, 0, :] = irf_cumulative[h-1, 0, :] + irf[h, 0, :]
+            irf_cumulative[h, 3, :] = irf_cumulative[h-1, 3, :] + irf[h, 3, :]
+        
+        valid_IRFs[accepted] = irf_cumulative
+        valid_B_tildes[accepted] = B_tilde
+        accepted += 1
             
     return valid_IRFs, valid_B_tildes, attempts
 
@@ -151,11 +144,11 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws):
 # -------------------------------------------------------------------
 def worker_draw(args):
     """Wrapper function to assign a unique seed to each parallel core."""
-    A, P, signs, p, K, Q_avg, h_max, target_draws, seed = args
+    A, P, signs, p, K, h_max, target_draws, seed = args
     np.random.seed(seed) # Crucial for independent random streams
-    return fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws)
+    return fast_draw_core(A, P, signs, p, K, h_max, target_draws)
 
-def draw_sign_restrictions_parallel(A, SIGMA, signs, p, K, Q_avg, h_max=24, n_draws=1000):
+def draw_sign_restrictions_parallel(A, SIGMA, signs, p, K, h_max=24, n_draws=1000):
     P = np.linalg.cholesky(SIGMA)
     n_cores = multiprocessing.cpu_count()
     
@@ -167,7 +160,7 @@ def draw_sign_restrictions_parallel(A, SIGMA, signs, p, K, Q_avg, h_max=24, n_dr
     for i in range(n_cores):
         td = draws_per_core + (1 if i < remain else 0)
         if td > 0:
-            tasks.append((A, P, signs, p, K, Q_avg, h_max, td, SEED + i + p*100))
+            tasks.append((A, P, signs, p, K, h_max, td, SEED + i + p*100))
             
     valid_IRFs_list = []
     valid_B_tildes_list = []
@@ -203,10 +196,8 @@ def main():
     km_base = script_dir if os.path.basename(script_dir) == KM_FOLDER else os.path.join(script_dir, KM_FOLDER)
 
     km_data_path = os.path.join(km_base, 'km-ascii-data', 'kmData.txt')
-    world_prod_path = os.path.join(km_base, 'km-ascii-data', 'worldprod.txt')
 
     km_data_array = np.loadtxt(km_data_path)
-    world_prod_array = np.loadtxt(world_prod_path)
 
     print("Data loaded successfully!")
     var_names = ["Oil Production", "Real Activity", "Real Oil Price", "Inventories"]
@@ -262,7 +253,6 @@ def main():
 
     h_max = 24  
     n_draws = 1000 
-    Q_avg = np.mean(world_prod_array)
 
     for config in dgp_configs:
         p = config["p"]
@@ -278,11 +268,19 @@ def main():
         K = SIGMA.shape[0]
         
         accepted_irfs, accepted_B_tildes = draw_sign_restrictions_parallel(
-            A=A, SIGMA=SIGMA, signs=sign_matrix, p=p, K=K, Q_avg=Q_avg, h_max=h_max, n_draws=n_draws
+            A=A, SIGMA=SIGMA, signs=sign_matrix, p=p, K=K, h_max=h_max, n_draws=n_draws
         )
 
         pointwise_median_irf = np.median(accepted_irfs, axis=0)
-        distances = np.sum((accepted_irfs - pointwise_median_irf)**2, axis=(1, 2, 3))
+
+        # Fry-Pagan standardization: divide deviations by pointwise std across draws
+        pointwise_std_irf = np.std(accepted_irfs, axis=0)
+        # Guard against division by zero (e.g. IRF[0] identity-driven zeros)
+        pointwise_std_irf = np.where(pointwise_std_irf == 0, np.nan, pointwise_std_irf)
+
+        standardized_dev = (accepted_irfs - pointwise_median_irf) / pointwise_std_irf
+        # NaN entries (zero-variance cells) contribute nothing to the sum
+        distances = np.nansum(standardized_dev**2, axis=(1, 2, 3))
         best_model_idx = np.argmin(distances)
 
         B_tilde_true = accepted_B_tildes[best_model_idx]
