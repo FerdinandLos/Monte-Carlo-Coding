@@ -199,8 +199,21 @@ def get_median_target_model(valid_irfs, accepted_count):
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
-    
+
+    # Number of SE_* fields returned before the p_hat tuple and status.
+    # Order: aic, aicc, sic, hqc, ols_bma, minn_rw_tight, minn_rw_std,
+    #        minn_rw_loose, minn_wn_std, bvar_bic, bvar_bma, p0  -> 12 fields
+    N_SE = 12
+
+    def fail(msg):
+        return (iter_idx,) + (None,) * N_SE + ((None, None, None, None), msg)
+
     try:
+        # --- Per-iteration local caches (must be fresh each call) ---
+        ols_cache = {}
+        bic_scores = {}
+        bvar_cache = {}
+
         K = true_A.shape[0]
         simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 100, iteration_seed)
         
@@ -288,7 +301,7 @@ def single_monte_carlo_iteration(args):
             SE_hqc = get_ols_se_for_p(p_hat_hqc)
             SE_p0 = get_ols_se_for_p(true_p)
         except ValueError as e:
-            return iter_idx, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), str(e)
+            return fail(str(e))
             
         ols_bma_pool, ols_bma_accepted = [], 0
         for p_bma in kept_lags:
@@ -305,7 +318,7 @@ def single_monte_carlo_iteration(args):
             total_attempts += att
             if acc > 0: ols_bma_pool.append(v_irfs[:acc]); ols_bma_accepted += acc
                 
-        if ols_bma_accepted == 0: return iter_idx, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), "Empty Set BMA"
+        if ols_bma_accepted == 0: return fail("Empty Set BMA")
         SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2
        
        # -------------------------------------------------------------
@@ -324,12 +337,14 @@ def single_monte_carlo_iteration(args):
             return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2
         
         try:
+            # RW Benchmark Comparison (tight / std / loose)
+            SE_minn_rw_tight = eval_minn(0.05, delta_rw, 999)
+            SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1001)
+            SE_minn_rw_loose = eval_minn(0.50, delta_rw, 1002)
             # WN Baseline (Standard)
-            SE_minn_wn_std = eval_minn(0.20, delta_wn, 1000)
-            # RW Benchmark Comparison
-            SE_minn_rw_std = eval_minn(0.20, delta_rw, 1001)
+            SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1000)
         except ValueError as e:
-            return iter_idx, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), str(e)
+            return fail(str(e))
         
         # -------------------------------------------------------------
         # 5. DYNAMIC BVAR (Using White Noise Prior)
@@ -355,7 +370,7 @@ def single_monte_carlo_iteration(args):
         try:
             SE_bvar_bic = eval_dyn_bvar(p_hat_sic, 3000 + p_hat_sic)
         except ValueError as e:
-            return iter_idx, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), str(e)
+            return fail(str(e))
 
         bvar_bma_pool, bvar_bma_acc = [], 0
         for p_bma in kept_lags:
@@ -364,13 +379,16 @@ def single_monte_carlo_iteration(args):
             v_c, acc_c = eval_dyn_bvar(p_bma, 4000 + p_bma, is_bma=True, draws=td)
             if acc_c > 0: bvar_bma_pool.append(v_c[:acc_c]); bvar_bma_acc += acc_c
                 
-        if bvar_bma_acc == 0: return iter_idx, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), "Empty BVAR BMA"
+        if bvar_bma_acc == 0: return fail("Empty BVAR BMA")
         SE_bvar_bma = (get_median_target_model(np.vstack(bvar_bma_pool), bvar_bma_acc) - true_IRF_target)**2
 
-        return iter_idx, SE_aic, SE_aicc, SE_sic, SE_hqc, SE_ols_bma, SE_minn_rw_tight, SE_minn_rw_std, SE_minn_rw_loose, SE_minn_wn_std, SE_bvar_bic, SE_bvar_bma, SE_p0, (p_hat_aic, p_hat_aicc, p_hat_sic, p_hat_hqc), "Success"
+        return (iter_idx, SE_aic, SE_aicc, SE_sic, SE_hqc, SE_ols_bma,
+                SE_minn_rw_tight, SE_minn_rw_std, SE_minn_rw_loose,
+                SE_minn_wn_std, SE_bvar_bic, SE_bvar_bma, SE_p0,
+                (p_hat_aic, p_hat_aicc, p_hat_sic, p_hat_hqc), "Success")
         
     except Exception as e:
-        return iter_idx, None, None, None, None, None, None, None, None, None, None, None, None, 0, (None, None, None, None), f"Error: {str(e)}"
+        return fail(f"Error: {str(e)}")
 
 # -------------------------------------------------------------------
 # 5. PARALLEL ORCHESTRATION WITH NESTED LOOP (p0 and T)
