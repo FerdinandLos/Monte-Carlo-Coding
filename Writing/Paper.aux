@@ -8,16 +8,35 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}Methodology}{2}{section.2}\protected@file@percent }
 \newlabel{sec:methodology}{{2}{2}{Methodology}{section.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Data Generating Process}{2}{subsection.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Simulation Results}{2}{section.3}\protected@file@percent }
-\newlabel{sec:results}{{3}{2}{Simulation Results}{section.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusion}{2}{section.4}\protected@file@percent }
-\newlabel{sec:conclusion}{{4}{2}{Conclusion}{section.4}{}}
-\newlabel{RF1}{3}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Relative Mean Squared Error: Hard Selection (ICs) vs. Bayesian Shrinkage. Bold values indicate the best performing estimator for a given Sample Size.}}{3}{table.caption.1}\protected@file@percent }
-\newlabel{tab:shrinkage_comparison}{{1}{3}{Relative Mean Squared Error: Hard Selection (ICs) vs. Bayesian Shrinkage. Bold values indicate the best performing estimator for a given Sample Size}{table.caption.1}{}}
-\newlabel{RF2}{4}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Relative Mean Squared Error: Hard Selection (ICs) vs. Bayesian Model Averaging (BMA). Bold values indicate the best performing estimator for a given Sample Size.}}{4}{table.caption.2}\protected@file@percent }
-\newlabel{tab:uncertainty_comparison}{{2}{4}{Relative Mean Squared Error: Hard Selection (ICs) vs. Bayesian Model Averaging (BMA). Bold values indicate the best performing estimator for a given Sample Size}{table.caption.2}{}}
-\abx@aux@read@bbl@mdfivesum{E75D7E0DB03F09D45B25DF2F538BB294}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Optimal Prior Selection via Marginal Data Density}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Objective Function Surface for Marginal Data Density Optimization. The peak represents the optimal balance between model fit and parameter penalty.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:mdd_surface}{{1}{2}{Objective Function Surface for Marginal Data Density Optimization. The peak represents the optimal balance between model fit and parameter penalty}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Simulation Results}{3}{section.3}\protected@file@percent }
+\newlabel{sec:results}{{3}{3}{Simulation Results}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Behavior of Standard Information Criteria}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Average Evaluated Lag Order ($\hat  {p}$) selected by standard Information Criteria.}}{3}{table.caption.2}\protected@file@percent }
+\newlabel{tab:ic_lag_orders}{{1}{3}{Average Evaluated Lag Order ($\hat {p}$) selected by standard Information Criteria}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}The Shrinkage Strategy: Priors vs. Data}{3}{subsection.3.2}\protected@file@percent }
+\newlabel{RF1}{4}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Relative Mean Squared Error: Hard Selection vs. Bayesian Shrinkage.}}{4}{table.caption.3}\protected@file@percent }
+\newlabel{tab:shrinkage_mse}{{2}{4}{Relative Mean Squared Error: Hard Selection vs. Bayesian Shrinkage}{table.caption.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Bias-Variance Tradeoff Curve for SVAR Estimation. Demonstrates the out-of-sample forecasting error across varying degrees of shrinkage ($\tau $) for small and large sample sizes.}}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:tradeoff}{{2}{5}{Bias-Variance Tradeoff Curve for SVAR Estimation. Demonstrates the out-of-sample forecasting error across varying degrees of shrinkage ($\tau $) for small and large sample sizes}{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Asymptotic Relaxation of the Minnesota Prior. As the sample size ($T$) increases, the optimizer naturally selects looser priors, letting the data dominate the estimation.}}{5}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:asymptotic_relaxation}{{3}{5}{Asymptotic Relaxation of the Minnesota Prior. As the sample size ($T$) increases, the optimizer naturally selects looser priors, letting the data dominate the estimation}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}The Uncertainty Strategy: Averaging vs. Selection}{6}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Catastrophe Avoidance: BMA vs. Hard Selection (BIC). Points above the 45-degree line indicate iterations where BMA outperformed BIC, notably smoothing out catastrophic tail risks.}}{6}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:risk_hedging}{{4}{6}{Catastrophe Avoidance: BMA vs. Hard Selection (BIC). Points above the 45-degree line indicate iterations where BMA outperformed BIC, notably smoothing out catastrophic tail risks}{figure.caption.8}{}}
+\newlabel{RF2}{7}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Relative Mean Squared Error: Hard Selection vs. Bayesian Model Averaging.}}{7}{table.caption.6}\protected@file@percent }
+\newlabel{tab:uncertainty_mse}{{3}{7}{Relative Mean Squared Error: Hard Selection vs. Bayesian Model Averaging}{table.caption.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Posterior Lag Weight Distribution for BMA ($p_0 = 4$).}}{8}{table.caption.7}\protected@file@percent }
+\newlabel{tab:bma_posterior}{{4}{8}{Posterior Lag Weight Distribution for BMA ($p_0 = 4$)}{table.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Posterior Weight Evolution of SOTA-BMA. At small sample sizes, probability mass is dispersed to hedge uncertainty. As $T$ grows, the distribution concentrates precisely on the true DGP.}}{8}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:bma_heatmap}{{5}{8}{Posterior Weight Evolution of SOTA-BMA. At small sample sizes, probability mass is dispersed to hedge uncertainty. As $T$ grows, the distribution concentrates precisely on the true DGP}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusion}{9}{section.4}\protected@file@percent }
+\newlabel{sec:conclusion}{{4}{9}{Conclusion}{section.4}{}}
+\abx@aux@read@bbl@mdfivesum{nohash}
 \abx@aux@read@bblrerun
-\gdef \@abspage@last{4}
+\gdef \@abspage@last{9}

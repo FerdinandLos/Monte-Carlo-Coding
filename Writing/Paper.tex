@@ -9,15 +9,11 @@
 \onehalfspacing % Common for readability; use \doublespacing if submitting for review
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{caption}
-\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
-
-% Papers to make the tables render correctly
-\usepackage[utf8]{inputenc}
 \usepackage{booktabs}  % Creates beautiful top/mid/bottom rules instead of ugly grids
 \usepackage{multirow}  % Allows the p0 values to span across the T rows seamlessly
-\usepackage{rotating} % sidways table
+\usepackage{rotating}  % Allows for sideways tables (sidewaystable)
+\usepackage{caption}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 % BibLaTeX setup for Zotero Better BibLaTeX
 \usepackage[style=authoryear, backend=biber, natbib=true, maxcitenames=2]{biblatex}
@@ -47,28 +43,81 @@ This is the abstract for your paper. Briefly state the purpose of the research, 
 
 \section{Introduction}
 \label{sec:introduction}
-
+Introduce the problem of lag selection and parameter proliferation in Structural VARs. Highlight the debate between hard lag selection (Information Criteria) and Bayesian methods (Shrinkage and Model Averaging).
 
 \section{Methodology}
 \label{sec:methodology}
 
-Describe your structural VAR (SVAR) models and the Monte Carlo Data Generating Processes (DGPs) here.
-
 \subsection{Data Generating Process}
-Explain the true DGP based on Johansen and Juselius (1990), Ramey (2011), or Kilian and Murphy (2014).
+Explain the true DGP based on Kilian and Murphy (2014) or other literature. 
+
+\subsection{Optimal Prior Selection via Marginal Data Density}
+Describe how the shrinkage parameter ($\tau$) is treated as an optimization problem rather than a fixed heuristic. 
+
+% Placing the MDD Surface here visually justifies your optimization approach.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig3_MDD_Surface.pdf}
+    \caption{Objective Function Surface for Marginal Data Density Optimization. The peak represents the optimal balance between model fit and parameter penalty.}
+    \label{fig:mdd_surface}
+\end{figure}
 
 \section{Simulation Results}
 \label{sec:results}
+Present the results of the Monte Carlo simulations, broken down by the specific strategies employed to handle model uncertainty.
 
-Present the results of your Monte Carlo simulations. 
+\subsection{Behavior of Standard Information Criteria}
+Before evaluating the Bayesian estimators, we examine the baseline lag detection performance of the classical Information Criteria.
+
+\input{Tables/Table_Paper3_IC_Lags.tex}
+
+\subsection{The Shrinkage Strategy: Priors vs. Data}
+This section compares hard lag selection against dynamic BVARs. We analyze both the bias-variance tradeoff and how the optimal prior relaxes asymptotically as sample sizes increase.
 
 \input{Tables/Table_Paper1_Shrinkage.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig1_Tradeoff_Curve.pdf}
+    \caption{Bias-Variance Tradeoff Curve for SVAR Estimation. Demonstrates the out-of-sample forecasting error across varying degrees of shrinkage ($\tau$) for small and large sample sizes.}
+    \label{fig:tradeoff}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig2_Asymptotic_Relaxation.pdf}
+    \caption{Asymptotic Relaxation of the Minnesota Prior. As the sample size ($T$) increases, the optimizer naturally selects looser priors, letting the data dominate the estimation.}
+    \label{fig:asymptotic_relaxation}
+\end{figure}
+
+\clearpage
+
+\subsection{The Uncertainty Strategy: Averaging vs. Selection}
+Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criteria. We focus on how BMA acts as an insurance policy against catastrophic lag misspecification in small samples.
+
 \input{Tables/Table_Paper2_Uncertainty.tex}
 
+\input{Tables/Table_Paper4_BMA_Distribution.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figures/Fig4_Risk_Hedging_Scatter.pdf}
+    \caption{Catastrophe Avoidance: BMA vs. Hard Selection (BIC). Points above the 45-degree line indicate iterations where BMA outperformed BIC, notably smoothing out catastrophic tail risks.}
+    \label{fig:risk_hedging}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig5_BMA_Heatmap.pdf}
+    \caption{Posterior Weight Evolution of SOTA-BMA. At small sample sizes, probability mass is dispersed to hedge uncertainty. As $T$ grows, the distribution concentrates precisely on the true DGP.}
+    \label{fig:bma_heatmap}
+\end{figure}
+
+\clearpage
 \section{Conclusion}
 \label{sec:conclusion}
 
-Summarize the main findings and implications for applied macroeconomic research.
+Summarize the main findings, specifically highlighting how optimal $\tau$ selection and true BMA systematically outperform standard econometric heuristics in finite samples.
 
 \newpage
 % Print the bibliography

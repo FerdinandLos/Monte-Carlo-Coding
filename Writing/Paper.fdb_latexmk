@@ -1,18 +1,25 @@
 # Fdb version 4
-["biber Paper"] 1781362770.75135 "Paper.bcf" "Paper.bbl" "Paper" 1781450807.49673 0
-  "Paper.bcf" 1781450807 108615 4ac720ab7bff577a29e603816e0b3c25 "pdflatex"
+["biber Paper"] 0 "Paper.bcf" "Paper.bbl" "Paper" 1781561043.04973 -1
+  "Monte Carlo Simulations.bib" 1781449878 48645 2cf159eb189d5e22f39bbee0e3ba5243 ""
+  "Paper.bcf" 1781561042 108615 4ac720ab7bff577a29e603816e0b3c25 "pdflatex"
   (generated)
   "Paper.bbl"
   "Paper.blg"
   (rewritten before read)
-["pdflatex"] 1781450805.7798 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper.tex" "Paper.pdf" "Paper" 1781450807.49889 0
-  "Paper.aux" 1781450807 2137 f52b838a3dfd607ef9b9ec87bd06f9d7 "pdflatex"
+["pdflatex"] 1781561041.21386 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper.tex" "Paper.pdf" "Paper" 1781561043.05084 2
+  "Figures/Fig1_Tradeoff_Curve.pdf" 1781561035 25436 3b5cb47327c0481e1dc0edb44dd12f33 ""
+  "Figures/Fig2_Asymptotic_Relaxation.pdf" 1781561035 29338 d5f6c54e364597ec4c40d56c9adc39fd ""
+  "Figures/Fig3_MDD_Surface.pdf" 1781561036 27110 0e2b7a594b9ee6cdf7b7bef092842bdd ""
+  "Figures/Fig4_Risk_Hedging_Scatter.pdf" 1781561036 26082 473dd6d5639d045821f2e9bf3b46247f ""
+  "Figures/Fig5_BMA_Heatmap.pdf" 1781561037 27351 e58615f50e3ed250645a40be8cba25f8 ""
+  "Paper.aux" 1781561042 5651 34138c04e2630ab594602260012f2631 "pdflatex"
   "Paper.bbl" 1781362772 486 76d65a242ec496c9b4361af646ff12cb "biber Paper"
-  "Paper.out" 1781450807 608 aabf0b019c7aae9e9cfd7fc44a46b04e "pdflatex"
-  "Paper.run.xml" 1781450807 2365 f1159c1c71732b19a2ad31de24a9b8a0 "pdflatex"
-  "Paper.tex" 1781450583 2583 5aff50efcaa55cec3d1bcc3ae056f145 ""
-  "Tables/Table_Paper1_Shrinkage.tex" 1781450805 2093 4e85a8ab945f6f125933fd9ca7659e0b ""
-  "Tables/Table_Paper2_Uncertainty.tex" 1781450805 1769 5c0818a816bbbd599f0f623b5833befc ""
+  "Paper.out" 1781561042 1786 5ef74f43de9d39d1a9bf4478b39f7b64 "pdflatex"
+  "Paper.tex" 1781560748 5583 209c372620d2223537f82c0ddd4a95df ""
+  "Tables/Table_Paper1_Shrinkage.tex" 1781561034 2430 6d1f9768f7b0859c2f9d3c6bb0207f1f ""
+  "Tables/Table_Paper2_Uncertainty.tex" 1781561034 1992 9800d70c1a6f2d89736ad467e03418b8 ""
+  "Tables/Table_Paper3_IC_Lags.tex" 1781561034 1024 ebac115f80201cf2c0244391c94f290f ""
+  "Tables/Table_Paper4_BMA_Distribution.tex" 1781561034 1222 14dc3e8320d9dcff83639d2f55b46afc ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1095.tfm" 1747240602 3584 21b378cca2e40816b0e6d74a4dc98f04 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1747240602 3584 402da0b29eafbad07963b1224b222f18 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1440.tfm" 1747240602 3584 13049b61b922a28b158a38aeff75ee9b ""
@@ -45,6 +52,7 @@
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm" 1747240603 1116 933a60c408fc0a863a92debe84b2d294 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1747240603 1120 8b7d695260f3cff42e636090a8002094 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb" 1771352136 36741 0ee9e374ec3e30da87cdfb0ea3575226 ""
+  "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1771352136 35469 dcf3a5f2fc1862f5952e3ee5eb1d98c4 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1771352136 32722 d7379af29a190c3f453aba36302ff5a9 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1771352136 32726 39f0f9e62e84beb801509898a605dbd5 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1771352340 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -137,7 +145,7 @@
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk" 1779723493 11524 9f3e48b550994109e3d7fad15f683495 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1771352530 2236262 dae90ef3062d3e0bc38ec1de445c41ec ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf.cnf" 1747240626 955 6591b7e09ece6af4143024019d5a863d ""
-  "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper.tex" 1781450583 2583 5aff50efcaa55cec3d1bcc3ae056f145 ""
+  "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper.tex" 1781560748 5583 209c372620d2223537f82c0ddd4a95df ""
   (generated)
   "Paper.aux"
   "Paper.bcf"
