@@ -252,7 +252,7 @@ def main():
     ], dtype=np.float64)
 
     h_max = 24  
-    n_draws = 100000 
+    n_draws = 500000 
 
     for config in dgp_configs:
         p = config["p"]
