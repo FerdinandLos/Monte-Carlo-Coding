@@ -135,65 +135,61 @@ def bvar_minnesota_silent(y, p, tau=0.2, c=1e5, delta_prior=None):
 # 2b. ANALYTICAL MARGINAL DATA DENSITY (MDD) FOR OPTIMAL TAU
 # -------------------------------------------------------------------
 def compute_neg_log_mdd(tau, XtX_base, XtY_base, YtY_base, T_eff, K, p, s, delta_prior, c=1e5):
-    Y_d1 = np.zeros((K * p, K))
-    X_d1 = np.zeros((K * p, 12 + K * p))
-    row = 0
+    """
+    Standard Analytical Marginal Likelihood for a Normal-Inverse-Wishart Minnesota Prior.
+    Fixes the issue of varying prior degrees of freedom and scaling across lag lengths.
+    """
+    k_regressors = K * p + 12
+    V_inv = np.zeros(k_regressors)
+    V_inv[:12] = 1.0 / (c**2)
+    
+    B_prior = np.zeros((k_regressors, K))
+    row = 12
     for lag in range(1, p + 1):
         for j in range(K):
-            X_d1[row, 12 + (lag - 1) * K + j] = (s[j] * lag) / tau
-            if lag == 1: Y_d1[row, j] = (s[j] * delta_prior[j]) / tau
+            val = (s[j] * lag) / tau
+            V_inv[row] = val**2
+            if lag == 1:
+                B_prior[row, j] = delta_prior[j]
             row += 1
-
-    Y_d2 = np.zeros((12, K))
-    X_d2 = np.zeros((12, 12 + K * p))
-    for i in range(12): X_d2[i, i] = 1.0 / c
-
-    Y_d3 = np.diag(s)
-    X_d3 = np.zeros((K, 12 + K * p))
-
-    Y_D = np.vstack([Y_d1, Y_d2, Y_d3])
-    X_D = np.vstack([X_d1, X_d2, X_d3])
-    T_D = Y_D.shape[0]
-    T_aug = T_eff + T_D
+            
+    V_inv_mat = np.diag(V_inv)
+    invV_B = V_inv_mat @ B_prior
     
-    k_regressors = (K * p) + 12 
-
-    XtX_D = X_D.T @ X_D
-    XtY_D = X_D.T @ Y_D
-    YtY_D = Y_D.T @ Y_D
-
-    XtX_aug = XtX_base + XtX_D
-    XtY_aug = XtY_base + XtY_D
-    YtY_aug = YtY_base + YtY_D
-
-    ridge = np.eye(XtX_aug.shape[0]) * 1e-9
-
-    sign_D, logdet_XtX_D = np.linalg.slogdet(XtX_D + ridge)
-    if sign_D <= 0: return float('inf')
-    B_D = np.linalg.solve(XtX_D + ridge, XtY_D)
-    S_D = YtY_D - B_D.T @ XtY_D
-    S_D = (S_D + S_D.T) / 2.0 
-    sign_SD, logdet_SD = np.linalg.slogdet(S_D + np.eye(K)*1e-9)
-    if sign_SD <= 0: return float('inf')
-
-    sign_aug, logdet_XtX_aug = np.linalg.slogdet(XtX_aug + ridge)
-    if sign_aug <= 0: return float('inf')
-    B_aug = np.linalg.solve(XtX_aug + ridge, XtY_aug)
-    S_aug = YtY_aug - B_aug.T @ XtY_aug
-    S_aug = (S_aug + S_aug.T) / 2.0 
-    sign_Saug, logdet_Saug = np.linalg.slogdet(S_aug + np.eye(K)*1e-9)
-    if sign_Saug <= 0: return float('inf')
-
-    v_0 = T_D - k_regressors
-    v_n = T_aug - k_regressors
-
-    gamma_term = multigammaln(v_n / 2.0, K) - multigammaln(v_0 / 2.0, K)
+    # Fixed prior shape and scale across all models to ensure valid Bayes Factors
+    nu_0 = K + 2.0
+    S_0 = np.diag(s**2)
+    
+    V_bar_inv = V_inv_mat + XtX_base
+    V_bar_inv_ridge = V_bar_inv + np.eye(k_regressors) * 1e-9
+    
+    sign_Vbar, logdet_Vbar_inv = np.linalg.slogdet(V_bar_inv_ridge)
+    if sign_Vbar <= 0: return float('inf')
+    
+    logdet_V_inv = np.sum(np.log(V_inv))
+    
+    try:
+        B_bar = np.linalg.solve(V_bar_inv_ridge, invV_B + XtY_base)
+    except np.linalg.LinAlgError:
+        return float('inf')
+        
+    S_bar = S_0 + YtY_base + B_prior.T @ invV_B - B_bar.T @ V_bar_inv_ridge @ B_bar
+    S_bar = (S_bar + S_bar.T) / 2.0 
+    
+    sign_Sbar, logdet_Sbar = np.linalg.slogdet(S_bar + np.eye(K) * 1e-9)
+    if sign_Sbar <= 0: return float('inf')
+    
+    sign_S0, logdet_S0 = np.linalg.slogdet(S_0)
+    
+    nu_bar = nu_0 + T_eff
+    
+    gamma_term = multigammaln(nu_bar / 2.0, K) - multigammaln(nu_0 / 2.0, K)
     const_term = - (K * T_eff / 2.0) * math.log(math.pi)
-
-    mdd = const_term + \
-          (K / 2.0) * logdet_XtX_D - (K / 2.0) * logdet_XtX_aug + \
-          (v_0 / 2.0) * logdet_SD - (v_n / 2.0) * logdet_Saug + \
-          gamma_term
+    
+    mdd = const_term \
+          - (K / 2.0) * logdet_Vbar_inv + (K / 2.0) * logdet_V_inv \
+          + (nu_0 / 2.0) * logdet_S0 - (nu_bar / 2.0) * logdet_Sbar \
+          + gamma_term
           
     return -mdd
 
@@ -396,12 +392,11 @@ def single_monte_carlo_iteration(args):
             if acc_m == 0: return nan_array
             return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2
 
-        SE_minn_rw_tight = eval_minn(0.05, delta_rw, 999)
-        SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1001)
-        SE_minn_rw_loose = eval_minn(0.50, delta_rw, 1002)
-        SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1000)
+        SE_minn_wn_tight = eval_minn(0.05, delta_wn, 999)
+        SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1001)
+        SE_minn_wn_loose = eval_minn(0.50, delta_wn, 1002)
+        SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1000)
         
-        # Hybrid models updated to White Noise (delta_wn)
         SE_bvar_bic      = eval_minn(0.20, delta_wn, 3000 + p_hat_sic, p_tgt=p_hat_sic)
 
         bvar_bma_pool, bvar_bma_acc = [], 0
@@ -409,7 +404,6 @@ def single_monte_carlo_iteration(args):
             td = int(round(mc_draws * final_bic_weights[p_bma]))
             if td == 0: continue
             
-            # Hybrid BMA updated to White Noise (delta_wn)
             A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=0.20, delta_prior=delta_wn)
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
@@ -426,6 +420,7 @@ def single_monte_carlo_iteration(args):
         t_total = simulated_data.shape[0]
         y_T, s = simulated_data.T, np.std(simulated_data, axis=0)
 
+        # --- Reverted FIX 1: Fixed Estimation Sample (p_max) ---
         Y_base_strict = y_T[:, p_max:t_total].T
         x_base = np.vstack([np.eye(11), np.zeros((1, 11))])
         n_years = int(N_eff_total // 12)
@@ -438,12 +433,21 @@ def single_monte_carlo_iteration(args):
 
         for p_test in range(1, p_max + 1):
             Y_mat = y_T[:, p_max-1 : t_total-1]
-            for i in range(1, p_test): Y_mat = np.vstack([Y_mat, y_T[:, p_max-1-i : t_total-1-i]])
+            for i in range(1, p_test): 
+                Y_mat = np.vstack([Y_mat, y_T[:, p_max-1-i : t_total-1-i]])
+                
             X_base_strict = np.vstack([X2_base.T, Y_mat]).T
-            XtX_base, XtY_base, YtY_base = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
+            XtX_base = X_base_strict.T @ X_base_strict
+            XtY_base = X_base_strict.T @ Y_base_strict
+            YtY_base = Y_base_strict.T @ Y_base_strict
             
-            # SOTA Opt updated to White Noise (delta_wn)
-            res = minimize_scalar(compute_neg_log_mdd, args=(XtX_base, XtY_base, YtY_base, N_eff_total, K, p_test, s, delta_wn), bounds=(0.01, 2.0), method='bounded')
+            # Optimization using fixed N_eff_total to preserve the Bayes factor
+            res = minimize_scalar(
+                compute_neg_log_mdd, 
+                args=(XtX_base, XtY_base, YtY_base, N_eff_total, K, p_test, s, delta_wn), 
+                bounds=(0.01, 2.0), 
+                method='bounded'
+            )
             if not res.success:
                 opt_taus[p_test], mdd_scores[p_test] = 0.20, -float('inf')
             else:
@@ -452,7 +456,6 @@ def single_monte_carlo_iteration(args):
         p_sota_bic = max(mdd_scores, key=mdd_scores.get)
         tau_sota_bic = opt_taus[p_sota_bic]
         
-        # SOTA BVAR updated to White Noise (delta_wn)
         A_sota, SIGMA_sota = bvar_minnesota_silent(simulated_data, p_sota_bic, tau=tau_sota_bic, delta_prior=delta_wn)
         try: P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
         except np.linalg.LinAlgError: SIGMA_sota += np.eye(K) * 1e-8; P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
@@ -463,11 +466,24 @@ def single_monte_carlo_iteration(args):
         else:
             SE_sota_bic = (get_median_target_model(v_sota, acc_sota) - true_IRF_target)**2
 
+        # --- FIX 3: Stabilized Posterior Probs ---
         max_mdd = mdd_scores[p_sota_bic]
         raw_sota_weights = {p: np.exp(score - max_mdd) for p, score in mdd_scores.items()}
-        sum_sota_w = sum(raw_sota_weights.values())
-        kept_sota = [p for p, w in raw_sota_weights.items() if (w / sum_sota_w) > 0.01]
-        sota_weights = {p: raw_sota_weights[p] / sum(raw_sota_weights[k] for k in kept_sota) for p in kept_sota}
+        
+        posterior_probs = {
+            p: w / sum(raw_sota_weights.values())
+            for p, w in raw_sota_weights.items()
+        }
+        
+        kept_sota = [
+            p for p, prob in posterior_probs.items()
+            if prob > 0.001
+        ]
+        
+        sota_weights = {
+            p: posterior_probs[p] / sum(posterior_probs[k] for k in kept_sota) 
+            for p in kept_sota
+        }
         exp_p_sota = sum(p * w for p, w in sota_weights.items())
 
         sota_bma_pool, sota_bma_acc = [], 0
@@ -475,7 +491,6 @@ def single_monte_carlo_iteration(args):
             td = int(round(mc_draws * sota_weights[p_bma]))
             if td == 0: continue
             
-            # SOTA BMA updated to White Noise (delta_wn)
             A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=opt_taus[p_bma], delta_prior=delta_wn)
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
@@ -495,7 +510,6 @@ def single_monte_carlo_iteration(args):
             tradeoff_mses = np.zeros(len(TAU_GRID_PLOT))
             for idx, t_val in enumerate(TAU_GRID_PLOT):
                 try:
-                    # Tradeoff plot updated to White Noise (delta_wn)
                     A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_max, tau=t_val, delta_prior=delta_wn)
                     try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
                     except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
@@ -508,13 +522,15 @@ def single_monte_carlo_iteration(args):
             
             if T_real == 480 and iter_idx == 0:
                 mdd_surface = np.zeros(len(TAU_GRID_PLOT))
+                
                 Y_mat = y_T[:, p_max-1 : t_total-1]
                 for i in range(1, p_max): Y_mat = np.vstack([Y_mat, y_T[:, p_max-1-i : t_total-1-i]])
+                
                 X_base_strict = np.vstack([X2_base.T, Y_mat]).T
-                XtX_base, XtY_base, YtY_base = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
+                XtX_base_surf, XtY_base_surf, YtY_base_surf = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
+                
                 for idx, t_val in enumerate(TAU_GRID_PLOT):
-                    # MDD plot updated to White Noise (delta_wn)
-                    mdd_surface[idx] = -compute_neg_log_mdd(t_val, XtX_base, XtY_base, YtY_base, N_eff_total, K, p_max, s, delta_wn)
+                    mdd_surface[idx] = -compute_neg_log_mdd(t_val, XtX_base_surf, XtY_base_surf, YtY_base_surf, N_eff_total, K, p_max, s, delta_wn)
 
         return (iter_idx, SE_aic, SE_aicc, SE_sic, SE_hqc, SE_ols_bma,
                 SE_minn_rw_tight, SE_minn_rw_std, SE_minn_rw_loose, SE_minn_wn_std, 
@@ -569,8 +585,8 @@ def main():
             results = Parallel(n_jobs=n_cores, backend='loky')(delayed(single_monte_carlo_iteration)(task) for task in tasks)
 
             all_SE_aic, all_SE_aicc, all_SE_sic, all_SE_hqc, all_SE_ols_bma = [], [], [], [], []
-            all_SE_minn_rw_t, all_SE_minn_rw_s, all_SE_minn_rw_l = [], [], []
-            all_SE_minn_wn_s, all_SE_bvar_bic, all_SE_bvar_bma = [], [], []
+            all_SE_minn_wn_t, all_SE_minn_wn_s, all_SE_minn_wn_l = [], [], []
+            all_SE_minn_rw_s, all_SE_bvar_bic, all_SE_bvar_bma = [], [], []
             all_SE_sota_bic, all_SE_sota_bma, all_tau_sota, all_SE_p0 = [], [], [], []
             
             all_p_hats_aic, all_p_hats_aicc, all_p_hats_sic, all_p_hats_hqc, all_p_hats_sota = [], [], [], [], []
@@ -581,8 +597,8 @@ def main():
             for res in results:
                 if res[-1] != "Success": continue
                 all_SE_aic.append(res[1]); all_SE_aicc.append(res[2]); all_SE_sic.append(res[3]); all_SE_hqc.append(res[4])
-                all_SE_ols_bma.append(res[5]); all_SE_minn_rw_t.append(res[6]); all_SE_minn_rw_s.append(res[7])
-                all_SE_minn_rw_l.append(res[8]); all_SE_minn_wn_s.append(res[9]); all_SE_bvar_bic.append(res[10])
+                all_SE_ols_bma.append(res[5]); all_SE_minn_wn_t.append(res[6]); all_SE_minn_wn_s.append(res[7])
+                all_SE_minn_wn_l.append(res[8]); all_SE_minn_rw_s.append(res[9]); all_SE_bvar_bic.append(res[10])
                 all_SE_bvar_bma.append(res[11]); all_SE_sota_bic.append(res[12]); all_SE_sota_bma.append(res[13])
                 
                 all_tau_sota.append(res[14]) 
@@ -684,10 +700,10 @@ def main():
                 ("SIC (BIC)",                    calc_met(all_SE_sic,         all_p_hats_sic,   true_p)),
                 ("HQC",                          calc_met(all_SE_hqc,         all_p_hats_hqc,   true_p)),
                 ("OLS BMA (BIC-W)",              calc_met(all_SE_ols_bma,     all_exp_p_hybrid, true_p)),
-                ("BVAR-RW (Tight tau=0.05)",     calc_met(all_SE_minn_rw_t,   None,             true_p)),
-                ("BVAR-RW (Std tau=0.20)",       calc_met(all_SE_minn_rw_s,   None,             true_p)),
-                ("BVAR-RW (Loose tau=0.50)",     calc_met(all_SE_minn_rw_l,   None,             true_p)),
+                ("BVAR-WN (Tight tau=0.05)",     calc_met(all_SE_minn_wn_t,   None,             true_p)),
                 ("BVAR-WN (Std tau=0.20)",       calc_met(all_SE_minn_wn_s,   None,             true_p)),
+                ("BVAR-WN (Loose tau=0.50)",     calc_met(all_SE_minn_wn_l,   None,             true_p)),
+                ("BVAR-RW (Std tau=0.20)",       calc_met(all_SE_minn_rw_s,   None,             true_p)),
                 ("Hybrid-BVAR (OLS p, Fix tau)", calc_met(all_SE_bvar_bic,    all_p_hats_sic,   true_p)),
                 ("Hybrid-BMA (OLS W, Fix tau)",  calc_met(all_SE_bvar_bma,    all_exp_p_hybrid, true_p)),
                 ("SOTA-BVAR (MDD p, Opt tau)",   calc_met(all_SE_sota_bic,    all_p_hats_sota,  true_p, all_tau_sota)),

@@ -23,8 +23,8 @@ def main():
     # -------------------------------------------------------------------
     # 2. LOAD ALL CSV DATAFRAMES
     # -------------------------------------------------------------------
-    main_path = os.path.join(results_dir, "Master_Final_SVAR_Comparison_iters100_draws50.csv")
-    weights_path = os.path.join(results_dir, "Master_BMA_Weights_iters100.csv")
+    main_path = os.path.join(results_dir, "Master_Final_SVAR_Comparison_iters50_draws10.csv")
+    weights_path = os.path.join(results_dir, "Master_BMA_Weights_iters50.csv")
     raw_taus_path = os.path.join(results_dir, "Master_Raw_Opt_Tau.csv")
     tradeoff_path = os.path.join(results_dir, "Master_Tradeoff_Curve.csv")
     mdd_path = os.path.join(results_dir, "Master_MDD_Surface.csv")
