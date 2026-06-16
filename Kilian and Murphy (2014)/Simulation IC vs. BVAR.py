@@ -6,6 +6,8 @@ from numba import njit
 import time
 from joblib import Parallel, delayed
 from scipy.optimize import minimize_scalar
+from scipy.special import multigammaln
+import math
 
 # ---------------- Reproducibility & Environment ----------------
 SEED = 12345
@@ -153,6 +155,8 @@ def compute_neg_log_mdd(tau, XtX_base, XtY_base, YtY_base, T_eff, K, p, s, delta
     X_D = np.vstack([X_d1, X_d2, X_d3])
     T_D = Y_D.shape[0]
     T_aug = T_eff + T_D
+    
+    k_regressors = (K * p) + 12 
 
     XtX_D = X_D.T @ X_D
     XtY_D = X_D.T @ Y_D
@@ -180,7 +184,17 @@ def compute_neg_log_mdd(tau, XtX_base, XtY_base, YtY_base, T_eff, K, p, s, delta
     sign_Saug, logdet_Saug = np.linalg.slogdet(S_aug + np.eye(K)*1e-9)
     if sign_Saug <= 0: return float('inf')
 
-    mdd = (K/2.0)*logdet_XtX_D - (K/2.0)*logdet_XtX_aug + (T_D/2.0)*logdet_SD - (T_aug/2.0)*logdet_Saug
+    v_0 = T_D - k_regressors
+    v_n = T_aug - k_regressors
+
+    gamma_term = multigammaln(v_n / 2.0, K) - multigammaln(v_0 / 2.0, K)
+    const_term = - (K * T_eff / 2.0) * math.log(math.pi)
+
+    mdd = const_term + \
+          (K / 2.0) * logdet_XtX_D - (K / 2.0) * logdet_XtX_aug + \
+          (v_0 / 2.0) * logdet_SD - (v_n / 2.0) * logdet_Saug + \
+          gamma_term
+          
     return -mdd
 
 # -------------------------------------------------------------------
@@ -192,7 +206,7 @@ def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
     Phi[0] = np.eye(K)
     for h in range(1, h_max):
         for j in range(1, min(h, p) + 1):
-            A_j = A[:, (j-1)*K : j*K]
+            A_j = np.ascontiguousarray(A[:, (j-1)*K : j*K]) 
             Phi[h] += A_j @ Phi[h-j]
 
     IRF = np.zeros((h_max, K, K))
@@ -212,10 +226,13 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops, see
         attempts += 1
         W = np.random.randn(K, K)
         Q, R = np.linalg.qr(W)
+        
         for i in range(K):
             if R[i, i] < 0: Q[:, i] = -Q[:, i]
-
+        Q = np.ascontiguousarray(Q)
+        
         B_tilde = P @ Q
+        B_tilde = np.ascontiguousarray(B_tilde)
 
         match = True
         for i in range(K):
@@ -233,6 +250,21 @@ def fast_draw_core(A, P, signs, p, K, Q_avg, h_max, target_draws, max_loops, see
             for k in range(K):
                 irf_cumulative[h, 0, k] = irf_cumulative[h-1, 0, k] + irf[h, 0, k]
                 irf_cumulative[h, 3, k] = irf_cumulative[h-1, 3, k] + irf[h, 3, k]
+
+        dynamic_match = True
+        for h in range(3): 
+            if irf_cumulative[h, 0, 0] >= 0:
+                dynamic_match = False
+                break
+            if irf[h, 1, 0] >= 0:
+                dynamic_match = False
+                break
+            if irf[h, 2, 0] <= 0:
+                dynamic_match = False
+                break
+                
+        if not dynamic_match:
+            continue
 
         valid_IRFs[accepted] = irf_cumulative
         accepted += 1
@@ -257,6 +289,8 @@ def get_median_target_model(valid_irfs, accepted_count):
 def single_monte_carlo_iteration(args):
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
     N_SE = 15
+
+    nan_array = np.full(true_IRF_target.shape, np.nan)
 
     def fail(msg):
         return (iter_idx,) + (None,) * N_SE + ((None,)*7, (None, None), None, None, msg)
@@ -313,28 +347,30 @@ def single_monte_carlo_iteration(args):
         final_bic_weights = {p: raw_weights[p] / sum(raw_weights[p] for p in kept_lags_ols) for p in kept_lags_ols}
         exp_p_hybrid = sum(p * w for p, w in final_bic_weights.items())
 
-        # 3. OLS ESTIMATORS
+        # 3. SAFE OLS ESTIMATORS
         computed_ols_SEs = {}
         def get_ols_se_for_p(p_target):
             if p_target in computed_ols_SEs: return computed_ols_SEs[p_target]
             A_est, SIGMA_est = ols_cache[p_target]
             try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
             except np.linalg.LinAlgError:
-                SIGMA_est += np.eye(K) * 1e-8; P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+                SIGMA_est += np.eye(K) * 1e-8
+                try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+                except: return nan_array
 
             v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_target, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + p_target)
-            if acc < mc_draws: raise ValueError("Empty OLS")
-            se = (get_median_target_model(v_irfs, acc) - true_IRF_target)**2
+            if acc == 0:
+                se = nan_array
+            else:
+                se = (get_median_target_model(v_irfs, acc) - true_IRF_target)**2
             computed_ols_SEs[p_target] = se
             return se
 
-        try:
-            SE_aic = get_ols_se_for_p(p_hat_aic)
-            SE_aicc = get_ols_se_for_p(p_hat_aicc)
-            SE_sic = get_ols_se_for_p(p_hat_sic)
-            SE_hqc = get_ols_se_for_p(p_hat_hqc)
-            SE_p0 = get_ols_se_for_p(true_p)
-        except ValueError as e: return fail(str(e))
+        SE_aic = get_ols_se_for_p(p_hat_aic)
+        SE_aicc = get_ols_se_for_p(p_hat_aicc)
+        SE_sic = get_ols_se_for_p(p_hat_sic)
+        SE_hqc = get_ols_se_for_p(p_hat_hqc)
+        SE_p0 = get_ols_se_for_p(true_p)
 
         ols_bma_pool, ols_bma_accepted = [], 0
         for p_bma in kept_lags_ols:
@@ -346,38 +382,44 @@ def single_monte_carlo_iteration(args):
             v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 5000 + p_bma)
             if acc > 0: ols_bma_pool.append(v_irfs[:acc]); ols_bma_accepted += acc
 
-        if ols_bma_accepted == 0: return fail("Empty OLS BMA")
-        SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2
+        if ols_bma_accepted == 0:
+            SE_ols_bma = nan_array
+        else:
+            SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2
 
-        # 4. FIXED TAU BVAR ESTIMATORS
+        # 4. SAFE FIXED TAU BVAR ESTIMATORS
         def eval_minn(tau_val, delta_array, seed_offset, p_tgt=p_max):
             A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_tgt, tau=tau_val, delta_prior=delta_array)
             try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
             except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
             v_m, att_m, acc_m = fast_draw_core(A_m, P_m, signs, p_tgt, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_offset)
-            if acc_m < mc_draws: raise ValueError("Empty Minn")
+            if acc_m == 0: return nan_array
             return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2
 
-        try:
-            SE_minn_rw_tight = eval_minn(0.05, delta_rw, 999)
-            SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1001)
-            SE_minn_rw_loose = eval_minn(0.50, delta_rw, 1002)
-            SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1000)
-            SE_bvar_bic      = eval_minn(0.20, delta_rw, 3000 + p_hat_sic, p_tgt=p_hat_sic)
-        except ValueError as e: return fail(str(e))
+        SE_minn_rw_tight = eval_minn(0.05, delta_rw, 999)
+        SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1001)
+        SE_minn_rw_loose = eval_minn(0.50, delta_rw, 1002)
+        SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1000)
+        
+        # Hybrid models updated to White Noise (delta_wn)
+        SE_bvar_bic      = eval_minn(0.20, delta_wn, 3000 + p_hat_sic, p_tgt=p_hat_sic)
 
         bvar_bma_pool, bvar_bma_acc = [], 0
         for p_bma in kept_lags_ols:
             td = int(round(mc_draws * final_bic_weights[p_bma]))
             if td == 0: continue
-            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=0.20, delta_prior=delta_rw)
+            
+            # Hybrid BMA updated to White Noise (delta_wn)
+            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=0.20, delta_prior=delta_wn)
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             v_c, att_c, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 4000 + p_bma)
             if acc_c > 0: bvar_bma_pool.append(v_c[:acc_c]); bvar_bma_acc += acc_c
 
-        if bvar_bma_acc == 0: return fail("Empty BVAR BMA")
-        SE_bvar_bma = (get_median_target_model(np.vstack(bvar_bma_pool), bvar_bma_acc) - true_IRF_target)**2
+        if bvar_bma_acc == 0:
+            SE_bvar_bma = nan_array
+        else:
+            SE_bvar_bma = (get_median_target_model(np.vstack(bvar_bma_pool), bvar_bma_acc) - true_IRF_target)**2
 
         # 5. SOTA BAYESIAN: OPT-TAU PER LAG & TRUE BAYESIAN MODEL AVERAGING
         opt_taus, mdd_scores = {}, {}
@@ -400,21 +442,26 @@ def single_monte_carlo_iteration(args):
             X_base_strict = np.vstack([X2_base.T, Y_mat]).T
             XtX_base, XtY_base, YtY_base = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
             
-            res = minimize_scalar(compute_neg_log_mdd, args=(XtX_base, XtY_base, YtY_base, N_eff_total, K, p_test, s, delta_rw), bounds=(0.01, 2.0), method='bounded')
-            if not res.success: return fail(f"MDD Optimization failed at p={p_test}")
-            opt_taus[p_test], mdd_scores[p_test] = res.x, -res.fun 
+            # SOTA Opt updated to White Noise (delta_wn)
+            res = minimize_scalar(compute_neg_log_mdd, args=(XtX_base, XtY_base, YtY_base, N_eff_total, K, p_test, s, delta_wn), bounds=(0.01, 2.0), method='bounded')
+            if not res.success:
+                opt_taus[p_test], mdd_scores[p_test] = 0.20, -float('inf')
+            else:
+                opt_taus[p_test], mdd_scores[p_test] = res.x, -res.fun 
 
         p_sota_bic = max(mdd_scores, key=mdd_scores.get)
         tau_sota_bic = opt_taus[p_sota_bic]
         
-        try:
-            A_sota, SIGMA_sota = bvar_minnesota_silent(simulated_data, p_sota_bic, tau=tau_sota_bic, delta_prior=delta_rw)
-            try: P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
-            except np.linalg.LinAlgError: SIGMA_sota += np.eye(K) * 1e-8; P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
-            v_sota, att_sota, acc_sota = fast_draw_core(A_sota, P_sota, signs, p_sota_bic, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 8000)
-            if acc_sota < mc_draws: raise ValueError("Empty SOTA BIC")
+        # SOTA BVAR updated to White Noise (delta_wn)
+        A_sota, SIGMA_sota = bvar_minnesota_silent(simulated_data, p_sota_bic, tau=tau_sota_bic, delta_prior=delta_wn)
+        try: P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
+        except np.linalg.LinAlgError: SIGMA_sota += np.eye(K) * 1e-8; P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
+        v_sota, att_sota, acc_sota = fast_draw_core(A_sota, P_sota, signs, p_sota_bic, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 8000)
+        
+        if acc_sota == 0:
+            SE_sota_bic = nan_array
+        else:
             SE_sota_bic = (get_median_target_model(v_sota, acc_sota) - true_IRF_target)**2
-        except ValueError as e: return fail(str(e))
 
         max_mdd = mdd_scores[p_sota_bic]
         raw_sota_weights = {p: np.exp(score - max_mdd) for p, score in mdd_scores.items()}
@@ -427,18 +474,20 @@ def single_monte_carlo_iteration(args):
         for p_bma in kept_sota:
             td = int(round(mc_draws * sota_weights[p_bma]))
             if td == 0: continue
-            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=opt_taus[p_bma], delta_prior=delta_rw)
+            
+            # SOTA BMA updated to White Noise (delta_wn)
+            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=opt_taus[p_bma], delta_prior=delta_wn)
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             v_c, att_c, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 9000 + p_bma)
             if acc_c > 0: sota_bma_pool.append(v_c[:acc_c]); sota_bma_acc += acc_c
 
-        if sota_bma_acc == 0: return fail("Empty SOTA BMA")
-        SE_sota_bma = (get_median_target_model(np.vstack(sota_bma_pool), sota_bma_acc) - true_IRF_target)**2
+        if sota_bma_acc == 0:
+            SE_sota_bma = nan_array
+        else:
+            SE_sota_bma = (get_median_target_model(np.vstack(sota_bma_pool), sota_bma_acc) - true_IRF_target)**2
 
-        # -------------------------------------------------------------
-        # 6. PLOT DATA EXTRACTION (Only for p0=4 target groups)
-        # -------------------------------------------------------------
+        # 6. PLOT DATA EXTRACTION
         tradeoff_mses = None
         mdd_surface = None
 
@@ -446,7 +495,8 @@ def single_monte_carlo_iteration(args):
             tradeoff_mses = np.zeros(len(TAU_GRID_PLOT))
             for idx, t_val in enumerate(TAU_GRID_PLOT):
                 try:
-                    A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_max, tau=t_val, delta_prior=delta_rw)
+                    # Tradeoff plot updated to White Noise (delta_wn)
+                    A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_max, tau=t_val, delta_prior=delta_wn)
                     try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
                     except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
                     v_m, att_m, acc_m = fast_draw_core(A_m, P_m, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 10000 + idx)
@@ -456,7 +506,6 @@ def single_monte_carlo_iteration(args):
                     else: tradeoff_mses[idx] = np.nan
                 except: tradeoff_mses[idx] = np.nan
             
-            # Extract MDD curve strictly for the first iteration at T=480
             if T_real == 480 and iter_idx == 0:
                 mdd_surface = np.zeros(len(TAU_GRID_PLOT))
                 Y_mat = y_T[:, p_max-1 : t_total-1]
@@ -464,8 +513,8 @@ def single_monte_carlo_iteration(args):
                 X_base_strict = np.vstack([X2_base.T, Y_mat]).T
                 XtX_base, XtY_base, YtY_base = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
                 for idx, t_val in enumerate(TAU_GRID_PLOT):
-                    # We invert the returned negative log to get the true positive MDD
-                    mdd_surface[idx] = -compute_neg_log_mdd(t_val, XtX_base, XtY_base, YtY_base, N_eff_total, K, p_max, s, delta_rw)
+                    # MDD plot updated to White Noise (delta_wn)
+                    mdd_surface[idx] = -compute_neg_log_mdd(t_val, XtX_base, XtY_base, YtY_base, N_eff_total, K, p_max, s, delta_wn)
 
         return (iter_idx, SE_aic, SE_aicc, SE_sic, SE_hqc, SE_ols_bma,
                 SE_minn_rw_tight, SE_minn_rw_std, SE_minn_rw_loose, SE_minn_wn_std, 
@@ -487,7 +536,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 100, 50, 5000000
+    N_iterations, mc_draws, max_loops = 50, 10, 1000000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
@@ -545,18 +594,16 @@ def main():
                 all_exp_p_hybrid.append(p_tuple[5]); all_exp_p_sota.append(p_tuple[6])
                 all_weights_hybrid.append(weight_tuple[0]); all_weights_sota.append(weight_tuple[1])
 
-                # --- Extract Iteration-Level MSEs for the Scatter Plot ---
-                se_bic_iter = np.sum(res[10])
-                se_bma_iter = np.sum(res[13])
-                se_p0_iter = np.sum(res[15]) + 1e-12
+                se_bic_iter = np.sum(res[10]) if not (np.isscalar(res[10]) and np.isnan(res[10])) else np.nan
+                se_bma_iter = np.sum(res[13]) if not (np.isscalar(res[13]) and np.isnan(res[13])) else np.nan
+                se_p0_iter = np.sum(res[15]) + 1e-12 if not (np.isscalar(res[15]) and np.isnan(res[15])) else np.nan
                 
                 iteration_mses_list.append({
                     'p0': current_p0, 'T': current_T, 'Iter': res[0],
-                    'BIC_Rel_MSE': se_bic_iter / se_p0_iter,
-                    'BMA_Rel_MSE': se_bma_iter / se_p0_iter
+                    'BIC_Rel_MSE': se_bic_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan,
+                    'BMA_Rel_MSE': se_bma_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan
                 })
 
-                # Graph Data
                 raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'Opt_Tau': res[14]})
                 if res[18] is not None: all_tradeoffs_t.append(res[18])
                 if res[19] is not None:
@@ -567,17 +614,35 @@ def main():
                 print(" [FAILED]"); continue
             print(f" [SUCCESS] ({len(all_SE_aic)}/{N_iterations})")
 
-            MSE_p0_iter = np.sum(all_SE_p0, axis=(1, 2, 3)) + 1e-12
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                
+                all_SE_p0_sums = []
+                for se in all_SE_p0:
+                    if np.isscalar(se) and np.isnan(se):
+                        all_SE_p0_sums.append(np.nan)
+                    elif np.isnan(se).all():
+                        all_SE_p0_sums.append(np.nan)
+                    else:
+                        all_SE_p0_sums.append(np.sum(se))
+                
+                all_SE_p0_sums = np.array(all_SE_p0_sums)
+                mean_p0_mse = np.nanmean(all_SE_p0_sums)
+                
+                MSE_p0_iter = np.copy(all_SE_p0_sums)
+                MSE_p0_iter[np.isnan(MSE_p0_iter)] = mean_p0_mse
+                MSE_p0_iter += 1e-12
 
-            # Compute Relative MSE Tradeoff Curve safely
             if len(all_tradeoffs_t) > 0:
-                tradeoff_arr = np.array(all_tradeoffs_t) # Shape: (100 iterations, 30 taus)
+                tradeoff_arr = np.array(all_tradeoffs_t) 
                 ratio_matrix = tradeoff_arr / MSE_p0_iter[:, None]
-                geom_mean_curve = np.exp(np.mean(np.log(ratio_matrix), axis=0))
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", category=RuntimeWarning)
+                    geom_mean_curve = np.exp(np.nanmean(np.log(ratio_matrix), axis=0))
                 for i, t_val in enumerate(TAU_GRID_PLOT):
                     tradeoff_list.append({'T': current_T, 'Tau': t_val, 'Rel_MSE': geom_mean_curve[i]})
 
-            # Weights
             avg_hybrid_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_hybrid]) for p in range(1, p_max + 1)}
             avg_sota_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_sota]) for p in range(1, p_max + 1)}
             
@@ -585,12 +650,33 @@ def main():
             s_row = {"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "SOTA-BMA (MDD W)"}; s_row.update(avg_sota_dist)
             bma_weights_list.extend([h_row, s_row])
 
-            # Performance Metrics 
             def calc_met(se_list, p_list, true_val, tau_list=None):
-                arr = np.sum(se_list, axis=(1, 2, 3)) / MSE_p0_iter
+                mse_sums = []
+                for se in se_list:
+                    if np.isscalar(se) and np.isnan(se): mse_sums.append(np.nan)
+                    elif np.isnan(se).all(): mse_sums.append(np.nan)
+                    else: mse_sums.append(np.sum(se))
+                mse_sums = np.array(mse_sums)
+                
+                arr = mse_sums / MSE_p0_iter
+                
+                valid_mask = ~np.isnan(arr) & (arr > 0)
+                valid_arr = arr[valid_mask]
+                
+                fail_pct = (1.0 - (np.sum(valid_mask) / len(arr))) * 100.0 if len(arr) > 0 else 100.0
+                
+                if len(valid_arr) > 0:
+                    geom_mean = np.exp(np.mean(np.log(valid_arr)))
+                    p5 = np.percentile(valid_arr, 5)
+                    p95 = np.percentile(valid_arr, 95)
+                else:
+                    geom_mean, p5, p95 = np.nan, np.nan, np.nan
+                    
                 lg = (p_list.count(true_val) / len(p_list)) * 100 if isinstance(p_list, list) and not isinstance(p_list[0], float) else np.nan
-                ml = np.mean(p_list) if p_list else p_max
-                return round(np.exp(np.mean(np.log(arr))), 4), round(np.percentile(arr, 5), 4), round(np.percentile(arr, 95), 4), round(lg, 2), round(ml, 2), round(np.mean(tau_list), 4) if tau_list else "N/A"
+                ml = np.mean([p for p in p_list if not np.isnan(p)]) if p_list else p_max
+                avg_tau = round(np.mean([t for t in tau_list if not np.isnan(t)]), 4) if tau_list else "N/A"
+                
+                return geom_mean, p5, p95, round(lg, 2), round(ml, 2), avg_tau, round(fail_pct, 1)
 
             models = [
                 ("AIC",                          calc_met(all_SE_aic,         all_p_hats_aic,   true_p)),
@@ -612,21 +698,31 @@ def main():
                 master_results_list.append({
                     "True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": m_name,
                     "Lag Detection Rate (%)": m_data[3] if not np.isnan(m_data[3]) else "N/A",
-                    "Mean Evaluated Lag": m_data[4], "Avg Opt Tau": m_data[5],
-                    "Geom Mean MSE Ratio": m_data[0], "5th Percentile": m_data[1], "95th Percentile": m_data[2]
+                    "Mean Evaluated Lag": m_data[4], 
+                    "Avg Opt Tau": m_data[5],
+                    "Fail Rate (%)": m_data[6],
+                    "Geom Mean MSE Ratio": m_data[0], 
+                    "5th Percentile": m_data[1], 
+                    "95th Percentile": m_data[2]
                 })
 
     if len(master_results_list) > 0:
         results_dir = os.path.join(km_base, 'Results')
         os.makedirs(results_dir, exist_ok=True)
         
-        pd.DataFrame(master_results_list).to_csv(os.path.join(results_dir, f"Master_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        df_master = pd.DataFrame(master_results_list)
+        df_master.to_csv(os.path.join(results_dir, f"Master_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(bma_weights_list).to_csv(os.path.join(results_dir, f"Master_BMA_Weights_iters{N_iterations}.csv"), index=False)
         pd.DataFrame(raw_taus_list).to_csv(os.path.join(results_dir, "Master_Raw_Opt_Tau.csv"), index=False)
         pd.DataFrame(tradeoff_list).to_csv(os.path.join(results_dir, "Master_Tradeoff_Curve.csv"), index=False)
         pd.DataFrame(mdd_list).to_csv(os.path.join(results_dir, "Master_MDD_Surface.csv"), index=False)
         pd.DataFrame(iteration_mses_list).to_csv(os.path.join(results_dir, "Master_Iteration_MSEs.csv"), index=False)
         
+        print("\n" + "="*90)
+        print(" RESULTS PREVIEW:")
+        print("="*90)
+        print(df_master.to_string(index=False))
+
         print("\n" + "="*90)
         print(" SUCCESS: Simulation complete and 6 CSVs generated in 'Results'!")
         print("="*90)

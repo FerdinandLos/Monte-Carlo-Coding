@@ -88,7 +88,8 @@ def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
 def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
     """
     JIT-compiled inner loop. 
-    Implements 'Fail Fast' by rejecting matrices before calculating full IRFs.
+    Implements 'Fail Fast' by rejecting matrices before calculating full IRFs,
+    and enforces dynamic sign restrictions for the first 3 months.
     """
     valid_IRFs = np.zeros((target_draws, h_max, K, K))
     valid_B_tildes = np.zeros((target_draws, K, K))
@@ -110,7 +111,7 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
                 
         B_tilde = P @ Q
         
-        # 2. FAIL FAST: Check Sign Restrictions immediately on Impact Matrix
+        # 2. FAIL FAST 1: Check Impact Sign Restrictions
         match = True
         for i in range(K):
             for j in range(K):
@@ -124,7 +125,7 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
         if not match:
             continue # Throw away the matrix immediately. Do not compute IRF!
             
-        # 3. Compute IRF (Elasticity Bounds Removed)
+        # 3. Compute IRF
         irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
         
         irf_cumulative = irf.copy()
@@ -132,7 +133,31 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
         for h in range(1, h_max):
             irf_cumulative[h, 0, :] = irf_cumulative[h-1, 0, :] + irf[h, 0, :]
             irf_cumulative[h, 3, :] = irf_cumulative[h-1, 3, :] + irf[h, 3, :]
-        
+
+        # 4. FAIL FAST 2: Dynamic Sign Restrictions (First 3 months)
+        # Flow Supply Shock = Column 0
+        dynamic_match = True
+        for h in range(3): # Horizons 0 through 11
+            
+            # Oil Production level (cumulative) must be negative
+            if irf_cumulative[h, 0, 0] >= 0:
+                dynamic_match = False
+                break
+                
+            # Real Activity level (standard IRF) must be negative
+            if irf[h, 1, 0] >= 0:
+                dynamic_match = False
+                break
+                
+            # Real Oil Price level (standard IRF) must be positive
+            if irf[h, 2, 0] <= 0:
+                dynamic_match = False
+                break
+                
+        if not dynamic_match:
+            continue # Reject model if any dynamic restriction fails
+            
+        # 5. Store Valid Models
         valid_IRFs[accepted] = irf_cumulative
         valid_B_tildes[accepted] = B_tilde
         accepted += 1
@@ -252,7 +277,7 @@ def main():
     ], dtype=np.float64)
 
     h_max = 24  
-    n_draws = 500000 
+    n_draws = 1000 
 
     for config in dgp_configs:
         p = config["p"]

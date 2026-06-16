@@ -54,24 +54,45 @@ def main():
     }
     df_renamed['Estimator_Mapped'] = df_renamed['Estimator'].replace(estimator_mapping)
 
-    pivot_mse = df_renamed.pivot(index=['$p_0$', '$T$'], columns='Estimator_Mapped', values='Geom Mean MSE Ratio')
+    # Pivot MSE so we can format it. For Tables 1 & 2 we want T as the outer
+    # (spanning) row index and p0 as the inner one, ordered by T.
+    pivot_mse = df_renamed.pivot(index=['$T$', '$p_0$'], columns='Estimator_Mapped', values='Geom Mean MSE Ratio').sort_index()
     pivot_lags = df_renamed.pivot(index=['$p_0$', '$T$'], columns='Estimator', values='Mean Evaluated Lag')
+
+    # Row-min over the FULL estimator set (matches original bolding logic, which
+    # selects the winner across all estimators, not just the table's subset).
+    row_min = pivot_mse.min(axis=1)
+
+    def bold_full_row_min(row):
+        # Bold cells equal to the full-row minimum; '' otherwise. NaNs left blank.
+        return ['font-weight: bold' if (pd.notna(v) and v == row_min[row.name]) else ''
+                for v in row]
+
+    # Strip axis names so the Styler header row doesn't print 'Estimator_Mapped'.
+    pivot_mse = pivot_mse.rename_axis(columns=None)
+
+    def styled_mse_latex(cols, **to_latex_kwargs):
+        return (pivot_mse[cols].style
+                .format("{:.3f}", na_rep="-")
+                .apply(bold_full_row_min, axis=1)
+                .to_latex(**to_latex_kwargs))
 
     # Table 1: Shrinkage Strategy
     cols_paper1 = ['AIC', 'AICc', 'SIC (BIC)', 'HQC', 'BVAR_TIGHT_05', 'BVAR_STD_20', 'BVAR_LOOSE_50', 'BVAR_WN_20', 'SOTA_BVAR', 'SOTA_BMA']
     cols_paper1 = [c for c in cols_paper1 if c in pivot_mse.columns]
     
-    latex_paper1 = (pivot_mse[cols_paper1].style.format("{:.3f}").highlight_min(axis=1, props='textbf:--rwrap;')
-        .to_latex(column_format="ll" + "c" * len(cols_paper1), position="htbp", position_float="centering", hrules=True,
-                  caption="Relative Mean Squared Error: Hard Selection vs. Bayesian Shrinkage.", label="tab:shrinkage_mse", multirow_align="t")
+    latex_paper1 = styled_mse_latex(cols_paper1,
+        column_format="ll" + "c" * len(cols_paper1), position="htbp", position_float="centering", hrules=True,
+        caption="Relative Mean Squared Error: Hard Selection vs. Bayesian Shrinkage.", label="tab:shrinkage_mse", multirow_align="t",
+        convert_css=True
     ).replace('\\begin{table}', '\\begin{sidewaystable}').replace('\\end{table}', '\\end{sidewaystable}')
     
     latex_paper1 = latex_paper1.replace('BVAR_TIGHT_05', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.05$)\end{tabular}')\
         .replace('BVAR_STD_20', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.20$)\end{tabular}')\
         .replace('BVAR_LOOSE_50', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.50$)\end{tabular}')\
         .replace('BVAR_WN_20', r'\begin{tabular}{@{}c@{}}BVAR-WN \\ ($\tau=0.20$)\end{tabular}')\
-        .replace('SOTA_BVAR', r'\begin{tabular}{@{}c@{}}SOTA-BVAR \\ (Opt $\tau$)\end{tabular}')\
-        .replace('SOTA_BMA', r'\begin{tabular}{@{}c@{}}SOTA-BMA \\ (Opt $\tau$)\end{tabular}')
+        .replace('SOTA_BVAR', r'\begin{tabular}{@{}c@{}}SOTA-BVAR (WN) \\ (Opt $\tau$)\end{tabular}')\
+        .replace('SOTA_BMA', r'\begin{tabular}{@{}c@{}}SOTA-BMA (WN) \\ (Opt $\tau$)\end{tabular}')
 
     with open(os.path.join(tables_dir, "Table_Paper1_Shrinkage.tex"), "w") as f: f.write(latex_paper1)
 
@@ -79,14 +100,15 @@ def main():
     cols_paper2 = ['AIC', 'AICc', 'SIC (BIC)', 'HQC', 'OLS BMA (BIC-W)', 'BVAR_BIC', 'BVAR_BMA', 'SOTA_BMA']
     cols_paper2 = [c for c in cols_paper2 if c in pivot_mse.columns]
 
-    latex_paper2 = (pivot_mse[cols_paper2].style.format("{:.3f}").highlight_min(axis=1, props='textbf:--rwrap;')
-        .to_latex(column_format="ll" + "c" * len(cols_paper2), position="htbp", position_float="centering", hrules=True,
-                  caption="Relative Mean Squared Error: Hard Selection vs. Bayesian Model Averaging.", label="tab:uncertainty_mse", multirow_align="t")
+    latex_paper2 = styled_mse_latex(cols_paper2,
+        column_format="ll" + "c" * len(cols_paper2), position="htbp", position_float="centering", hrules=True,
+        caption="Relative Mean Squared Error: Hard Selection vs. Bayesian Model Averaging.", label="tab:uncertainty_mse", multirow_align="t",
+        convert_css=True
     ).replace('\\begin{table}', '\\begin{sidewaystable}').replace('\\end{table}', '\\end{sidewaystable}')
     
-    latex_paper2 = latex_paper2.replace('BVAR_BIC', r'\begin{tabular}{@{}c@{}}Hybrid-BVAR \\ (Fixed $\tau$)\end{tabular}')\
-        .replace('BVAR_BMA', r'\begin{tabular}{@{}c@{}}Hybrid-BMA \\ (Fixed $\tau$)\end{tabular}')\
-        .replace('SOTA_BMA', r'\begin{tabular}{@{}c@{}}SOTA-BMA \\ (Opt $\tau$)\end{tabular}')
+    latex_paper2 = latex_paper2.replace('BVAR_BIC', r'\begin{tabular}{@{}c@{}}Hybrid-BVAR (WN) \\ (Fixed $\tau$)\end{tabular}')\
+        .replace('BVAR_BMA', r'\begin{tabular}{@{}c@{}}Hybrid-BMA (WN) \\ (Fixed $\tau$)\end{tabular}')\
+        .replace('SOTA_BMA', r'\begin{tabular}{@{}c@{}}SOTA-BMA (WN) \\ (Opt $\tau$)\end{tabular}')
 
     with open(os.path.join(tables_dir, "Table_Paper2_Uncertainty.tex"), "w") as f: f.write(latex_paper2)
 
@@ -96,7 +118,7 @@ def main():
     
     latex_paper3 = pivot_lags[cols_paper3].style.format("{:.2f}").to_latex(
         column_format="ll" + "c" * len(cols_paper3), position="htbp", position_float="centering", hrules=True,
-        caption="Average Evaluated Lag Order ($\hat{p}$) selected by standard Information Criteria.", label="tab:ic_lag_orders", multirow_align="t")
+        caption=r"Average Evaluated Lag Order ($\hat{p}$) selected by standard Information Criteria.", label="tab:ic_lag_orders", multirow_align="t")
     
     with open(os.path.join(tables_dir, "Table_Paper3_IC_Lags.tex"), "w") as f: f.write(latex_paper3)
 
@@ -113,26 +135,30 @@ def main():
         p_cols = [c for c in [f"p={i}" for i in range(1, 13)] if c in dist_df_p4.columns]
         dist_df_p4 = dist_df_p4[['$E[p]$'] + p_cols]
 
-        # Format elements as strings before transposing
         dist_df_p4_str = dist_df_p4.copy()
         dist_df_p4_str['$E[p]$'] = dist_df_p4_str['$E[p]$'].apply(lambda x: f"{x:.2f}" if pd.notna(x) else "-")
         
         def format_weight(val):
-            return "-" if pd.isna(val) or float(val) < 0.001 else f"{float(val):.1%}"
+            # FIXED: We multiply by 100 and append \% manually to avoid f-string format crashes
+            return "-" if pd.isna(val) or float(val) < 0.001 else f"{float(val) * 100:.1f}\\%"
             
         for col in p_cols:
             dist_df_p4_str[col] = dist_df_p4_str[col].apply(format_weight)
             
-        # Transpose to switch rows and columns
         transposed_df = dist_df_p4_str.T
         transposed_df.index.name = 'Statistic / Lag'
 
-        # Generate standard portrait table
         latex_paper4 = (transposed_df.style
             .to_latex(column_format="l|" + "c" * len(transposed_df.columns), 
                       position="htbp", position_float="centering", hrules=True,
                       caption="Posterior Lag Weight Distribution for BMA ($p_0 = 4$).", 
                       label="tab:bma_posterior", multirow_align="t")
+        )
+        
+        latex_paper4 = latex_paper4.replace(
+            'Hybrid-BMA (OLS W)', r'\begin{tabular}{@{}c@{}}Hybrid-BMA \\ (OLS W)\end{tabular}'
+        ).replace(
+            'SOTA-BMA (MDD W)', r'\begin{tabular}{@{}c@{}}SOTA-BMA \\ (MDD W)\end{tabular}'
         )
         
         with open(os.path.join(tables_dir, "Table_Paper4_BMA_Distribution.tex"), "w") as f: f.write(latex_paper4)
@@ -168,7 +194,8 @@ def main():
         raw_taus_p4 = raw_taus[raw_taus['p0'] == 4]
         
         plt.figure(figsize=(8, 6))
-        sns.boxplot(data=raw_taus_p4, x='T', y='Opt_Tau', palette='Blues', showfliers=False)
+        sns.boxplot(data=raw_taus_p4, x='T', y='Opt_Tau', hue='T', palette='Blues', 
+                    legend=False, showfliers=False)
         sns.stripplot(data=raw_taus_p4, x='T', y='Opt_Tau', color='black', alpha=0.3, jitter=True)
         
         plt.xlabel('Sample Size ($T$)')
@@ -187,7 +214,8 @@ def main():
 
         plt.figure(figsize=(8, 6))
         sns.lineplot(data=mdd_df, x='Tau', y='MDD', color='purple', linewidth=2.5)
-        plt.axvline(max_tau, color='black', linestyle='--', alpha=0.6, label=f'Optimal $\\tau \simeq {max_tau:.2f}$')
+        # FIXED: Escaped the \simeq with double backslashes
+        plt.axvline(max_tau, color='black', linestyle='--', alpha=0.6, label=f'Optimal $\\tau \\simeq {max_tau:.2f}$')
         plt.plot(max_tau, max_mdd, 'ko', markersize=8)
         
         plt.xlabel(r'Candidate Shrinkage Parameter ($\tau$)')

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  16 JUN 2026 00:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  16 JUN 2026 18:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -535,8 +535,7 @@ Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
 ))
 \@quotelevel=\count445
 \@quotereset=\count446
-
-No file Paper.aux.
+ (./Paper.aux)
 \openout1 = `Paper.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
@@ -557,6 +556,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 30.
 LaTeX Font Info:    ... okay on input line 30.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
 LaTeX Font Info:    ... okay on input line 30.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -621,6 +621,7 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 Package color Info: Driver file: pdftex.def on input line 149.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 Package hyperref Info: Link coloring ON on input line 30.
+ (./Paper.out) (./Paper.out)
 \@outlinefile=\write4
 \openout4 = `Paper.out'.
 
@@ -649,217 +650,44 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<Figures/Fig3_MDD_Surface.pdf, id=19, 578.16pt x 433.62pt>
+<Figures/Fig3_MDD_Surface.pdf, id=55, 578.16pt x 433.62pt>
 File: Figures/Fig3_MDD_Surface.pdf Graphic file (type pdf)
 <use Figures/Fig3_MDD_Surface.pdf>
 Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 60.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
  [2 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table_Paper3_IC_Lags.tex) (./Tables/Table_Paper1_Shrinkage.tex
-./Tables/Table_Paper1_Shrinkage.tex:7: Missing $ inserted.
-<inserted text> 
-                $
-l.7  & Estimator_
-                 Mapped & AIC & AICc & SIC (BIC) & HQC & \begin{tabular}{@{}...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./Tables/Table_Paper1_Shrinkage.tex:7: Extra }, or forgotten $.
-<template> \unskip \hfil }
-                          \hskip \tabcolsep \endtemplate 
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & \begin{tabular}{@{}...
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-./Tables/Table_Paper1_Shrinkage.tex:7: Missing $ inserted.
-<inserted text> 
-                $
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & \begin{tabular}{@{}...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./Tables/Table_Paper1_Shrinkage.tex:7: Missing } inserted.
-<inserted text> 
-                }
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & \begin{tabular}{@{}...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-Overfull \hbox (51.75812pt too wide) in paragraph at lines 5--28
+Overfull \hbox (43.08975pt too wide) in paragraph at lines 5--28
  [][] 
  []
 
 )
-<Figures/Fig1_Tradeoff_Curve.pdf, id=116, 650.43pt x 433.62pt>
+<Figures/Fig1_Tradeoff_Curve.pdf, id=146, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve.pdf>
 Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 81.
 (pdftex.def)             Requested size: 385.02547pt x 256.6871pt.
-<Figures/Fig2_Asymptotic_Relaxation.pdf, id=117, 578.16pt x 433.62pt>
+<Figures/Fig2_Asymptotic_Relaxation.pdf, id=147, 578.16pt x 433.62pt>
 File: Figures/Fig2_Asymptotic_Relaxation.pdf Graphic file (type pdf)
 <use Figures/Fig2_Asymptotic_Relaxation.pdf>
 Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 88.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
  [3] [4] [5 <./Figures/Fig1_Tradeoff_Curve.pdf> <./Figures/Fig2_Asymptotic_Relaxation.pdf>] (./Tables/Table_Paper2_Uncertainty.tex
-./Tables/Table_Paper2_Uncertainty.tex:7: Missing $ inserted.
-<inserted text> 
-                $
-l.7  & Estimator_
-                 Mapped & AIC & AICc & SIC (BIC) & HQC & OLS BMA (BIC-W) & \...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./Tables/Table_Paper2_Uncertainty.tex:7: Extra }, or forgotten $.
-<template> \unskip \hfil }
-                          \hskip \tabcolsep \endtemplate 
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & OLS BMA (BIC-W) & \...
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-./Tables/Table_Paper2_Uncertainty.tex:7: Missing $ inserted.
-<inserted text> 
-                $
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & OLS BMA (BIC-W) & \...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-./Tables/Table_Paper2_Uncertainty.tex:7: Missing } inserted.
-<inserted text> 
-                }
-l.7  & Estimator_Mapped &
-                          AIC & AICc & SIC (BIC) & HQC & OLS BMA (BIC-W) & \...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
+Overfull \hbox (1.66344pt too wide) in paragraph at lines 5--28
+ [][] 
+ []
 
 ) (./Tables/Table_Paper4_BMA_Distribution.tex
-./Tables/Table_Paper4_BMA_Distribution.tex:20: Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.20 p=9 &
-           3.5% & - & 4.1% & - & 5.3% & - & 6.7% & - \\
-You have given more \span or & marks than there were
-in the preamble to the \halign or \valign now in progress.
-So I'll assume that you meant to type \cr instead.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:24: Misplaced \noalign.
-\bottomrule ->\noalign 
-                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
-l.24 \bottomrule
-                
-I expect to see \noalign only after the \cr of
-an alignment. Proceed, and I'll ignore this case.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Missing } inserted.
-<inserted text> 
-                }
-l.25 \end
-         {tabular}
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Missing } inserted.
-<inserted text> 
-                }
-l.25 \end
-         {tabular}
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Missing } inserted.
-<inserted text> 
-                }
-l.25 \end
-         {tabular}
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Missing \cr inserted.
-<inserted text> 
-                \cr 
-l.25 \end
-         {tabular}
-I'm guessing that you meant to end an alignment here.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Missing { inserted.
-<inserted text> 
-                {
-l.25 \end
-         {tabular}
-I've put in what seems to be necessary to fix
-the current column of the current alignment.
-Try to go on, since this might almost work.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Undefined control sequence.
-\@BTrule ...\doublerulesep \fi \fi \fi \@BTswitch 
-                                                  
-l.25 \end
-         {tabular}
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Misplaced \crcr.
-<recently read> \crcr 
-                      
-l.25 \end{tabular}
-                  
-I can't figure out why you would want to use a tab mark
-or \cr or \span just now. If something like a right brace
-up above has ended a previous alignment prematurely,
-you're probably due for more error messages, and you
-might try typing `S' now just to see what is salvageable.
-
-./Tables/Table_Paper4_BMA_Distribution.tex:25: Extra }, or forgotten $.
-\endtabular ->\crcr \egroup \egroup 
-                                    $\egroup 
-l.25 \end{tabular}
-                  
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-
-Overfull \hbox (695.34027pt too wide) in paragraph at lines 5--26
+Overfull \hbox (256.20337pt too wide) in paragraph at lines 5--26
  [][] 
  []
 
 )
-<Figures/Fig4_Risk_Hedging_Scatter.pdf, id=281, 578.16pt x 578.16pt>
+<Figures/Fig4_Risk_Hedging_Scatter.pdf, id=310, 578.16pt x 578.16pt>
 File: Figures/Fig4_Risk_Hedging_Scatter.pdf Graphic file (type pdf)
 <use Figures/Fig4_Risk_Hedging_Scatter.pdf>
 Package pdftex.def Info: Figures/Fig4_Risk_Hedging_Scatter.pdf  used on input line 104.
 (pdftex.def)             Requested size: 362.37569pt x 362.37247pt.
-<Figures/Fig5_BMA_Heatmap.pdf, id=282, 578.16pt x 505.89pt>
+<Figures/Fig5_BMA_Heatmap.pdf, id=311, 578.16pt x 505.89pt>
 File: Figures/Fig5_BMA_Heatmap.pdf Graphic file (type pdf)
 <use Figures/Fig5_BMA_Heatmap.pdf>
 Package pdftex.def Info: Figures/Fig5_BMA_Heatmap.pdf  used on input line 111.
@@ -877,43 +705,25 @@ LaTeX Warning: Empty bibliography on input line 124.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `Paper.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Paper.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  5EF74F43DE9D39D1A9BF4478B39F7B64;1786.
-
-Package biblatex Warning: Please (re)run Biber on the file:
-(biblatex)                Paper
-(biblatex)                and rerun LaTeX afterwards.
-
+Package rerunfilecheck Info: File `Paper.out' has not changed.
+(rerunfilecheck)             Checksum: 5EF74F43DE9D39D1A9BF4478B39F7B64;1786.
 Package logreq Info: Writing requests to 'Paper.run.xml'.
 \openout1 = `Paper.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19338 strings out of 469513
- 338723 string characters out of 5468178
- 1180186 words of memory out of 5000000
- 47746 multiletter control sequences out of 15000+600000
+ 19356 strings out of 469513
+ 338953 string characters out of 5468178
+ 1183848 words of memory out of 5000000
+ 47758 multiletter control sequences out of 15000+600000
  644767 words of font info for 85 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,17n,79p,771b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
-Output written on Paper.pdf (9 pages, 240615 bytes).
+ <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+Output written on Paper.pdf (9 pages, 228967 bytes).
 PDF statistics:
- 777 PDF objects out of 1000 (max. 8388607)
- 202 compressed objects within 3 object streams
+ 802 PDF objects out of 1000 (max. 8388607)
+ 227 compressed objects within 3 object streams
  28 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 98 words of extra memory for PDF output out of 10000 (max. 10000000)
 
