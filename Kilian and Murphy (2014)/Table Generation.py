@@ -23,8 +23,8 @@ def main():
     # -------------------------------------------------------------------
     # 2. LOAD ALL CSV DATAFRAMES
     # -------------------------------------------------------------------
-    main_path = os.path.join(results_dir, "Master_Final_SVAR_Comparison_iters50_draws10.csv")
-    weights_path = os.path.join(results_dir, "Master_BMA_Weights_iters50.csv")
+    main_path = os.path.join(results_dir, "Master_Final_SVAR_Comparison_iters100_draws50.csv")
+    weights_path = os.path.join(results_dir, "Master_BMA_Weights_iters100.csv")
     raw_taus_path = os.path.join(results_dir, "Master_Raw_Opt_Tau.csv")
     tradeoff_path = os.path.join(results_dir, "Master_Tradeoff_Curve.csv")
     mdd_path = os.path.join(results_dir, "Master_MDD_Surface.csv")
@@ -43,10 +43,10 @@ def main():
     df_renamed = df.rename(columns={'True DGP (p0)': '$p_0$', 'Sample Size (T)': '$T$'})
 
     estimator_mapping = {
-        'BVAR-RW (Tight tau=0.05)': 'BVAR_TIGHT_05',
-        'BVAR-RW (Std tau=0.20)': 'BVAR_STD_20',
-        'BVAR-RW (Loose tau=0.50)': 'BVAR_LOOSE_50',
-        'BVAR-WN (Std tau=0.20)': 'BVAR_WN_20',
+        'BVAR-WN (Tight tau=0.05)': 'BVAR_TIGHT_05',
+        'BVAR-WN (Std tau=0.20)': 'BVAR_STD_20',
+        'BVAR-WN (Loose tau=0.50)': 'BVAR_LOOSE_50',
+        'BVAR-RW (Std tau=0.20)': 'BVAR_RW_20',
         'Hybrid-BVAR (OLS p, Fix tau)': 'BVAR_BIC',
         'Hybrid-BMA (OLS W, Fix tau)': 'BVAR_BMA',
         'SOTA-BVAR (MDD p, Opt tau)': 'SOTA_BVAR',
@@ -78,7 +78,7 @@ def main():
                 .to_latex(**to_latex_kwargs))
 
     # Table 1: Shrinkage Strategy
-    cols_paper1 = ['AIC', 'AICc', 'SIC (BIC)', 'HQC', 'BVAR_TIGHT_05', 'BVAR_STD_20', 'BVAR_LOOSE_50', 'BVAR_WN_20', 'SOTA_BVAR', 'SOTA_BMA']
+    cols_paper1 = ['AIC', 'AICc', 'SIC (BIC)', 'HQC', 'BVAR_TIGHT_05', 'BVAR_STD_20', 'BVAR_LOOSE_50', 'BVAR_RW_20', 'SOTA_BVAR', 'SOTA_BMA']
     cols_paper1 = [c for c in cols_paper1 if c in pivot_mse.columns]
     
     latex_paper1 = styled_mse_latex(cols_paper1,
@@ -87,10 +87,10 @@ def main():
         convert_css=True
     ).replace('\\begin{table}', '\\begin{sidewaystable}').replace('\\end{table}', '\\end{sidewaystable}')
     
-    latex_paper1 = latex_paper1.replace('BVAR_TIGHT_05', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.05$)\end{tabular}')\
-        .replace('BVAR_STD_20', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.20$)\end{tabular}')\
-        .replace('BVAR_LOOSE_50', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.50$)\end{tabular}')\
-        .replace('BVAR_WN_20', r'\begin{tabular}{@{}c@{}}BVAR-WN \\ ($\tau=0.20$)\end{tabular}')\
+    latex_paper1 = latex_paper1.replace('BVAR_TIGHT_05', r'\begin{tabular}{@{}c@{}}BVAR-WN \\ ($\tau=0.05$)\end{tabular}')\
+        .replace('BVAR_STD_20', r'\begin{tabular}{@{}c@{}}BVAR-WN \\ ($\tau=0.20$)\end{tabular}')\
+        .replace('BVAR_LOOSE_50', r'\begin{tabular}{@{}c@{}}BVAR-WN \\ ($\tau=0.50$)\end{tabular}')\
+        .replace('BVAR_RW_20', r'\begin{tabular}{@{}c@{}}BVAR-RW \\ ($\tau=0.20$)\end{tabular}')\
         .replace('SOTA_BVAR', r'\begin{tabular}{@{}c@{}}SOTA-BVAR (WN) \\ (Opt $\tau$)\end{tabular}')\
         .replace('SOTA_BMA', r'\begin{tabular}{@{}c@{}}SOTA-BMA (WN) \\ (Opt $\tau$)\end{tabular}')
 

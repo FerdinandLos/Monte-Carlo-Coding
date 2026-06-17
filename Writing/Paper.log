@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  16 JUN 2026 21:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  17 JUN 2026 22:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -655,12 +655,7 @@ File: Figures/Fig3_MDD_Surface.pdf Graphic file (type pdf)
 <use Figures/Fig3_MDD_Surface.pdf>
 Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 60.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
- [2 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table_Paper3_IC_Lags.tex) (./Tables/Table_Paper1_Shrinkage.tex
-Overfull \hbox (43.08975pt too wide) in paragraph at lines 5--28
- [][] 
- []
-
-)
+ [2 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table_Paper3_IC_Lags.tex) (./Tables/Table_Paper1_Shrinkage.tex)
 <Figures/Fig1_Tradeoff_Curve.pdf, id=146, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve.pdf>
@@ -682,12 +677,12 @@ Overfull \hbox (256.20337pt too wide) in paragraph at lines 5--26
  []
 
 )
-<Figures/Fig4_Risk_Hedging_Scatter.pdf, id=310, 578.16pt x 578.16pt>
+<Figures/Fig4_Risk_Hedging_Scatter.pdf, id=309, 578.16pt x 578.16pt>
 File: Figures/Fig4_Risk_Hedging_Scatter.pdf Graphic file (type pdf)
 <use Figures/Fig4_Risk_Hedging_Scatter.pdf>
 Package pdftex.def Info: Figures/Fig4_Risk_Hedging_Scatter.pdf  used on input line 104.
 (pdftex.def)             Requested size: 362.37569pt x 362.37247pt.
-<Figures/Fig5_BMA_Heatmap.pdf, id=311, 578.16pt x 505.89pt>
+<Figures/Fig5_BMA_Heatmap.pdf, id=310, 578.16pt x 505.89pt>
 File: Figures/Fig5_BMA_Heatmap.pdf Graphic file (type pdf)
 <use Figures/Fig5_BMA_Heatmap.pdf>
 Package pdftex.def Info: Figures/Fig5_BMA_Heatmap.pdf  used on input line 111.
@@ -720,9 +715,9 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,17n,79p,771b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
-Output written on Paper.pdf (9 pages, 229306 bytes).
+Output written on Paper.pdf (9 pages, 224787 bytes).
 PDF statistics:
- 802 PDF objects out of 1000 (max. 8388607)
+ 799 PDF objects out of 1000 (max. 8388607)
  227 compressed objects within 3 object streams
  28 named destinations out of 1000 (max. 500000)
  98 words of extra memory for PDF output out of 10000 (max. 10000000)

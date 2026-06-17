@@ -5,9 +5,8 @@ import pandas as pd
 from numba import njit
 import time
 from joblib import Parallel, delayed
-from scipy.optimize import minimize_scalar
-from scipy.special import multigammaln
 import math
+from alexandria import NormalWishartBayesianVar
 
 # ---------------- Reproducibility & Environment ----------------
 SEED = 12345
@@ -51,9 +50,9 @@ def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
     return np.ascontiguousarray(y_sim[:, burn_in:].T)
 
 # -------------------------------------------------------------------
-# 2. FAST VAR ESTIMATORS (OLS & BVARs)
+# 2. FAST VAR ESTIMATORS (OLS & ALEXANDRIA BVAR)
 # -------------------------------------------------------------------
-def lsvarcSA2_silent(y, p):
+def lsvarcSA2_silent(y, p, X_exo_aligned):
     t, K = y.shape
     y = y.T
     Y = y[:, p-1:t]
@@ -61,137 +60,74 @@ def lsvarcSA2_silent(y, p):
     for i in range(1, p):
         Y = np.vstack([Y, y[:, p-1-i : t-i]])
 
-    x = np.vstack([np.eye(11), np.zeros((1, 11))])
-    n_years = int((t - p) // 12)
-    remainder = int((t - p) % 12)
+    # Extract the exact effective estimation period from the synced matrix
+    X2 = X_exo_aligned[p:t, :] 
 
-    X2 = np.tile(x, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
-    if remainder > 0:
-        last = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
-        X2 = np.vstack([X2, last])
-
-    X2 = np.hstack([np.ones((t - p, 1)), X2])
-    X = np.vstack([X2.T, Y[:, :t-p]])
+    # Combine Constant, Seasonals, and Lags
+    X = np.vstack([np.ones((t - p, 1)).T, X2.T, Y[:, :t-p]])
     Y2 = y[:, p:t]
 
     B = np.linalg.lstsq(X.T, Y2.T, rcond=None)[0].T
     U = Y2 - B @ X
     SIGMA = np.ascontiguousarray((U @ U.T) / (t - p - p * K - 12))
+    
     A = np.ascontiguousarray(B[:, 12 : K*p + 12])
-
     return A, SIGMA
 
-def bvar_minnesota_silent(y, p, tau=0.2, c=1e5, delta_prior=None):
-    t, K = y.shape
-    y_T = y.T
-    Y_mat = y_T[:, p-1:t]
-
-    if delta_prior is None: delta_prior = np.zeros(K)
-
-    for i in range(1, p):
-        Y_mat = np.vstack([Y_mat, y_T[:, p-1-i : t-i]])
-
-    x = np.vstack([np.eye(11), np.zeros((1, 11))])
-    n_years = int((t - p) // 12)
-    remainder = int((t - p) % 12)
-
-    X2 = np.tile(x, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
-    if remainder > 0:
-        last = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
-        X2 = np.vstack([X2, last])
-
-    X2 = np.hstack([np.ones((t - p, 1)), X2])
-    X_ols = np.vstack([X2.T, Y_mat[:, :t-p]]).T
-    Y_ols = y_T[:, p:t].T
-    s = np.std(y, axis=0)
-
-    Y_d1 = np.zeros((K * p, K))
-    X_d1 = np.zeros((K * p, 12 + K * p))
-    row = 0
-    for lag in range(1, p + 1):
-        for j in range(K):
-            X_d1[row, 12 + (lag - 1) * K + j] = (s[j] * lag) / tau
-            if lag == 1: Y_d1[row, j] = (s[j] * delta_prior[j]) / tau
-            row += 1
-
-    Y_d2 = np.zeros((12, K))
-    X_d2 = np.zeros((12, 12 + K * p))
-    for i in range(12): X_d2[i, i] = 1.0 / c
-
-    Y_d3 = np.diag(s)
-    X_d3 = np.zeros((K, 12 + K * p))
-
-    Y_aug = np.vstack([Y_ols, Y_d1, Y_d2, Y_d3])
-    X_aug = np.vstack([X_ols, X_d1, X_d2, X_d3])
-
-    B = np.linalg.lstsq(X_aug, Y_aug, rcond=None)[0].T
-    U = Y_ols.T - B @ X_ols.T
-    SIGMA = np.ascontiguousarray((U @ U.T) / (t - p - p * K - 12))
-    A = np.ascontiguousarray(B[:, 12 : K*p + 12])
-
-    return A, SIGMA
-
-# -------------------------------------------------------------------
-# 2b. ANALYTICAL MARGINAL DATA DENSITY (MDD) FOR OPTIMAL TAU
-# -------------------------------------------------------------------
-def compute_neg_log_mdd(tau, XtX_base, XtY_base, YtY_base, T_eff, K, p, s, delta_prior, c=1e5):
+def estimate_alexandria_bvar(y, p, X_exo=None, tau_val=0.2, prior_mean=None, optimize_tau=False):
     """
-    Standard Analytical Marginal Likelihood for a Normal-Inverse-Wishart Minnesota Prior.
-    Fixes the issue of varying prior degrees of freedom and scaling across lag lengths.
+    Robust Wrapper mapping directly to Alexandria v3.0 / v4.0 Official API Structure.
     """
-    k_regressors = K * p + 12
-    V_inv = np.zeros(k_regressors)
-    V_inv[:12] = 1.0 / (c**2)
+    K = y.shape[1]
     
-    B_prior = np.zeros((k_regressors, K))
-    row = 12
-    for lag in range(1, p + 1):
-        for j in range(K):
-            val = (s[j] * lag) / tau
-            V_inv[row] = val**2
-            if lag == 1:
-                B_prior[row, j] = delta_prior[j]
-            row += 1
-            
-    V_inv_mat = np.diag(V_inv)
-    invV_B = V_inv_mat @ B_prior
+    prior_arr = np.asarray(prior_mean) if prior_mean is not None else None
+    if prior_arr is not None:
+        if prior_arr.ndim == 1:
+            ar_coeffs = prior_arr
+        elif prior_arr.ndim == 2 and prior_arr.shape in ((K, 1), (1, K)):
+            ar_coeffs = prior_arr.ravel()
+        else:
+            ar_coeffs = prior_arr
+    else:
+        ar_coeffs = 0.0
+
+    bvar_model = NormalWishartBayesianVar(
+        endogenous=y, 
+        exogenous=X_exo if X_exo is not None else [], 
+        lags=p,
+        constant=True, # We pass seasonals in X_exo, but Alexandria must generate the intercept 
+        ar_coefficients=ar_coeffs,
+        pi1=tau_val, # pi1 is the overall tightness hyperparameter (tau)
+        hyperparameter_optimization=optimize_tau,
+        verbose=False
+    )
     
-    # Fixed prior shape and scale across all models to ensure valid Bayes Factors
-    nu_0 = K + 2.0
-    S_0 = np.diag(s**2)
+    bvar_model.estimate()
     
-    V_bar_inv = V_inv_mat + XtX_base
-    V_bar_inv_ridge = V_bar_inv + np.eye(k_regressors) * 1e-9
+    B_bar = bvar_model.B_bar
+    SIGMA_est = bvar_model.Sigma_estimates
     
-    sign_Vbar, logdet_Vbar_inv = np.linalg.slogdet(V_bar_inv_ridge)
-    if sign_Vbar <= 0: return float('inf')
+    # Because BMA weighting uses np.exp (Natural Log), we convert marginal_likelihood to base-e here
+    mdd_log10 = bvar_model.marginal_likelihood()
+    mdd_ln = mdd_log10 * np.log(10)
     
-    logdet_V_inv = np.sum(np.log(V_inv))
-    
-    try:
-        B_bar = np.linalg.solve(V_bar_inv_ridge, invV_B + XtY_base)
-    except np.linalg.LinAlgError:
-        return float('inf')
-        
-    S_bar = S_0 + YtY_base + B_prior.T @ invV_B - B_bar.T @ V_bar_inv_ridge @ B_bar
-    S_bar = (S_bar + S_bar.T) / 2.0 
-    
-    sign_Sbar, logdet_Sbar = np.linalg.slogdet(S_bar + np.eye(K) * 1e-9)
-    if sign_Sbar <= 0: return float('inf')
-    
-    sign_S0, logdet_S0 = np.linalg.slogdet(S_0)
-    
-    nu_bar = nu_0 + T_eff
-    
-    gamma_term = multigammaln(nu_bar / 2.0, K) - multigammaln(nu_0 / 2.0, K)
-    const_term = - (K * T_eff / 2.0) * math.log(math.pi)
-    
-    mdd = const_term \
-          - (K / 2.0) * logdet_Vbar_inv + (K / 2.0) * logdet_V_inv \
-          + (nu_0 / 2.0) * logdet_S0 - (nu_bar / 2.0) * logdet_Sbar \
-          + gamma_term
-          
-    return -mdd
+    opt_tau = bvar_model.pi1 if hasattr(bvar_model, 'pi1') else tau_val
+
+    if hasattr(bvar_model, 'W') and bvar_model.W is not None:
+        W_arr = np.asarray(bvar_model.W)
+        if W_arr.ndim == 1:
+            W_diag = W_arr
+        elif W_arr.ndim == 2:
+            W_diag = np.diag(W_arr)
+        else:
+            W_diag = W_arr.ravel()
+        lag_indices = np.argsort(W_diag)[:K*p]
+        lag_indices = np.sort(lag_indices) 
+        A_lags = np.ascontiguousarray(B_bar[lag_indices, :].T)
+    else:
+        A_lags = np.ascontiguousarray(B_bar[:K*p, :].T)
+
+    return A_lags, np.ascontiguousarray(SIGMA_est), mdd_ln, opt_tau
 
 # -------------------------------------------------------------------
 # 3. PURE SIGN RESTRICTION CORE
@@ -296,7 +232,7 @@ def single_monte_carlo_iteration(args):
         bic_scores = {}
         
         K = true_A.shape[0]
-        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 100, iteration_seed)
+        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 120, iteration_seed)
 
         best_aic, best_aicc, best_sic, best_hqc = float('inf'), float('inf'), float('inf'), float('inf')
         p_hat_aic, p_hat_aicc, p_hat_sic, p_hat_hqc = 1, 1, 1, 1
@@ -305,10 +241,20 @@ def single_monte_carlo_iteration(args):
         delta_wn = np.zeros(K)  
         delta_rw = np.ones(K)   
 
-        # 1. EVALUATE LAG ORDERS (OLS)
+        t_total = simulated_data.shape[0]
+        x_base = np.vstack([np.eye(11), np.zeros((1, 11))])
+        n_years = int(t_total // 12)
+        remainder = int(t_total % 12)
+        X_exo = np.tile(x_base, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
+        if remainder > 0:
+            last_base = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
+            X_exo = np.vstack([X_exo, last_base])
+
         for p_test in range(1, p_max + 1):
             y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
-            A_temp, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test)
+            x_slice = np.ascontiguousarray(X_exo[p_max - p_test : , :])
+            
+            A_temp, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test, x_slice)
             if not np.all(np.isfinite(SIGMA_temp)): continue
             ols_cache[p_test] = (A_temp.copy(), SIGMA_temp.copy())
 
@@ -335,7 +281,6 @@ def single_monte_carlo_iteration(args):
                 if sic_val < best_sic: best_sic, p_hat_sic = sic_val, p_test
                 if hqc_val < best_hqc: best_hqc, p_hat_hqc = hqc_val, p_test
 
-        # 2. OLS-BASED BMA WEIGHTING
         min_bic = min(bic_scores.values())
         raw_weights = {p: np.exp(-0.5 * (score - min_bic)) for p, score in bic_scores.items()}
         weight_sum = sum(raw_weights.values())
@@ -343,7 +288,6 @@ def single_monte_carlo_iteration(args):
         final_bic_weights = {p: raw_weights[p] / sum(raw_weights[p] for p in kept_lags_ols) for p in kept_lags_ols}
         exp_p_hybrid = sum(p * w for p, w in final_bic_weights.items())
 
-        # 3. SAFE OLS ESTIMATORS
         computed_ols_SEs = {}
         def get_ols_se_for_p(p_target):
             if p_target in computed_ols_SEs: return computed_ols_SEs[p_target]
@@ -383,28 +327,39 @@ def single_monte_carlo_iteration(args):
         else:
             SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2
 
-        # 4. SAFE FIXED TAU BVAR ESTIMATORS
-        def eval_minn(tau_val, delta_array, seed_offset, p_tgt=p_max):
-            A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_tgt, tau=tau_val, delta_prior=delta_array)
+        def eval_minn_alex(tau_val, delta_array, seed_offset, p_tgt=p_max):
+            y_slice_fixed = np.ascontiguousarray(simulated_data[p_max - p_tgt : , :])
+            x_slice_fixed = np.ascontiguousarray(X_exo[p_max - p_tgt : , :])
+
+            A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(
+                y_slice_fixed, p_tgt, X_exo=x_slice_fixed, tau_val=tau_val, prior_mean=delta_array, optimize_tau=False
+            )
             try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
             except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
             v_m, att_m, acc_m = fast_draw_core(A_m, P_m, signs, p_tgt, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_offset)
             if acc_m == 0: return nan_array
             return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2
 
-        SE_minn_wn_tight = eval_minn(0.05, delta_wn, 999)
-        SE_minn_wn_std   = eval_minn(0.20, delta_wn, 1001)
-        SE_minn_wn_loose = eval_minn(0.50, delta_wn, 1002)
-        SE_minn_rw_std   = eval_minn(0.20, delta_rw, 1000)
+        SE_minn_wn_tight = eval_minn_alex(0.05, delta_wn, 999)
+        SE_minn_wn_std   = eval_minn_alex(0.20, delta_wn, 1001)
+        SE_minn_wn_loose = eval_minn_alex(0.50, delta_wn, 1002)
+        SE_minn_rw_tight = eval_minn_alex(0.05, delta_rw, 998)
+        SE_minn_rw_std   = eval_minn_alex(0.20, delta_rw, 1000)
+        SE_minn_rw_loose = eval_minn_alex(0.50, delta_rw, 1003)
         
-        SE_bvar_bic      = eval_minn(0.20, delta_wn, 3000 + p_hat_sic, p_tgt=p_hat_sic)
+        SE_bvar_bic      = eval_minn_alex(0.20, delta_wn, 3000 + p_hat_sic, p_tgt=p_hat_sic)
 
         bvar_bma_pool, bvar_bma_acc = [], 0
         for p_bma in kept_lags_ols:
             td = int(round(mc_draws * final_bic_weights[p_bma]))
             if td == 0: continue
             
-            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=0.20, delta_prior=delta_wn)
+            y_slice_bma = np.ascontiguousarray(simulated_data[p_max - p_bma : , :])
+            x_slice_bma = np.ascontiguousarray(X_exo[p_max - p_bma : , :])
+            
+            A_c, SIGMA_c, _, _ = estimate_alexandria_bvar(
+                y_slice_bma, p_bma, X_exo=x_slice_bma, tau_val=0.20, prior_mean=delta_wn, optimize_tau=False
+            )
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             v_c, att_c, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 4000 + p_bma)
@@ -415,48 +370,28 @@ def single_monte_carlo_iteration(args):
         else:
             SE_bvar_bma = (get_median_target_model(np.vstack(bvar_bma_pool), bvar_bma_acc) - true_IRF_target)**2
 
-        # 5. SOTA BAYESIAN: OPT-TAU PER LAG & TRUE BAYESIAN MODEL AVERAGING
         opt_taus, mdd_scores = {}, {}
-        t_total = simulated_data.shape[0]
-        y_T, s = simulated_data.T, np.std(simulated_data, axis=0)
+        bvar_sota_cache = {}
+        plausible_lags = list(set(kept_lags_ols + [true_p, p_hat_sic]))
+        
+        for p_test in plausible_lags:
+            try:
+                y_slice_sota = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
+                x_slice_sota = np.ascontiguousarray(X_exo[p_max - p_test : , :])
 
-        # --- Reverted FIX 1: Fixed Estimation Sample (p_max) ---
-        Y_base_strict = y_T[:, p_max:t_total].T
-        x_base = np.vstack([np.eye(11), np.zeros((1, 11))])
-        n_years = int(N_eff_total // 12)
-        remainder = int(N_eff_total % 12)
-        X2_base = np.tile(x_base, (n_years, 1)) if n_years > 0 else np.empty((0, 11))
-        if remainder > 0:
-            last_base = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
-            X2_base = np.vstack([X2_base, last_base])
-        X2_base = np.hstack([np.ones((N_eff_total, 1)), X2_base])
-
-        for p_test in range(1, p_max + 1):
-            Y_mat = y_T[:, p_max-1 : t_total-1]
-            for i in range(1, p_test): 
-                Y_mat = np.vstack([Y_mat, y_T[:, p_max-1-i : t_total-1-i]])
-                
-            X_base_strict = np.vstack([X2_base.T, Y_mat]).T
-            XtX_base = X_base_strict.T @ X_base_strict
-            XtY_base = X_base_strict.T @ Y_base_strict
-            YtY_base = Y_base_strict.T @ Y_base_strict
-            
-            # Optimization using fixed N_eff_total to preserve the Bayes factor
-            res = minimize_scalar(
-                compute_neg_log_mdd, 
-                args=(XtX_base, XtY_base, YtY_base, N_eff_total, K, p_test, s, delta_wn), 
-                bounds=(0.01, 2.0), 
-                method='bounded'
-            )
-            if not res.success:
+                A_opt, SIGMA_opt, log_mdd, tau_opt = estimate_alexandria_bvar(
+                    y_slice_sota, p_test, X_exo=x_slice_sota, prior_mean=delta_wn, optimize_tau=True
+                )
+                opt_taus[p_test] = tau_opt
+                mdd_scores[p_test] = log_mdd
+                bvar_sota_cache[p_test] = (A_opt.copy(), SIGMA_opt.copy())
+            except Exception as e:
                 opt_taus[p_test], mdd_scores[p_test] = 0.20, -float('inf')
-            else:
-                opt_taus[p_test], mdd_scores[p_test] = res.x, -res.fun 
 
         p_sota_bic = max(mdd_scores, key=mdd_scores.get)
         tau_sota_bic = opt_taus[p_sota_bic]
         
-        A_sota, SIGMA_sota = bvar_minnesota_silent(simulated_data, p_sota_bic, tau=tau_sota_bic, delta_prior=delta_wn)
+        A_sota, SIGMA_sota = bvar_sota_cache[p_sota_bic]
         try: P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
         except np.linalg.LinAlgError: SIGMA_sota += np.eye(K) * 1e-8; P_sota = np.ascontiguousarray(np.linalg.cholesky(SIGMA_sota))
         v_sota, att_sota, acc_sota = fast_draw_core(A_sota, P_sota, signs, p_sota_bic, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 8000)
@@ -466,7 +401,6 @@ def single_monte_carlo_iteration(args):
         else:
             SE_sota_bic = (get_median_target_model(v_sota, acc_sota) - true_IRF_target)**2
 
-        # --- FIX 3: Stabilized Posterior Probs ---
         max_mdd = mdd_scores[p_sota_bic]
         raw_sota_weights = {p: np.exp(score - max_mdd) for p, score in mdd_scores.items()}
         
@@ -475,15 +409,8 @@ def single_monte_carlo_iteration(args):
             for p, w in raw_sota_weights.items()
         }
         
-        kept_sota = [
-            p for p, prob in posterior_probs.items()
-            if prob > 0.001
-        ]
-        
-        sota_weights = {
-            p: posterior_probs[p] / sum(posterior_probs[k] for k in kept_sota) 
-            for p in kept_sota
-        }
+        kept_sota = [p for p, prob in posterior_probs.items() if prob > 0.001]
+        sota_weights = {p: posterior_probs[p] / sum(posterior_probs[k] for k in kept_sota) for p in kept_sota}
         exp_p_sota = sum(p * w for p, w in sota_weights.items())
 
         sota_bma_pool, sota_bma_acc = [], 0
@@ -491,7 +418,7 @@ def single_monte_carlo_iteration(args):
             td = int(round(mc_draws * sota_weights[p_bma]))
             if td == 0: continue
             
-            A_c, SIGMA_c = bvar_minnesota_silent(simulated_data, p_bma, tau=opt_taus[p_bma], delta_prior=delta_wn)
+            A_c, SIGMA_c = bvar_sota_cache[p_bma]
             try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
             v_c, att_c, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 9000 + p_bma)
@@ -502,15 +429,20 @@ def single_monte_carlo_iteration(args):
         else:
             SE_sota_bma = (get_median_target_model(np.vstack(sota_bma_pool), sota_bma_acc) - true_IRF_target)**2
 
-        # 6. PLOT DATA EXTRACTION
         tradeoff_mses = None
         mdd_surface = None
 
         if true_p == 4 and (T_real == 96 or T_real == 480):
             tradeoff_mses = np.zeros(len(TAU_GRID_PLOT))
+            
+            y_slice_plot = np.ascontiguousarray(simulated_data[p_max - p_max : , :])
+            x_slice_plot = np.ascontiguousarray(X_exo[p_max - p_max : , :])
+
             for idx, t_val in enumerate(TAU_GRID_PLOT):
                 try:
-                    A_m, SIGMA_m = bvar_minnesota_silent(simulated_data, p_max, tau=t_val, delta_prior=delta_wn)
+                    A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(
+                        y_slice_plot, p_max, X_exo=x_slice_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False
+                    )
                     try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
                     except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
                     v_m, att_m, acc_m = fast_draw_core(A_m, P_m, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + 10000 + idx)
@@ -522,18 +454,14 @@ def single_monte_carlo_iteration(args):
             
             if T_real == 480 and iter_idx == 0:
                 mdd_surface = np.zeros(len(TAU_GRID_PLOT))
-                
-                Y_mat = y_T[:, p_max-1 : t_total-1]
-                for i in range(1, p_max): Y_mat = np.vstack([Y_mat, y_T[:, p_max-1-i : t_total-1-i]])
-                
-                X_base_strict = np.vstack([X2_base.T, Y_mat]).T
-                XtX_base_surf, XtY_base_surf, YtY_base_surf = X_base_strict.T @ X_base_strict, X_base_strict.T @ Y_base_strict, Y_base_strict.T @ Y_base_strict
-                
                 for idx, t_val in enumerate(TAU_GRID_PLOT):
-                    mdd_surface[idx] = -compute_neg_log_mdd(t_val, XtX_base_surf, XtY_base_surf, YtY_base_surf, N_eff_total, K, p_max, s, delta_wn)
+                    _, _, log_mdd_surf, _ = estimate_alexandria_bvar(
+                        y_slice_plot, p_max, X_exo=x_slice_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False
+                    )
+                    mdd_surface[idx] = log_mdd_surf
 
         return (iter_idx, SE_aic, SE_aicc, SE_sic, SE_hqc, SE_ols_bma,
-                SE_minn_rw_tight, SE_minn_rw_std, SE_minn_rw_loose, SE_minn_wn_std, 
+                SE_minn_wn_tight, SE_minn_wn_std, SE_minn_wn_loose, SE_minn_rw_std, 
                 SE_bvar_bic, SE_bvar_bma, SE_sota_bic, SE_sota_bma,
                 tau_sota_bic, SE_p0,
                 (p_hat_aic, p_hat_aicc, p_hat_sic, p_hat_hqc, p_sota_bic, exp_p_hybrid, exp_p_sota),
@@ -552,7 +480,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 50, 10, 1000000
+    N_iterations, mc_draws, max_loops = 1000, 100, 5000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
@@ -581,34 +509,64 @@ def main():
 
         for current_T in sample_sizes:
             print(f"    Running Simulation for T = {current_T} ...", end="", flush=True)
-            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max) for i in range(N_iterations)]
-            results = Parallel(n_jobs=n_cores, backend='loky')(delayed(single_monte_carlo_iteration)(task) for task in tasks)
 
-            all_SE_aic, all_SE_aicc, all_SE_sic, all_SE_hqc, all_SE_ols_bma = [], [], [], [], []
+            # --- 1. INITIALIZE ALL METRIC LISTS HERE (Before any parallel execution) ---
+            all_SE_aic, all_SE_aicc, all_SE_sic, all_SE_hqc = [], [], [], []
+            all_SE_ols_bma = []
             all_SE_minn_wn_t, all_SE_minn_wn_s, all_SE_minn_wn_l = [], [], []
-            all_SE_minn_rw_s, all_SE_bvar_bic, all_SE_bvar_bma = [], [], []
-            all_SE_sota_bic, all_SE_sota_bma, all_tau_sota, all_SE_p0 = [], [], [], []
+            all_SE_minn_rw_s = []
+            all_SE_bvar_bic, all_SE_bvar_bma = [], []
+            all_SE_sota_bic, all_SE_sota_bma = [], []
             
+            all_tau_sota, all_SE_p0 = [], []
             all_p_hats_aic, all_p_hats_aicc, all_p_hats_sic, all_p_hats_hqc, all_p_hats_sota = [], [], [], [], []
             all_exp_p_hybrid, all_exp_p_sota = [], []
             all_weights_hybrid, all_weights_sota = [], []
             all_tradeoffs_t = []
 
+            # --- 2. EXECUTE PARALLEL TASKS ---
+            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max) for i in range(N_iterations)]
+            results = Parallel(n_jobs=n_cores, backend='loky')(delayed(single_monte_carlo_iteration)(task) for task in tasks)
+
+            # --- 3. PROCESS RESULTS (Safely contained inside the loop) ---
             for res in results:
-                if res[-1] != "Success": continue
-                all_SE_aic.append(res[1]); all_SE_aicc.append(res[2]); all_SE_sic.append(res[3]); all_SE_hqc.append(res[4])
-                all_SE_ols_bma.append(res[5]); all_SE_minn_wn_t.append(res[6]); all_SE_minn_wn_s.append(res[7])
-                all_SE_minn_wn_l.append(res[8]); all_SE_minn_rw_s.append(res[9]); all_SE_bvar_bic.append(res[10])
-                all_SE_bvar_bma.append(res[11]); all_SE_sota_bic.append(res[12]); all_SE_sota_bma.append(res[13])
+                if res[-1] != "Success": 
+                    print(f"\n   -> [INTERNAL ERROR]: {res[-1]}")
+                    continue
+                
+                # Append mappings perfectly match the return tuple of single_monte_carlo_iteration
+                all_SE_aic.append(res[1])
+                all_SE_aicc.append(res[2])
+                all_SE_sic.append(res[3])
+                all_SE_hqc.append(res[4])
+                
+                all_SE_ols_bma.append(res[5])
+                
+                all_SE_minn_wn_t.append(res[6])
+                all_SE_minn_wn_s.append(res[7])
+                all_SE_minn_wn_l.append(res[8])
+                all_SE_minn_rw_s.append(res[9])
+                
+                all_SE_bvar_bic.append(res[10])
+                all_SE_bvar_bma.append(res[11])
+                all_SE_sota_bic.append(res[12])
+                all_SE_sota_bma.append(res[13])
                 
                 all_tau_sota.append(res[14]) 
                 all_SE_p0.append(res[15])
                 
                 p_tuple, weight_tuple = res[16], res[17]
-                all_p_hats_aic.append(p_tuple[0]); all_p_hats_aicc.append(p_tuple[1]); all_p_hats_sic.append(p_tuple[2])
-                all_p_hats_hqc.append(p_tuple[3]); all_p_hats_sota.append(p_tuple[4])
-                all_exp_p_hybrid.append(p_tuple[5]); all_exp_p_sota.append(p_tuple[6])
-                all_weights_hybrid.append(weight_tuple[0]); all_weights_sota.append(weight_tuple[1])
+                all_p_hats_aic.append(p_tuple[0])
+                all_p_hats_aicc.append(p_tuple[1])
+                all_p_hats_sic.append(p_tuple[2])
+                all_p_hats_hqc.append(p_tuple[3])
+                all_p_hats_sota.append(p_tuple[4])
+                
+                all_exp_p_hybrid.append(p_tuple[5])
+                all_exp_p_sota.append(p_tuple[6])
+                
+                all_weights_hybrid.append(weight_tuple[0])
+                all_weights_sota.append(weight_tuple[1])
 
                 se_bic_iter = np.sum(res[10]) if not (np.isscalar(res[10]) and np.isnan(res[10])) else np.nan
                 se_bma_iter = np.sum(res[13]) if not (np.isscalar(res[13]) and np.isnan(res[13])) else np.nan
