@@ -44,10 +44,10 @@
   <internal package="biblatex" priority="9" active="0">
     <generic>latex</generic>
     <provides type="dynamic">
-      <file>Paper.bcf</file>
+      <file>Paper2_BMA.bcf</file>
     </provides>
     <requires type="dynamic">
-      <file>Paper.bbl</file>
+      <file>Paper2_BMA.bbl</file>
     </requires>
     <requires type="static">
       <file>blx-dm.def</file>
@@ -65,19 +65,19 @@
     <generic>biber</generic>
     <cmdline>
       <binary>biber</binary>
-      <infile>Paper</infile>
+      <infile>Paper2_BMA</infile>
     </cmdline>
     <input>
-      <file>Paper.bcf</file>
+      <file>Paper2_BMA.bcf</file>
     </input>
     <output>
-      <file>Paper.bbl</file>
+      <file>Paper2_BMA.bbl</file>
     </output>
     <provides type="dynamic">
-      <file>Paper.bbl</file>
+      <file>Paper2_BMA.bbl</file>
     </provides>
     <requires type="dynamic">
-      <file>Paper.bcf</file>
+      <file>Paper2_BMA.bcf</file>
     </requires>
     <requires type="editable">
       <file>Monte Carlo Simulations.bib</file>

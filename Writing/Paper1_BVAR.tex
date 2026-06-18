@@ -1,0 +1,103 @@
+\documentclass[12pt, a4paper]{article}
+
+% Standard packages for economics papers
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{setspace}
+\onehalfspacing % Common for readability; use \doublespacing if submitting for review
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}  % Creates beautiful top/mid/bottom rules instead of ugly grids
+\usepackage{multirow}  % Allows the p0 values to span across the T rows seamlessly
+\usepackage{rotating}  % Allows for sideways tables (sidewaystable)
+\usepackage{caption}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+% BibLaTeX setup for Zotero Better BibLaTeX
+\usepackage[style=authoryear, backend=biber, natbib=true, maxcitenames=2]{biblatex}
+\addbibresource{Monte Carlo Simulations.bib}
+
+% Title and Author Information
+\title{BVAR vs. Information Criteria: A Monte Carlo Simulation Study}
+\author{
+    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de}} \and
+    Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+This is the abstract for your paper. Briefly state the purpose of the research, the principal results, and major conclusions. The abstract should be self-contained and citation-free.
+\vspace{1em}\\
+\noindent\textbf{Keywords:} Keyword 1, Keyword 2, Keyword 3 \\
+\noindent\textbf{JEL Codes:} C15, C32 % Update with relevant JEL classification codes
+\end{abstract}
+
+\newpage
+
+\section{Introduction}
+\label{sec:introduction}
+Introduce the problem of lag selection and parameter proliferation in Structural VARs. Highlight the debate between hard lag selection (Information Criteria) and Bayesian methods (Shrinkage and Model Averaging).
+
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Data Generating Process}
+Explain the true DGP based on Kilian and Murphy (2014) or other literature. 
+
+\subsection{Optimal Prior Selection via Marginal Data Density}
+Describe how the shrinkage parameter ($\tau$) is treated as an optimization problem rather than a fixed heuristic. 
+
+% Placing the MDD Surface here visually justifies your optimization approach.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig3_MDD_Surface.pdf}
+    \caption{Objective Function Surface for Marginal Data Density Optimization. The peak represents the optimal balance between model fit and parameter penalty.}
+    \label{fig:mdd_surface}
+\end{figure}
+
+\section{Simulation Results}
+\label{sec:results}
+Present the results of the Monte Carlo simulations, broken down by the specific strategies employed to handle model uncertainty.
+
+\subsection{Behavior of Standard Information Criteria}
+Before evaluating the Bayesian estimators, we examine the baseline lag detection performance of the classical Information Criteria.
+
+\input{Tables/Table3_IC_Lags.tex}
+
+\subsection{The Shrinkage Strategy: Priors vs. Data}
+This section compares hard lag selection against dynamic BVARs. We analyze both the bias-variance tradeoff and how the optimal prior relaxes asymptotically as sample sizes increase.
+
+\input{Tables/Table1_Shrinkage.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig1_Tradeoff_Curve.pdf}
+    \caption{Comparison of Bias-Variance Tradeoff: BVAR vs. Hard Selection. The curve illustrates how the optimal $\tau$ balances bias and variance, achieving superior MSE performance compared to fixed lag selection.}
+    \label{fig:tradeoff}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig2_Asymptotic_Relaxation.pdf}
+    \caption{Asymptotic Relaxation of the Minnesota Prior. As the sample size ($T$) increases, the optimizer naturally selects looser priors, letting the data dominate the estimation.}
+    \label{fig:asymptotic_relaxation}
+\end{figure}
+
+\clearpage
+\section{Conclusion}
+\label{sec:conclusion}
+
+Summarize the main findings, specifically highlighting how optimal $\tau$ selection and true BMA systematically outperform standard econometric heuristics in finite samples.
+
+\newpage
+% Print the bibliography
+\printbibliography
+
+\end{document}

@@ -69,35 +69,14 @@ Present the results of the Monte Carlo simulations, broken down by the specific 
 \subsection{Behavior of Standard Information Criteria}
 Before evaluating the Bayesian estimators, we examine the baseline lag detection performance of the classical Information Criteria.
 
-\input{Tables/Table_Paper3_IC_Lags.tex}
-
-\subsection{The Shrinkage Strategy: Priors vs. Data}
-This section compares hard lag selection against dynamic BVARs. We analyze both the bias-variance tradeoff and how the optimal prior relaxes asymptotically as sample sizes increase.
-
-\input{Tables/Table_Paper1_Shrinkage.tex}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.85\textwidth]{Figures/Fig1_Tradeoff_Curve.pdf}
-    \caption{Bias-Variance Tradeoff Curve for SVAR Estimation. Demonstrates the out-of-sample forecasting error across varying degrees of shrinkage ($\tau$) for small and large sample sizes.}
-    \label{fig:tradeoff}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.85\textwidth]{Figures/Fig2_Asymptotic_Relaxation.pdf}
-    \caption{Asymptotic Relaxation of the Minnesota Prior. As the sample size ($T$) increases, the optimizer naturally selects looser priors, letting the data dominate the estimation.}
-    \label{fig:asymptotic_relaxation}
-\end{figure}
-
-\clearpage
+\input{Tables/Table3_IC_Lags.tex}
 
 \subsection{The Uncertainty Strategy: Averaging vs. Selection}
 Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criteria. We focus on how BMA acts as an insurance policy against catastrophic lag misspecification in small samples.
 
-\input{Tables/Table_Paper2_Uncertainty.tex}
+\input{Tables/Table2_Uncertainty.tex}
 
-\input{Tables/Table_Paper4_BMA_Distribution.tex}
+\input{Tables/Table4_BMA_Distribution.tex}
 
 \begin{figure}[htbp]
     \centering
