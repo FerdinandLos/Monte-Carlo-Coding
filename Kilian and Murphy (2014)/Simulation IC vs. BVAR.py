@@ -480,7 +480,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 1000, 100, 5000
+    N_iterations, mc_draws, max_loops = 100, 50, 5000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
