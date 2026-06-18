@@ -218,13 +218,12 @@ def get_median_target_model(valid_irfs, accepted_count):
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
-    # Return positions 1-17 are SE arrays; 18=best_mdd_tau; 19=p_tuple; 20=bic_weights; 21=tradeoff; 22=mdd_surf
-    N_SE = 17
+    N_SE = 18
 
     nan_array = np.full(true_IRF_target.shape, np.nan)
 
     def fail(msg):
-        return (iter_idx,) + (None,) * N_SE + (None, (None,)*4, None, None, None, msg)
+        return (iter_idx,) + (None,) * N_SE + (None, (None,)*7, None, None, None, None, None, None, msg)
 
     try:
         ols_cache = {}
@@ -249,10 +248,15 @@ def single_monte_carlo_iteration(args):
             last_base = np.hstack([np.eye(remainder), np.zeros((remainder, 11 - remainder))])
             X_exo = np.vstack([X_exo, last_base])
 
+        bvar_mdd_grid = {}
+        bvar_cache = {}
+
+        # ---------------- GRID EVALUATION LOOP ----------------
         for p_test in range(1, p_max + 1):
             y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
             x_slice = np.ascontiguousarray(X_exo[p_max - p_test : , :])
 
+            # 1. OLS Evaluation
             A_temp, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test, x_slice)
             if not np.all(np.isfinite(SIGMA_temp)): continue
             ols_cache[p_test] = (A_temp.copy(), SIGMA_temp.copy())
@@ -273,16 +277,61 @@ def single_monte_carlo_iteration(args):
                 if sic_val < best_sic: best_sic, p_hat_sic = sic_val, p_test
                 if hqc_val < best_hqc: best_hqc, p_hat_hqc = hqc_val, p_test
 
+            # 2. BVAR Evaluation for Joint MDD Grid
+            for tau_test, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
+                A_c, SIGMA_c, mdd_ln, _ = estimate_alexandria_bvar(
+                    y_slice, p_test, X_exo=x_slice, tau_val=tau_test, prior_mean=delta_wn, optimize_tau=False
+                )
+                bvar_mdd_grid[(p_test, tau_test)] = mdd_ln
+                bvar_cache[(p_test, tau_test)] = (A_c.copy(), SIGMA_c.copy())
+
+        # ---------------- BMA WEIGHT CALCULATIONS ----------------
+        
+        # 1a. OLS BIC Weights (Uniform Prior)
         min_bic = min(bic_scores.values())
-        raw_weights = {p: np.exp(-0.5 * N_eff_total * (score - min_bic)) for p, score in bic_scores.items()}
-        weight_sum = sum(raw_weights.values())
-        kept_lags_ols = [p for p, w in raw_weights.items() if (w / weight_sum) > 0.01]
-        final_bic_weights = {p: raw_weights[p] / sum(raw_weights[p] for p in kept_lags_ols) for p in kept_lags_ols}
+        raw_weights_ols = {p: np.exp(-0.5 * N_eff_total * (score - min_bic)) for p, score in bic_scores.items()}
+        weight_sum_ols = sum(raw_weights_ols.values())
+        kept_lags_ols = [p for p, w in raw_weights_ols.items() if (w / weight_sum_ols) > 0.01]
+        final_bic_weights = {p: raw_weights_ols[p] / sum(raw_weights_ols[p] for p in kept_lags_ols) for p in kept_lags_ols}
         exp_p_hybrid = sum(p * w for p, w in final_bic_weights.items())
 
+        # 1b. OLS Geometric Weights (theta = 0.5)
+        theta = 0.5
+        raw_geom_ols = {p: np.exp(-0.5 * N_eff_total * (score - min_bic)) * (theta**p) for p, score in bic_scores.items()}
+        sum_geom_ols = sum(raw_geom_ols.values())
+        kept_geom_ols = {p: w for p, w in raw_geom_ols.items() if (w / sum_geom_ols) > 0.01}
+        sum_kept_geom_ols = sum(kept_geom_ols.values())
+        final_geom_ols_weights = {p: w / sum_kept_geom_ols for p, w in kept_geom_ols.items()}
+        
+        exp_p_geom_ols = sum(p * w for p, w in final_geom_ols_weights.items())
+        geom_ols_p_dist = {p: final_geom_ols_weights.get(p, 0.0) for p in range(1, p_max+1)}
+
+        # 2. Joint Grid BVAR Weights (MDD Uniform Prior)
+        max_mdd = max(bvar_mdd_grid.values())
+        raw_j = {k: np.exp(v - max_mdd) for k, v in bvar_mdd_grid.items()}
+        sum_j = sum(raw_j.values())
+        kept_j = {k: w for k, w in raw_j.items() if (w / sum_j) > 0.01}
+        sum_kept_j = sum(kept_j.values())
+        final_joint_weights = {k: w / sum_kept_j for k, w in kept_j.items()}
+        
+        exp_p_joint = sum(k[0] * w for k, w in final_joint_weights.items())
+        joint_p_dist = {p: sum(w for (p_k, tau_k), w in final_joint_weights.items() if p_k == p) for p in range(1, p_max+1)}
+
+        # 3. Geometric BVAR Weights (MDD with theta=0.5 prior)
+        raw_g = {k: np.exp(v - max_mdd) * (theta**k[0]) for k, v in bvar_mdd_grid.items()}
+        sum_g = sum(raw_g.values())
+        kept_g = {k: w for k, w in raw_g.items() if (w / sum_g) > 0.01}
+        sum_kept_g = sum(kept_g.values())
+        final_geom_weights = {k: w / sum_kept_g for k, w in kept_g.items()}
+        
+        exp_p_geom = sum(k[0] * w for k, w in final_geom_weights.items())
+        geom_p_dist = {p: sum(w for (p_k, tau_k), w in final_geom_weights.items() if p_k == p) for p in range(1, p_max+1)}
+
+        # ---------------- OLS & INFORMATION CRITERION EVALUATIONS ----------------
         computed_ols_SEs = {}
         def get_ols_se_for_p(p_target):
             if p_target in computed_ols_SEs: return computed_ols_SEs[p_target]
+            if p_target not in ols_cache: return nan_array
             A_est, SIGMA_est = ols_cache[p_target]
             try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
             except np.linalg.LinAlgError:
@@ -300,7 +349,7 @@ def single_monte_carlo_iteration(args):
         SE_hqc = get_ols_se_for_p(p_hat_hqc)
         SE_p0  = get_ols_se_for_p(true_p)
 
-        # OLS BMA
+        # OLS BMA (Uniform) Evaluation
         ols_bma_pool, ols_bma_accepted = [], 0
         for p_bma in kept_lags_ols:
             td = int(round(mc_draws * final_bic_weights[p_bma]))
@@ -313,29 +362,31 @@ def single_monte_carlo_iteration(args):
 
         SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2 if ols_bma_accepted > 0 else nan_array
 
-        # Helper for BVAR RW (eval with fixed tau, p_max)
-        def eval_minn_rw(tau_val, seed_offset):
-            y_s = np.ascontiguousarray(simulated_data)
-            x_s = np.ascontiguousarray(X_exo)
-            A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(y_s, p_max, X_exo=x_s, tau_val=tau_val, prior_mean=delta_rw, optimize_tau=False)
-            try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
-            except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
-            v_m, _, acc_m = fast_draw_core(A_m, P_m, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_offset)
-            return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2 if acc_m > 0 else nan_array
+        # OLS BMA (Geometric) Evaluation
+        ols_geom_pool, ols_geom_accepted = [], 0
+        for p_bma in kept_geom_ols:
+            td = int(round(mc_draws * final_geom_ols_weights[p_bma]))
+            if td == 0: continue
+            A_est, SIGMA_est = ols_cache[p_bma]
+            try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            except np.linalg.LinAlgError: SIGMA_est += np.eye(K) * 1e-8; P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            
+            v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 9000 + p_bma)
+            if acc > 0: ols_geom_pool.append(v_irfs[:acc]); ols_geom_accepted += acc
 
-        # BVAR WN grid at p_max: compute SE and MDD for each tau, then select best MDD tau
-        y_pmax = np.ascontiguousarray(simulated_data)
-        x_pmax = np.ascontiguousarray(X_exo)
+        SE_ols_geom = (get_median_target_model(np.vstack(ols_geom_pool), ols_geom_accepted) - true_IRF_target)**2 if ols_geom_accepted > 0 else nan_array
 
+        # ---------------- FIXED P_MAX BVAR EVALUATIONS (Cached) ----------------
         bvar_wn_SEs  = {}
         bvar_wn_MDDs = {}
         for tau_wn, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
-            A_wn, SIGMA_wn, mdd_wn, _ = estimate_alexandria_bvar(
-                y_pmax, p_max, X_exo=x_pmax, tau_val=tau_wn, prior_mean=delta_wn, optimize_tau=False
-            )
+            A_wn, SIGMA_wn = bvar_cache[(p_max, tau_wn)]
+            mdd_wn = bvar_mdd_grid[(p_max, tau_wn)]
+            
             try: P_wn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_wn))
             except np.linalg.LinAlgError: SIGMA_wn += np.eye(K) * 1e-8; P_wn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_wn))
             v_wn, _, acc_wn = fast_draw_core(A_wn, P_wn, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_off)
+            
             bvar_wn_MDDs[tau_wn] = mdd_wn
             bvar_wn_SEs[tau_wn]  = (get_median_target_model(v_wn, acc_wn) - true_IRF_target)**2 if acc_wn > 0 else nan_array
 
@@ -350,40 +401,41 @@ def single_monte_carlo_iteration(args):
         best_mdd_tau   = max(bvar_wn_MDDs, key=bvar_wn_MDDs.get)
         SE_minn_wn_mdd = bvar_wn_SEs[best_mdd_tau]
 
-        # BVAR RW tau=0.20 and tau=0.50
+        # BVAR RW tau=0.20 and tau=0.50 (Evaluated Fresh)
+        def eval_minn_rw(tau_val, seed_offset):
+            y_s = np.ascontiguousarray(simulated_data)
+            x_s = np.ascontiguousarray(X_exo)
+            A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(y_s, p_max, X_exo=x_s, tau_val=tau_val, prior_mean=delta_rw, optimize_tau=False)
+            try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
+            except np.linalg.LinAlgError: SIGMA_m += np.eye(K) * 1e-8; P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
+            v_m, _, acc_m = fast_draw_core(A_m, P_m, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_offset)
+            return (get_median_target_model(v_m, acc_m) - true_IRF_target)**2 if acc_m > 0 else nan_array
+
         SE_minn_rw_020 = eval_minn_rw(0.20, 1000)
         SE_minn_rw_050 = eval_minn_rw(0.50, 1003)
 
-        # BMA BVAR WN tau=0.20
-        bvar_bma_pool, bvar_bma_acc = [], 0
-        for p_bma in kept_lags_ols:
-            td = int(round(mc_draws * final_bic_weights[p_bma]))
-            if td == 0: continue
-            y_s = np.ascontiguousarray(simulated_data[p_max - p_bma : , :])
-            x_s = np.ascontiguousarray(X_exo[p_max - p_bma : , :])
-            A_c, SIGMA_c, _, _ = estimate_alexandria_bvar(y_s, p_bma, X_exo=x_s, tau_val=0.20, prior_mean=delta_wn, optimize_tau=False)
-            try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
-            except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
-            v_c, _, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 4000 + p_bma)
-            if acc_c > 0: bvar_bma_pool.append(v_c[:acc_c]); bvar_bma_acc += acc_c
+        # ---------------- BVAR BMA EVALUATIONS (Cached) ----------------
+        def pool_bma_draws(weights_dict, seed_offset):
+            pool, acc_total = [], 0
+            for (p_bma, tau_bma), weight in weights_dict.items():
+                td = int(round(mc_draws * weight))
+                if td == 0: continue
+                
+                A_c, SIGMA_c = bvar_cache[(p_bma, tau_bma)]
+                try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
+                except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
+                
+                unique_seed = iteration_seed + seed_offset + p_bma * 100 + int(tau_bma * 100)
+                v_c, _, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, unique_seed)
+                if acc_c > 0: pool.append(v_c[:acc_c]); acc_total += acc_c
+            
+            if acc_total > 0: return (get_median_target_model(np.vstack(pool), acc_total) - true_IRF_target)**2
+            return nan_array
 
-        SE_bvar_bma = (get_median_target_model(np.vstack(bvar_bma_pool), bvar_bma_acc) - true_IRF_target)**2 if bvar_bma_acc > 0 else nan_array
+        SE_joint_bma = pool_bma_draws(final_joint_weights, 7000)
+        SE_geom_bma  = pool_bma_draws(final_geom_weights, 8000)
 
-        # BMA BVAR WN tau=0.50
-        bvar_bma_05_pool, bvar_bma_05_acc = [], 0
-        for p_bma in kept_lags_ols:
-            td = int(round(mc_draws * final_bic_weights[p_bma]))
-            if td == 0: continue
-            y_s = np.ascontiguousarray(simulated_data[p_max - p_bma : , :])
-            x_s = np.ascontiguousarray(X_exo[p_max - p_bma : , :])
-            A_c, SIGMA_c, _, _ = estimate_alexandria_bvar(y_s, p_bma, X_exo=x_s, tau_val=0.50, prior_mean=delta_wn, optimize_tau=False)
-            try: P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
-            except np.linalg.LinAlgError: SIGMA_c += np.eye(K) * 1e-8; P_c = np.ascontiguousarray(np.linalg.cholesky(SIGMA_c))
-            v_c, _, acc_c = fast_draw_core(A_c, P_c, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 6000 + p_bma)
-            if acc_c > 0: bvar_bma_05_pool.append(v_c[:acc_c]); bvar_bma_05_acc += acc_c
-
-        SE_bvar_bma_05 = (get_median_target_model(np.vstack(bvar_bma_05_pool), bvar_bma_05_acc) - true_IRF_target)**2 if bvar_bma_05_acc > 0 else nan_array
-
+        # ---------------- TRADEOFF & SURFACE EVALUATIONS ----------------
         tradeoff_mses = None
         mdd_surface   = None
 
@@ -407,22 +459,15 @@ def single_monte_carlo_iteration(args):
                     _, _, log_mdd_surf, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
                     mdd_surface[idx] = log_mdd_surf
 
-        # Return tuple indices:
-        # 0=iter_idx, 1=SE_aic, 2=SE_sic, 3=SE_hqc, 4=SE_ols_bma,
-        # 5-11=SE_minn_wn_005..095, 12=SE_minn_rw_020, 13=SE_minn_rw_050,
-        # 14=SE_bvar_bma(0.2), 15=SE_bvar_bma_05(0.5), 16=SE_minn_wn_mdd,
-        # 17=SE_p0, 18=best_mdd_tau, 19=p_tuple, 20=bic_weights, 21=tradeoff, 22=mdd_surf
-        return (iter_idx, SE_aic, SE_sic, SE_hqc, SE_ols_bma,
+        return (iter_idx, SE_aic, SE_sic, SE_hqc, SE_ols_bma, SE_ols_geom,
                 SE_minn_wn_005, SE_minn_wn_020, SE_minn_wn_035, SE_minn_wn_050,
                 SE_minn_wn_065, SE_minn_wn_080, SE_minn_wn_095,
                 SE_minn_rw_020, SE_minn_rw_050,
-                SE_bvar_bma, SE_bvar_bma_05, SE_minn_wn_mdd,
-                SE_p0,
-                best_mdd_tau,
-                (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid),
-                final_bic_weights,
-                tradeoff_mses, mdd_surface,
-                "Success")
+                SE_joint_bma, SE_geom_bma, SE_minn_wn_mdd,
+                SE_p0, best_mdd_tau,
+                (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid, exp_p_geom_ols, exp_p_joint, exp_p_geom),
+                final_bic_weights, geom_ols_p_dist, joint_p_dist, geom_p_dist,
+                tradeoff_mses, mdd_surface, "Success")
 
     except Exception as e:
         return fail(f"Error: {str(e)}")
@@ -451,7 +496,7 @@ def main():
     n_cores = multiprocessing.cpu_count()
 
     print("\n" + "="*90)
-    print(f" STARTING MASTER ASYMPTOTIC MONTE CARLO (State-Of-The-Art with Graph Exports)")
+    print(f" STARTING MASTER ASYMPTOTIC MONTE CARLO (2x2 Matrix: BMA & Geometric Priors)")
     print("="*90)
 
     for current_p0 in dgp_lag_orders:
@@ -466,16 +511,16 @@ def main():
             print(f"    Running Simulation for T = {current_T} ...", end="", flush=True)
 
             all_SE_aic, all_SE_sic, all_SE_hqc = [], [], []
-            all_SE_ols_bma = []
+            all_SE_ols_bma, all_SE_ols_geom = [], []
             all_SE_minn_wn_005, all_SE_minn_wn_020, all_SE_minn_wn_035 = [], [], []
             all_SE_minn_wn_050, all_SE_minn_wn_065, all_SE_minn_wn_080, all_SE_minn_wn_095 = [], [], [], []
             all_SE_minn_rw_020, all_SE_minn_rw_050 = [], []
-            all_SE_bvar_bma, all_SE_bvar_bma_05, all_SE_minn_wn_mdd = [], [], []
+            all_SE_joint_bma, all_SE_geom_bma, all_SE_minn_wn_mdd = [], [], []
             all_SE_p0 = []
             all_mdd_taus = []
             all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
-            all_exp_p_hybrid = []
-            all_weights_hybrid = []
+            all_exp_p_hybrid, all_exp_p_geom_ols, all_exp_p_joint, all_exp_p_geom = [], [], [], []
+            all_weights_hybrid, all_weights_geom_ols, all_weights_joint, all_weights_geom = [], [], [], []
             all_tradeoffs_t = []
 
             tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max) for i in range(N_iterations)]
@@ -490,43 +535,51 @@ def main():
                 all_SE_sic.append(res[2])
                 all_SE_hqc.append(res[3])
                 all_SE_ols_bma.append(res[4])
-                all_SE_minn_wn_005.append(res[5])
-                all_SE_minn_wn_020.append(res[6])
-                all_SE_minn_wn_035.append(res[7])
-                all_SE_minn_wn_050.append(res[8])
-                all_SE_minn_wn_065.append(res[9])
-                all_SE_minn_wn_080.append(res[10])
-                all_SE_minn_wn_095.append(res[11])
-                all_SE_minn_rw_020.append(res[12])
-                all_SE_minn_rw_050.append(res[13])
-                all_SE_bvar_bma.append(res[14])
-                all_SE_bvar_bma_05.append(res[15])
-                all_SE_minn_wn_mdd.append(res[16])
-                all_SE_p0.append(res[17])
-                all_mdd_taus.append(res[18])
+                all_SE_ols_geom.append(res[5])
+                all_SE_minn_wn_005.append(res[6])
+                all_SE_minn_wn_020.append(res[7])
+                all_SE_minn_wn_035.append(res[8])
+                all_SE_minn_wn_050.append(res[9])
+                all_SE_minn_wn_065.append(res[10])
+                all_SE_minn_wn_080.append(res[11])
+                all_SE_minn_wn_095.append(res[12])
+                all_SE_minn_rw_020.append(res[13])
+                all_SE_minn_rw_050.append(res[14])
+                all_SE_joint_bma.append(res[15])
+                all_SE_geom_bma.append(res[16])
+                all_SE_minn_wn_mdd.append(res[17])
+                all_SE_p0.append(res[18])
+                all_mdd_taus.append(res[19])
 
-                p_tuple = res[19]
+                p_tuple = res[20]
                 all_p_hats_aic.append(p_tuple[0])
                 all_p_hats_sic.append(p_tuple[1])
                 all_p_hats_hqc.append(p_tuple[2])
                 all_exp_p_hybrid.append(p_tuple[3])
-                all_weights_hybrid.append(res[20])
+                all_exp_p_geom_ols.append(p_tuple[4])
+                all_exp_p_joint.append(p_tuple[5])
+                all_exp_p_geom.append(p_tuple[6])
+                
+                all_weights_hybrid.append(res[21])
+                all_weights_geom_ols.append(res[22])
+                all_weights_joint.append(res[23])
+                all_weights_geom.append(res[24])
 
                 se_sic_iter = np.sum(res[2]) if not (np.isscalar(res[2]) and np.isnan(res[2])) else np.nan
-                se_bma_iter = np.sum(res[14]) if not (np.isscalar(res[14]) and np.isnan(res[14])) else np.nan
-                se_p0_iter  = np.sum(res[17]) + 1e-12 if not (np.isscalar(res[17]) and np.isnan(res[17])) else np.nan
+                se_bma_iter = np.sum(res[15]) if not (np.isscalar(res[15]) and np.isnan(res[15])) else np.nan
+                se_p0_iter  = np.sum(res[18]) + 1e-12 if not (np.isscalar(res[18]) and np.isnan(res[18])) else np.nan
 
                 iteration_mses_list.append({
                     'p0': current_p0, 'T': current_T, 'Iter': res[0],
                     'BIC_Rel_MSE': se_sic_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan,
-                    'BMA_Rel_MSE': se_bma_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan
+                    'Joint_BMA_Rel_MSE': se_bma_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan
                 })
 
-                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[18]})
-                if res[21] is not None: all_tradeoffs_t.append(res[21])
-                if res[22] is not None:
+                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[19]})
+                if res[25] is not None: all_tradeoffs_t.append(res[25])
+                if res[26] is not None:
                     for i, t_val in enumerate(TAU_GRID_PLOT):
-                        mdd_list.append({'Tau': t_val, 'MDD': res[22][i]})
+                        mdd_list.append({'Tau': t_val, 'MDD': res[26][i]})
 
             if len(all_SE_aic) == 0:
                 print(" [FAILED]"); continue
@@ -560,10 +613,16 @@ def main():
                 for i, t_val in enumerate(TAU_GRID_PLOT):
                     tradeoff_list.append({'T': current_T, 'Tau': t_val, 'Rel_MSE': geom_mean_curve[i]})
 
-            avg_hybrid_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_hybrid]) for p in range(1, p_max + 1)}
-            h_row = {"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "Hybrid-BMA (OLS W)"}
-            h_row.update(avg_hybrid_dist)
-            bma_weights_list.append(h_row)
+            # Compute Average Weights for CSVs
+            avg_hybrid_dist   = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_hybrid]) for p in range(1, p_max + 1)}
+            avg_geom_ols_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom_ols]) for p in range(1, p_max + 1)}
+            avg_joint_dist    = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_joint]) for p in range(1, p_max + 1)}
+            avg_geom_dist     = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom]) for p in range(1, p_max + 1)}
+
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-BMA", **avg_hybrid_dist})
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-Geom-BMA", **avg_geom_ols_dist})
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "Joint-BMA", **avg_joint_dist})
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "Geom-BMA", **avg_geom_dist})
 
             def calc_met(se_list, p_list, true_val, tau_list=None):
                 mse_sums = []
@@ -592,22 +651,23 @@ def main():
                 return geom_mean, p5, p95, round(lg, 2), round(ml, 2), avg_tau, round(fail_pct, 1)
 
             models = [
-                ("AIC",                              calc_met(all_SE_aic,          all_p_hats_aic,   true_p)),
-                ("SIC (BIC)",                        calc_met(all_SE_sic,          all_p_hats_sic,   true_p)),
-                ("HQC",                              calc_met(all_SE_hqc,          all_p_hats_hqc,   true_p)),
-                ("OLS BMA (BIC-W)",                  calc_met(all_SE_ols_bma,      all_exp_p_hybrid, true_p)),
-                ("BVAR-WN (tau=0.05, p_max)",        calc_met(all_SE_minn_wn_005,  None,             true_p)),
-                ("BVAR-WN (tau=0.20, p_max)",        calc_met(all_SE_minn_wn_020,  None,             true_p)),
-                ("BVAR-WN (tau=0.35, p_max)",        calc_met(all_SE_minn_wn_035,  None,             true_p)),
-                ("BVAR-WN (tau=0.50, p_max)",        calc_met(all_SE_minn_wn_050,  None,             true_p)),
-                ("BVAR-WN (tau=0.65, p_max)",        calc_met(all_SE_minn_wn_065,  None,             true_p)),
-                ("BVAR-WN (tau=0.80, p_max)",        calc_met(all_SE_minn_wn_080,  None,             true_p)),
-                ("BVAR-WN (tau=0.95, p_max)",        calc_met(all_SE_minn_wn_095,  None,             true_p)),
-                ("BVAR-RW (tau=0.20, p_max)",        calc_met(all_SE_minn_rw_020,  None,             true_p)),
-                ("BVAR-RW (tau=0.50, p_max)",        calc_met(all_SE_minn_rw_050,  None,             true_p)),
-                ("BMA BVAR-WN (BIC-W, tau=0.20)",    calc_met(all_SE_bvar_bma,     all_exp_p_hybrid, true_p)),
-                ("BMA BVAR-WN (BIC-W, tau=0.50)",    calc_met(all_SE_bvar_bma_05,  all_exp_p_hybrid, true_p)),
-                ("BVAR-WN (MDD tau, p_max)",         calc_met(all_SE_minn_wn_mdd,  None,             true_p, all_mdd_taus)),
+                ("AIC",                              calc_met(all_SE_aic,          all_p_hats_aic,     true_p)),
+                ("SIC (BIC)",                        calc_met(all_SE_sic,          all_p_hats_sic,     true_p)),
+                ("HQC",                              calc_met(all_SE_hqc,          all_p_hats_hqc,     true_p)),
+                ("OLS BMA (BIC-W)",                  calc_met(all_SE_ols_bma,      all_exp_p_hybrid,   true_p)),
+                ("OLS BMA (Geom-W, th=0.5)",         calc_met(all_SE_ols_geom,     all_exp_p_geom_ols, true_p)),
+                ("BVAR-WN (tau=0.05, p_max)",        calc_met(all_SE_minn_wn_005,  None,               true_p)),
+                ("BVAR-WN (tau=0.20, p_max)",        calc_met(all_SE_minn_wn_020,  None,               true_p)),
+                ("BVAR-WN (tau=0.35, p_max)",        calc_met(all_SE_minn_wn_035,  None,               true_p)),
+                ("BVAR-WN (tau=0.50, p_max)",        calc_met(all_SE_minn_wn_050,  None,               true_p)),
+                ("BVAR-WN (tau=0.65, p_max)",        calc_met(all_SE_minn_wn_065,  None,               true_p)),
+                ("BVAR-WN (tau=0.80, p_max)",        calc_met(all_SE_minn_wn_080,  None,               true_p)),
+                ("BVAR-WN (tau=0.95, p_max)",        calc_met(all_SE_minn_wn_095,  None,               true_p)),
+                ("BVAR-RW (tau=0.20, p_max)",        calc_met(all_SE_minn_rw_020,  None,               true_p)),
+                ("BVAR-RW (tau=0.50, p_max)",        calc_met(all_SE_minn_rw_050,  None,               true_p)),
+                ("Joint (p, tau) Grid BMA",          calc_met(all_SE_joint_bma,    all_exp_p_joint,    true_p)),
+                ("Geom (p, tau) Grid BMA (th=0.5)",  calc_met(all_SE_geom_bma,     all_exp_p_geom,     true_p)),
+                ("BVAR-WN (MDD tau, p_max)",         calc_met(all_SE_minn_wn_mdd,  None,               true_p, all_mdd_taus)),
             ]
 
             for m_name, m_data in models:
@@ -640,7 +700,7 @@ def main():
         print(df_master.to_string(index=False))
 
         print("\n" + "="*90)
-        print(" SUCCESS: Simulation complete and 6 CSVs generated in 'Results'!")
+        print(" SUCCESS: Simulation complete and CSVs generated in 'Results'!")
         print("="*90)
     else:
         print("\n[ERROR] No data generated. Check file paths.")
