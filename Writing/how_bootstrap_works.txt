@@ -1,0 +1,86 @@
+Here is a step-by-step breakdown of exactly how the empirical bootstrap implementation works in your updated script.
+
+The transition from a parametric to an empirical bootstrap requires a fundamental shift in how the synthetic time series is constructed. Instead of generating pure mathematical noise, the script now actively resamples pieces of the actual macroeconomic history.
+
+Here is how the machinery operates, split into the **Setup Phase** and the **DGP Loop Phase**.
+
+---
+
+### Phase 1: The Setup (Extracting the Exact Residuals)
+
+Before the simulation loop even begins, the master script has to prepare the "bucket" of empirical shocks. This happens in the `main()` function.
+
+In an empirical bootstrap designed to evaluate estimators, you cannot just use *any* residuals. You must use the residuals that exactly match your theoretical DGP ($A_{\text{true}}$ and $V_{\text{true}}$).
+
+The script does this by pushing the real-world data ($y_t$) through the theoretical parameters:
+
+
+$$\hat{u}_t = y_t - V_{\text{true}} d_t - A_{\text{true}} y_{t-p}$$
+
+```python
+deterministic_term_emp = true_V @ d_t_matrix
+autoregressive_term_emp = true_A @ Y_lags
+empirical_residuals_exact = y_current - deterministic_term_emp - autoregressive_term_emp
+
+```
+
+This guarantees that the historical anomalies (fat tails, 2008 financial crisis, etc.) are captured exactly as they would appear under your assumed true lag structure. This matrix of `empirical_residuals_exact` becomes the pool from which the Monte Carlo draws its random shocks.
+
+---
+
+### Phase 2: The DGP Loop (`simulate_var_dgp_empirical`)
+
+Inside the highly optimized Numba function, the script builds the artificial time series one step at a time.
+
+#### Step 1: The "Warm Start" (Block Initialization)
+
+In the parametric script, you started the economy at an absolute zero state (`y_sim = np.zeros(...)`). You can't do that in an empirical bootstrap without heavily distorting the initial variance.
+
+Instead, the script uses a **Block Bootstrap** approach for initialization. It randomly selects a starting point in the actual historical data and copies a contiguous block of length $p$ exactly as it happened in the real world:
+
+```python
+max_start_idx = T_emp - p
+start_idx = np.random.randint(0, max_start_idx + 1)
+
+for t in range(p):
+    y_sim[:, t] = empirical_data[:, start_idx + t]
+
+```
+
+If $p=4$, the script might randomly grab January through April of 1992 and use those actual values as the foundation for the autoregressive loop.
+
+#### Step 2: The Autoregressive Momentum
+
+From period $t=p$ to $T_{\text{total}}$, the script iterates forward exactly as it did before. It calculates the deterministic seasonal effects ($V d_t$) and the autoregressive momentum from the previous lags ($A y_{t-p}$).
+
+#### Step 3: Drawing the Shock with Replacement
+
+This is the heart of the empirical bootstrap. Instead of using `np.random.randn()`, the script acts like it is drawing a ball out of a bucket.
+
+```python
+res_idx = np.random.randint(0, T_res)
+u_t = empirical_residuals[:, res_idx : res_idx + 1]
+
+```
+
+It picks a random integer corresponding to a specific month in your historical residual matrix and pulls that entire column ($u_t$). Because it uses `randint` repeatedly, it samples **with replacement**, meaning it might draw the shock from March 2001 multiple times, or never at all.
+
+#### Step 4: The Crucial Absence of the Structural Matrix ($\tilde{B}$)
+
+Notice that the equation used to assemble today's value has changed.
+
+* **Old Parametric:** $y_t = \text{det} + \text{AR} + (\tilde{B} \times e_t)$
+* **New Empirical:** $y_t = \text{det} + \text{AR} + u_t$
+
+The true structural impact matrix ($\tilde{B}$) is entirely absent from the DGP loop. This is mathematically intentional. The empirical residuals ($u_t$) you extracted in Phase 1 are *reduced-form* residuals. Because they came from real macroeconomic data, the cross-variable correlation (e.g., how an oil price shock simultaneously affects real activity) is **already baked into them**.
+
+If you were to multiply those historical residuals by $\tilde{B}$ again, you would square the covariance matrix and double-count the correlation, destroying the simulation.
+
+#### Step 5: The Burn-in Discard
+
+```python
+return np.ascontiguousarray(y_sim[:, burn_in:].T)
+
+```
+
+Even with the "warm start" from Step 1, joining a historical block of data with randomly scrambled historical residuals creates an artificial "seam" that takes a few dozen periods to smooth out into a stationary distribution. The script still runs 120 extra months of simulation and permanently slices them off before returning the clean, $T$-length dataset to the estimators.
