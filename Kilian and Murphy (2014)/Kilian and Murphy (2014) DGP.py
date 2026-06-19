@@ -59,8 +59,9 @@ def lsvarcSA2(y, p):
     U = Y2 - B @ X
     SIGMA = (U @ U.T) / (t - p - p * K - 12)
     
-    V = B[:, 0:12] 
-    A = B[:, 12 : K*p + 12]
+    # FORCE CONTIGUOUS MEMORY HERE:
+    V = np.ascontiguousarray(B[:, 0:12]) 
+    A = np.ascontiguousarray(B[:, 12 : K*p + 12])
     
     return A, B, X, SIGMA, U, V
 
@@ -68,15 +69,15 @@ def lsvarcSA2(y, p):
 # OPTIMIZATION 2 & 3: JIT-COMPILED CORE WITH "FAIL FAST" LOGIC
 # -------------------------------------------------------------------
 @njit
-def compute_structural_irf_numba(A, B_tilde, h_max, K, p):
-    """JIT-compiled IRF generator for pure C-level execution speed."""
+def compute_structural_irf_numba(A_3d, B_tilde, h_max, K, p):
+    """JIT-compiled IRF generator taking a pre-sliced 3D A-matrix."""
     Phi = np.zeros((h_max, K, K))
     Phi[0] = np.eye(K)
     
     for h in range(1, h_max):
         for j in range(1, min(h, p) + 1):
-            A_j = A[:, (j-1)*K : j*K]
-            Phi[h] += A_j @ Phi[h-j]
+            # Simply access the pre-sliced, contiguous 2D array!
+            Phi[h] += A_3d[j-1] @ Phi[h-j]
             
     IRF = np.zeros((h_max, K, K))
     for h in range(h_max):
@@ -109,6 +110,9 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
             if R[i, i] < 0:
                 Q[:, i] = -Q[:, i]
                 
+        # --- NEW FIX: Force Q into C-contiguous memory ---
+        Q = np.ascontiguousarray(Q)
+        
         B_tilde = P @ Q
         
         # 2. FAIL FAST 1: Check Impact Sign Restrictions
@@ -124,9 +128,10 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
                 
         if not match:
             continue # Throw away the matrix immediately. Do not compute IRF!
-            
-        # 3. Compute IRF
+
+        # 3. Pass it into the function
         irf = compute_structural_irf_numba(A, B_tilde, h_max, K, p)
+        
         
         irf_cumulative = irf.copy()
         # Explicit loop for cumulative sum (safest approach in Numba 3D arrays)
@@ -169,15 +174,21 @@ def fast_draw_core(A, P, signs, p, K, h_max, target_draws):
 # -------------------------------------------------------------------
 def worker_draw(args):
     """Wrapper function to assign a unique seed to each parallel core."""
-    A, P, signs, p, K, h_max, target_draws, seed = args
+    A_3d, P, signs, p, K, h_max, target_draws, seed = args
     np.random.seed(seed) # Crucial for independent random streams
-    return fast_draw_core(A, P, signs, p, K, h_max, target_draws)
+    return fast_draw_core(A_3d, P, signs, p, K, h_max, target_draws)
 
 def draw_sign_restrictions_parallel(A, SIGMA, signs, p, K, h_max=24, n_draws=1000):
     P = np.linalg.cholesky(SIGMA)
-    n_cores = multiprocessing.cpu_count()
+    # Ensure P is contiguous before sending it to the workers
+    P = np.ascontiguousarray(P)
     
-    # Distribute the 1000 target draws equally among available CPU cores
+    # NEW: Pre-slice A into a contiguous 3D array (p, K, K)
+    A_3d = np.zeros((p, K, K))
+    for j in range(1, p + 1):
+        A_3d[j-1] = np.ascontiguousarray(A[:, (j-1)*K : j*K])
+        
+    n_cores = multiprocessing.cpu_count()
     draws_per_core = n_draws // n_cores
     remain = n_draws % n_cores
     
@@ -185,7 +196,8 @@ def draw_sign_restrictions_parallel(A, SIGMA, signs, p, K, h_max=24, n_draws=100
     for i in range(n_cores):
         td = draws_per_core + (1 if i < remain else 0)
         if td > 0:
-            tasks.append((A, P, signs, p, K, h_max, td, SEED + i + p*100))
+            # Pass A_3d instead of A
+            tasks.append((A_3d, P, signs, p, K, h_max, td, SEED + i + p*100))
             
     valid_IRFs_list = []
     valid_B_tildes_list = []
