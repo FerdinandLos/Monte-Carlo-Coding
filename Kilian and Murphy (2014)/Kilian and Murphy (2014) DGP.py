@@ -317,16 +317,14 @@ def main():
         os.makedirs(export_folder, exist_ok=True)
         export_path = os.path.join(export_folder, f'true_dgp_parameters_{config_name}.npz')
 
-        # Add empirical_data and empirical_residuals to feed the new Monte Carlo DGP
+        # Save the DGP
         np.savez(export_path, 
                  A_true=A, 
                  SIGMA_true=SIGMA, 
                  B_tilde_true=B_tilde_true, 
                  True_IRF=True_IRF, 
                  V_true=V, 
-                 p_true=p,
-                 empirical_data=km_data_array.T,    # <-- ADD THIS (Shape K x T)
-                 empirical_residuals=U)             # <-- ADD THIS (Shape K x T_eff)         
+                 p_true=p)       
 
         dgp_results[config_name]["B_tilde_true"] = B_tilde_true
         dgp_results[config_name]["True_IRF"] = True_IRF

@@ -13,38 +13,25 @@ SEED = 12345
 os.environ.setdefault('PYTHONHASHSEED', str(SEED))
 os.environ.setdefault('NUMBA_NUM_THREADS', '1')
 
+# Discrete tau grid used for BVAR-WN fixed-tau models, MDD tau selection,
+# AND the Tradeoff/Surface CSV exports.
 TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
 WN_SEED_OFFSETS = [999, 1001, 1008, 1002, 1009, 1010, 1011]
 
 # -------------------------------------------------------------------
-# 1. NUMBA-OPTIMIZED EMPIRICAL DATA GENERATING PROCESS (DGP)
+# 1. NUMBA-OPTIMIZED DATA GENERATING PROCESS (DGP)
 # -------------------------------------------------------------------
 @njit
-def simulate_var_dgp_empirical(A, V, p, T_target, burn_in, seed_val, empirical_data, empirical_residuals):
-    """
-    Empirical Bootstrap DGP:
-    1. Initializes data by drawing a contiguous block of length p from the empirical dataset.
-    2. Generates future values by sampling with replacement from empirical reduced-form residuals.
-    """
+def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
     np.random.seed(seed_val)
     K = A.shape[0]
     T_total = T_target + burn_in
-    
-    T_emp = empirical_data.shape[1]
-    T_res = empirical_residuals.shape[1]
 
+    structural_shocks = np.random.randn(K, T_total)
+    reduced_residuals = B_tilde @ structural_shocks
     y_sim = np.zeros((K, T_total))
 
-    # --- Step 1: Draw Initial Block of length p ---
-    max_start_idx = T_emp - p
-    start_idx = np.random.randint(0, max_start_idx + 1)
-    
-    for t in range(p):
-        y_sim[:, t] = empirical_data[:, start_idx + t]
-
-    # --- Step 2: Iterate Forward using Empirical Residuals ---
     for t in range(p, T_total):
-        # Deterministic Seasonality
         d_t = np.zeros((12, 1))
         d_t[0, 0] = 1.0
         month_idx = t % 12
@@ -53,19 +40,13 @@ def simulate_var_dgp_empirical(A, V, p, T_target, burn_in, seed_val, empirical_d
 
         deterministic_term = V @ d_t
 
-        # Autoregressive Lags
         y_lags = np.zeros((K * p, 1))
         for lag in range(1, p + 1):
             for k in range(K):
                 y_lags[(lag-1)*K + k, 0] = y_sim[k, t - lag]
 
         autoregressive_term = A @ y_lags
-        
-        # Sample an empirical residual with replacement
-        res_idx = np.random.randint(0, T_res)
-        u_t = empirical_residuals[:, res_idx : res_idx + 1]
-
-        y_t = deterministic_term + autoregressive_term + u_t
+        y_t = deterministic_term + autoregressive_term + reduced_residuals[:, t:t+1]
         y_sim[:, t] = y_t[:, 0]
 
     return np.ascontiguousarray(y_sim[:, burn_in:].T)
@@ -234,7 +215,7 @@ def get_median_target_model(valid_irfs, accepted_count):
 # 4. THE SINGLE MONTE CARLO ITERATION
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
-    iter_idx, iteration_seed, true_A, true_V, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max, empirical_data, empirical_residuals = args
+    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
     N_SE = 26
 
     nan_array = np.full(true_IRF_target.shape, np.nan)
@@ -247,9 +228,7 @@ def single_monte_carlo_iteration(args):
         bic_scores = {}
 
         K = true_A.shape[0]
-        
-        # ---------------- CALL TO EMPIRICAL DGP ----------------
-        simulated_data = simulate_var_dgp_empirical(true_A, true_V, true_p, T_real, 120, iteration_seed, empirical_data, empirical_residuals)
+        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 120, iteration_seed)
 
         best_aic, best_sic, best_hqc = float('inf'), float('inf'), float('inf')
         p_hat_aic, p_hat_sic, p_hat_hqc = 1, 1, 1
@@ -275,6 +254,7 @@ def single_monte_carlo_iteration(args):
             y_slice = np.ascontiguousarray(simulated_data[p_max - p_test : , :])
             x_slice = np.ascontiguousarray(X_exo[p_max - p_test : , :])
 
+            # 1. OLS Evaluation
             A_temp, SIGMA_temp = lsvarcSA2_silent(y_slice, p_test, x_slice)
             if not np.all(np.isfinite(SIGMA_temp)): continue
             ols_cache[p_test] = (A_temp.copy(), SIGMA_temp.copy())
@@ -295,6 +275,7 @@ def single_monte_carlo_iteration(args):
                 if sic_val < best_sic: best_sic, p_hat_sic = sic_val, p_test
                 if hqc_val < best_hqc: best_hqc, p_hat_hqc = hqc_val, p_test
 
+            # 2. BVAR Evaluation for Joint MDD Grid
             for tau_test, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
                 A_c, SIGMA_c, mdd_ln, _ = estimate_alexandria_bvar(
                     y_slice, p_test, X_exo=x_slice, tau_val=tau_test, prior_mean=delta_wn, optimize_tau=False
@@ -303,6 +284,8 @@ def single_monte_carlo_iteration(args):
                 bvar_cache[(p_test, tau_test)] = (A_c.copy(), SIGMA_c.copy())
 
         # ---------------- BMA WEIGHT CALCULATIONS ----------------
+        
+        # 1a. OLS BIC Weights (Uniform Prior)
         min_bic = min(bic_scores.values())
         raw_weights_ols = {p: np.exp(-0.5 * N_eff_total * (score - min_bic)) for p, score in bic_scores.items()}
         weight_sum_ols = sum(raw_weights_ols.values())
@@ -310,29 +293,35 @@ def single_monte_carlo_iteration(args):
         final_bic_weights = {p: raw_weights_ols[p] / sum(raw_weights_ols[p] for p in kept_lags_ols) for p in kept_lags_ols}
         exp_p_hybrid = sum(p * w for p, w in final_bic_weights.items())
 
+        # 1b. OLS Geometric Weights (theta = 0.5)
         theta = 0.5
         raw_geom_ols = {p: np.exp(-0.5 * N_eff_total * (score - min_bic)) * (theta**p) for p, score in bic_scores.items()}
         sum_geom_ols = sum(raw_geom_ols.values())
         kept_geom_ols = {p: w for p, w in raw_geom_ols.items() if (w / sum_geom_ols) > 0.01}
         sum_kept_geom_ols = sum(kept_geom_ols.values())
         final_geom_ols_weights = {p: w / sum_kept_geom_ols for p, w in kept_geom_ols.items()}
+        
         exp_p_geom_ols = sum(p * w for p, w in final_geom_ols_weights.items())
         geom_ols_p_dist = {p: final_geom_ols_weights.get(p, 0.0) for p in range(1, p_max+1)}
 
+        # 2. Joint Grid BVAR Weights (MDD Uniform Prior)
         max_mdd = max(bvar_mdd_grid.values())
         raw_j = {k: np.exp(v - max_mdd) for k, v in bvar_mdd_grid.items()}
         sum_j = sum(raw_j.values())
         kept_j = {k: w for k, w in raw_j.items() if (w / sum_j) > 0.01}
         sum_kept_j = sum(kept_j.values())
         final_joint_weights = {k: w / sum_kept_j for k, w in kept_j.items()}
+        
         exp_p_joint = sum(k[0] * w for k, w in final_joint_weights.items())
         joint_p_dist = {p: sum(w for (p_k, tau_k), w in final_joint_weights.items() if p_k == p) for p in range(1, p_max+1)}
 
+        # 3. Geometric BVAR Weights (MDD with theta=0.5 prior)
         raw_g = {k: np.exp(v - max_mdd) * (theta**k[0]) for k, v in bvar_mdd_grid.items()}
         sum_g = sum(raw_g.values())
         kept_g = {k: w for k, w in raw_g.items() if (w / sum_g) > 0.01}
         sum_kept_g = sum(kept_g.values())
         final_geom_weights = {k: w / sum_kept_g for k, w in kept_g.items()}
+        
         exp_p_geom = sum(k[0] * w for k, w in final_geom_weights.items())
         geom_p_dist = {p: sum(w for (p_k, tau_k), w in final_geom_weights.items() if p_k == p) for p in range(1, p_max+1)}
 
@@ -358,6 +347,7 @@ def single_monte_carlo_iteration(args):
         SE_hqc = get_ols_se_for_p(p_hat_hqc)
         SE_p0  = get_ols_se_for_p(true_p)
 
+        # OLS BMA (Uniform) Evaluation
         ols_bma_pool, ols_bma_accepted = [], 0
         for p_bma in kept_lags_ols:
             td = int(round(mc_draws * final_bic_weights[p_bma]))
@@ -370,6 +360,7 @@ def single_monte_carlo_iteration(args):
 
         SE_ols_bma = (get_median_target_model(np.vstack(ols_bma_pool), ols_bma_accepted) - true_IRF_target)**2 if ols_bma_accepted > 0 else nan_array
 
+        # OLS BMA (Geometric) Evaluation
         ols_geom_pool, ols_geom_accepted = [], 0
         for p_bma in kept_geom_ols:
             td = int(round(mc_draws * final_geom_ols_weights[p_bma]))
@@ -377,17 +368,19 @@ def single_monte_carlo_iteration(args):
             A_est, SIGMA_est = ols_cache[p_bma]
             try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
             except np.linalg.LinAlgError: SIGMA_est += np.eye(K) * 1e-8; P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            
             v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 9000 + p_bma)
             if acc > 0: ols_geom_pool.append(v_irfs[:acc]); ols_geom_accepted += acc
 
         SE_ols_geom = (get_median_target_model(np.vstack(ols_geom_pool), ols_geom_accepted) - true_IRF_target)**2 if ols_geom_accepted > 0 else nan_array
 
-        # ---------------- FIXED P_MAX BVAR EVALUATIONS ----------------
+        # ---------------- FIXED P_MAX BVAR EVALUATIONS (Cached) ----------------
         bvar_wn_SEs  = {}
         bvar_wn_MDDs = {}
         for tau_wn, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
             A_wn, SIGMA_wn = bvar_cache[(p_max, tau_wn)]
             mdd_wn = bvar_mdd_grid[(p_max, tau_wn)]
+            
             try: P_wn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_wn))
             except np.linalg.LinAlgError: SIGMA_wn += np.eye(K) * 1e-8; P_wn = np.ascontiguousarray(np.linalg.cholesky(SIGMA_wn))
             v_wn, _, acc_wn = fast_draw_core(A_wn, P_wn, signs, p_max, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_off)
@@ -406,14 +399,18 @@ def single_monte_carlo_iteration(args):
         best_mdd_tau   = max(bvar_wn_MDDs, key=bvar_wn_MDDs.get)
         SE_minn_wn_mdd = bvar_wn_SEs[best_mdd_tau]
 
-        # ---------------- FIXED P_TRUE BVAR EVALUATIONS ----------------
+        # ---------------- FIXED P_TRUE BVAR EVALUATIONS (Cached) ----------------
         bvar_p0_SEs  = {}
         bvar_p0_MDDs = {}
         for tau_wn, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
+            # Extract from cache generated in the grid search loop
             A_p0, SIGMA_p0 = bvar_cache[(true_p, tau_wn)]
             mdd_p0 = bvar_mdd_grid[(true_p, tau_wn)]
+            
             try: P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
             except np.linalg.LinAlgError: SIGMA_p0 += np.eye(K) * 1e-8; P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
+            
+            # Offset the seed strictly to avoid exact replication of draws from other evaluations
             v_p0, _, acc_p0 = fast_draw_core(A_p0, P_p0, signs, true_p, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_off + 2000)
             
             bvar_p0_MDDs[tau_wn] = mdd_p0
@@ -430,6 +427,7 @@ def single_monte_carlo_iteration(args):
         best_mdd_tau_p0   = max(bvar_p0_MDDs, key=bvar_p0_MDDs.get)
         SE_minn_wn_mdd_p0 = bvar_p0_SEs[best_mdd_tau_p0]
 
+        # BVAR RW tau=0.20 and tau=0.50 (Evaluated Fresh)
         def eval_minn_rw(tau_val, seed_offset):
             y_s = np.ascontiguousarray(simulated_data)
             x_s = np.ascontiguousarray(X_exo)
@@ -442,7 +440,7 @@ def single_monte_carlo_iteration(args):
         SE_minn_rw_020 = eval_minn_rw(0.20, 1000)
         SE_minn_rw_050 = eval_minn_rw(0.50, 1003)
 
-        # ---------------- BVAR BMA EVALUATIONS ----------------
+        # ---------------- BVAR BMA EVALUATIONS (Cached) ----------------
         def pool_bma_draws(weights_dict, seed_offset):
             pool, acc_total = [], 0
             for (p_bma, tau_bma), weight in weights_dict.items():
@@ -463,6 +461,7 @@ def single_monte_carlo_iteration(args):
         SE_joint_bma = pool_bma_draws(final_joint_weights, 7000)
         SE_geom_bma  = pool_bma_draws(final_geom_weights, 8000)
 
+        # ---------------- TRADEOFF & SURFACE EVALUATIONS ----------------
         tradeoff_mses = None
         mdd_surface   = None
 
@@ -510,7 +509,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 2, 2, 5000
+    N_iterations, mc_draws, max_loops = 100, 50, 5000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
@@ -527,30 +526,16 @@ def main():
     n_cores = multiprocessing.cpu_count()
 
     print("\n" + "="*90)
-    print(f" STARTING MASTER EMPIRICAL MONTE CARLO (2x2 Matrix: BMA & Geometric Priors)")
+    print(f" STARTING MASTER ASYMPTOTIC MONTE CARLO (2x2 Matrix: BMA & Geometric Priors)")
     print("="*90)
 
     for current_p0 in dgp_lag_orders:
         dgp_path = os.path.join(km_base, 'DGP files', f'true_dgp_parameters_{current_p0}_lags.npz')
-        if not os.path.exists(dgp_path): 
-            print(f"Skipping {current_p0} lags: File not found.")
-            continue
-            
-        try:
-            dgp = np.load(dgp_path)
-            true_A = np.ascontiguousarray(dgp['A_true'])
-            true_V = np.ascontiguousarray(dgp['V_true'])
-            true_IRF = np.ascontiguousarray(dgp['True_IRF'])
-            true_p = int(dgp['p_true'])
-            p_max = max(12, true_p)
-            
-            # --- Load Empirical Assets for the DGP ---
-            empirical_data = np.ascontiguousarray(dgp['empirical_data']) 
-            empirical_residuals = np.ascontiguousarray(dgp['empirical_residuals'])
-        except KeyError as e:
-            print(f"\n[ERROR] Missing required data in {current_p0}_lags.npz: {e}")
-            print("Please ensure you have re-run your DGP extraction script to save 'empirical_data' and 'empirical_residuals'.")
-            continue
+        if not os.path.exists(dgp_path): continue
+        dgp = np.load(dgp_path)
+        true_A, true_V, true_B_tilde = np.ascontiguousarray(dgp['A_true']), np.ascontiguousarray(dgp['V_true']), np.ascontiguousarray(dgp['B_tilde_true'])
+        true_IRF, true_p = np.ascontiguousarray(dgp['True_IRF']), int(dgp['p_true'])
+        p_max = max(12, true_p)
 
         for current_T in sample_sizes:
             print(f"    Running Simulation for T = {current_T} ...", end="", flush=True)
@@ -563,22 +548,19 @@ def main():
             all_SE_joint_bma, all_SE_geom_bma, all_SE_minn_wn_mdd = [], [], []
             all_SE_p0 = []
             
+            # New p0 specific SE lists
             all_SE_minn_wn_005_p0, all_SE_minn_wn_020_p0, all_SE_minn_wn_035_p0 = [], [], []
             all_SE_minn_wn_050_p0, all_SE_minn_wn_065_p0, all_SE_minn_wn_080_p0, all_SE_minn_wn_095_p0 = [], [], [], []
             all_SE_minn_wn_mdd_p0 = []
 
             all_mdd_taus, all_mdd_taus_p0 = [], []
+            
             all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
             all_exp_p_hybrid, all_exp_p_geom_ols, all_exp_p_joint, all_exp_p_geom = [], [], [], []
             all_weights_hybrid, all_weights_geom_ols, all_weights_joint, all_weights_geom = [], [], [], []
             all_tradeoffs_t = []
 
-            # Cleanly pass the empirical arrays down into the parallel loop
-            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), 
-                      true_A, true_V, true_p, true_IRF, sign_matrix, Q_avg, h_max, 
-                      mc_draws, max_loops, current_T, p_max, 
-                      empirical_data, empirical_residuals) for i in range(N_iterations)]
-                      
+            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max) for i in range(N_iterations)]
             results = Parallel(n_jobs=n_cores, backend='loky')(delayed(single_monte_carlo_iteration)(task) for task in tasks)
 
             for res in results:
@@ -605,6 +587,7 @@ def main():
                 all_SE_minn_wn_mdd.append(res[17])
                 all_SE_p0.append(res[18])
                 
+                # Unpack the new p0 SEs
                 all_SE_minn_wn_005_p0.append(res[19])
                 all_SE_minn_wn_020_p0.append(res[20])
                 all_SE_minn_wn_035_p0.append(res[21])
@@ -681,6 +664,7 @@ def main():
                 for i, t_val in enumerate(TAU_DISCRETE):
                     tradeoff_list.append({'T': current_T, 'Tau': t_val, 'Rel_MSE': geom_mean_curve[i]})
 
+            # Compute Average Weights for CSVs
             avg_hybrid_dist   = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_hybrid]) for p in range(1, p_max + 1)}
             avg_geom_ols_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom_ols]) for p in range(1, p_max + 1)}
             avg_joint_dist    = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_joint]) for p in range(1, p_max + 1)}
@@ -736,6 +720,7 @@ def main():
                 ("Geom (p, tau) Grid BMA (th=0.5)",  calc_met(all_SE_geom_bma,     all_exp_p_geom,     true_p)),
                 ("BVAR-WN (MDD tau, p_max)",         calc_met(all_SE_minn_wn_mdd,  None,               true_p, all_mdd_taus)),
                 
+                # --- New p0 Specific Additions ---
                 ("BVAR-WN (tau=0.05, p0)",           calc_met(all_SE_minn_wn_005_p0,  None,            true_p)),
                 ("BVAR-WN (tau=0.20, p0)",           calc_met(all_SE_minn_wn_020_p0,  None,            true_p)),
                 ("BVAR-WN (tau=0.35, p0)",           calc_met(all_SE_minn_wn_035_p0,  None,            true_p)),
