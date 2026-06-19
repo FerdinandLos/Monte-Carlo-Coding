@@ -7,8 +7,8 @@ import seaborn as sns
 # SIMULATION CONFIGURATION
 # Match these to your CSV file numbers
 # =====================================================================
-ITERS = 2
-DRAWS = 2
+ITERS = 100  # Adjust back to your production run numbers
+DRAWS = 50
 FILE_SUFFIX = f"iters{ITERS}_draws{DRAWS}.csv"
 
 TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
@@ -36,12 +36,13 @@ def main():
     # -------------------------------------------------------------------
     # 2. LOAD ALL CSV DATAFRAMES
     # -------------------------------------------------------------------
-    main_path      = os.path.join(results_dir, f"Master_Final_SVAR_Comparison_{FILE_SUFFIX}")
-    weights_path   = os.path.join(results_dir, f"Master_BMA_Weights_{FILE_SUFFIX}")
-    raw_taus_path  = os.path.join(results_dir, f"Master_Raw_MDD_Tau_{FILE_SUFFIX}")
-    tradeoff_path  = os.path.join(results_dir, f"Master_Tradeoff_Curve_{FILE_SUFFIX}")
-    mdd_path       = os.path.join(results_dir, f"Master_MDD_Surface_{FILE_SUFFIX}")
-    iter_mse_path  = os.path.join(results_dir, f"Master_Iteration_MSEs_{FILE_SUFFIX}")
+    main_path        = os.path.join(results_dir, f"Master_Final_SVAR_Comparison_{FILE_SUFFIX}")
+    weights_path     = os.path.join(results_dir, f"Master_BMA_Weights_{FILE_SUFFIX}")
+    raw_taus_path    = os.path.join(results_dir, f"Master_Raw_MDD_Tau_{FILE_SUFFIX}")
+    raw_taus_p0_path = os.path.join(results_dir, f"Master_Raw_MDD_Tau_p0_{FILE_SUFFIX}")
+    tradeoff_path    = os.path.join(results_dir, f"Master_Tradeoff_Curve_{FILE_SUFFIX}")
+    mdd_path         = os.path.join(results_dir, f"Master_MDD_Surface_{FILE_SUFFIX}")
+    iter_mse_path    = os.path.join(results_dir, f"Master_Iteration_MSEs_{FILE_SUFFIX}")
 
     if not os.path.exists(main_path):
         print(f"\n[CRITICAL ERROR] Main results CSV not found! The script aborted.")
@@ -61,22 +62,30 @@ def main():
     df_renamed = df.rename(columns={'True DGP (p0)': '$p_0$', 'Sample Size (T)': '$T$'})
 
     estimator_mapping = {
-        'BVAR-WN (tau=0.05, p_max)': 'BVAR_WN_05',
-        'BVAR-WN (tau=0.20, p_max)': 'BVAR_WN_20',
-        'BVAR-WN (tau=0.35, p_max)': 'BVAR_WN_35',
-        'BVAR-WN (tau=0.50, p_max)': 'BVAR_WN_50',
-        'BVAR-WN (tau=0.65, p_max)': 'BVAR_WN_65',
-        'BVAR-WN (tau=0.80, p_max)': 'BVAR_WN_80',
-        'BVAR-WN (tau=0.95, p_max)': 'BVAR_WN_95',
-        'BVAR-RW (tau=0.20, p_max)': 'BVAR_RW_20',
-        'BVAR-RW (tau=0.50, p_max)': 'BVAR_RW_50',
-        'OLS BMA (BIC-W)': 'OLS_BMA',
-        'OLS BMA (Geom-W, th=0.5)': 'OLS_GEOM_BMA',
-        'BMA BVAR-WN (BIC-W, tau=0.20)': 'BMA_BVAR_20',
-        'BMA BVAR-WN (BIC-W, tau=0.50)': 'BMA_BVAR_50',
-        'BVAR-WN (MDD tau, p_max)': 'BVAR_MDD',
-        'Joint (p, tau) Grid BMA': 'JOINT_BMA',
-        'Geom (p, tau) Grid BMA (th=0.5)': 'GEOM_BMA'
+        'BVAR-WN (tau=0.05, p_max)': 'BVAR-WN-05',
+        'BVAR-WN (tau=0.20, p_max)': 'BVAR-WN-20',
+        'BVAR-WN (tau=0.35, p_max)': 'BVAR-WN-35',
+        'BVAR-WN (tau=0.50, p_max)': 'BVAR-WN-50',
+        'BVAR-WN (tau=0.65, p_max)': 'BVAR-WN-65',
+        'BVAR-WN (tau=0.80, p_max)': 'BVAR-WN-80',
+        'BVAR-WN (tau=0.95, p_max)': 'BVAR-WN-95',
+        'BVAR-RW (tau=0.20, p_max)': 'BVAR-RW-20',
+        'BVAR-RW (tau=0.50, p_max)': 'BVAR-RW-50',
+        'OLS BMA (BIC-W)': 'OLS-BMA',
+        'OLS BMA (Geom-W, th=0.5)': 'OLS-GEOM-BMA',
+        'BVAR-WN (MDD tau, p_max)': 'BVAR-MDD',
+        'Joint (p, tau) Grid BMA': 'JOINT-BMA',
+        'Geom (p, tau) Grid BMA (th=0.5)': 'GEOM-BMA',
+        
+        # --- Mapping for True Lag (p0) Estimators ---
+        'BVAR-WN (tau=0.05, p0)': 'BVAR-WN-05-p0',
+        'BVAR-WN (tau=0.20, p0)': 'BVAR-WN-20-p0',
+        'BVAR-WN (tau=0.35, p0)': 'BVAR-WN-35-p0',
+        'BVAR-WN (tau=0.50, p0)': 'BVAR-WN-50-p0',
+        'BVAR-WN (tau=0.65, p0)': 'BVAR-WN-65-p0',
+        'BVAR-WN (tau=0.80, p0)': 'BVAR-WN-80-p0',
+        'BVAR-WN (tau=0.95, p0)': 'BVAR-WN-95-p0',
+        'BVAR-WN (MDD tau, p0)': 'BVAR-MDD-p0',
     }
     df_renamed['Estimator_Mapped'] = df_renamed['Estimator'].replace(estimator_mapping)
 
@@ -102,8 +111,8 @@ def main():
                 .to_latex(caption=caption, label=label, **to_latex_kwargs))
 
     # TABLE 1: Shrinkage strategy
-    cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR_WN_05', 'BVAR_WN_20', 'BVAR_WN_35', 'BVAR_WN_50',
-             'BVAR_WN_65', 'BVAR_WN_80', 'BVAR_WN_95', 'BVAR_RW_20', 'BVAR_RW_50', 'BVAR_MDD']
+    cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-35', 'BVAR-WN-50',
+             'BVAR-WN-65', 'BVAR-WN-80', 'BVAR-WN-95', 'BVAR-RW-20', 'BVAR-RW-50', 'BVAR-MDD']
     n1 = len([c for c in cols1 if c in pivot_mse.columns])
     latex1 = styled_mse_latex(
         cols1,
@@ -112,13 +121,30 @@ def main():
         column_format="ll" + "c" * n1,
         position="htbp", position_float="centering", hrules=True,
         multirow_align="t", convert_css=True
-    ).replace('SIC (BIC)', 'BIC')
+    )
+    
+    latex1 = (latex1
+        .replace('\\begin{table}', '\\begin{sidewaystable}')
+        .replace('\\end{table}',   '\\end{sidewaystable}')
+        .replace('SIC (BIC)', 'BIC')
+        .replace('BVAR-WN-05', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.05$)\end{tabular}')
+        .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
+        .replace('BVAR-WN-35', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.35$)\end{tabular}')
+        .replace('BVAR-WN-50', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.50$)\end{tabular}')
+        .replace('BVAR-WN-65', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.65$)\end{tabular}')
+        .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular}')
+        .replace('BVAR-WN-95', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.95$)\end{tabular}')
+        .replace('BVAR-RW-20', r'\begin{tabular}{@{}c@{}}BVAR RW \\ ($\lambda_1=0.20$)\end{tabular}')
+        .replace('BVAR-RW-50', r'\begin{tabular}{@{}c@{}}BVAR RW \\ ($\lambda_1=0.50$)\end{tabular}')
+        .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
+    )
+    
     with open(os.path.join(tables_dir, "Table1_Shrinkage.tex"), "w") as f:
         f.write(latex1)
     print("[SAVED] Table 1: Shrinkage.tex")
 
     # TABLE 2: Model uncertainty (2x2 Matrix Included)
-    cols2 = ['AIC', 'SIC (BIC)', 'HQC', 'OLS_BMA', 'OLS_GEOM_BMA', 'BMA_BVAR_20', 'BMA_BVAR_50', 'JOINT_BMA', 'GEOM_BMA']
+    cols2 = ['AIC', 'SIC (BIC)', 'HQC', 'OLS-BMA', 'OLS-GEOM-BMA', 'JOINT-BMA', 'GEOM-BMA']
     n2 = len([c for c in cols2 if c in pivot_mse.columns])
     latex2 = styled_mse_latex(
         cols2,
@@ -128,15 +154,17 @@ def main():
         position="htbp", position_float="centering", hrules=True,
         multirow_align="t", convert_css=True
     )
+    
     latex2 = (latex2
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
-        .replace('OLS_BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC-W)\end{tabular}')
-        .replace('OLS_GEOM_BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom-W, $\boldsymbol{\theta}=0.5$)\end{tabular}')
-        .replace('JOINT_BMA', r'\begin{tabular}{@{}c@{}}Joint BMA \\ ($p, \boldsymbol{\tau}$)\end{tabular}')
-        .replace('GEOM_BMA', r'\begin{tabular}{@{}c@{}}Geom BMA \\ ($\boldsymbol{\theta}=0.5$)\end{tabular}')
+        .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
+        .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom.)\end{tabular}')
+        .replace('JOINT-BMA', 'Joint Grid BMA')
+        .replace('GEOM-BMA', 'Geom. Grid BMA')
         .replace('SIC (BIC)', 'BIC')
     )
+    
     with open(os.path.join(tables_dir, "Table2_Uncertainty.tex"), "w") as f:
         f.write(latex2)
     print("[SAVED] Table 2: Uncertainty.tex")
@@ -158,18 +186,10 @@ def main():
     if weights_df is not None:
         weights_renamed = weights_df.rename(columns={'True DGP (p0)': '$p_0$', 'Sample Size (T)': '$T$'})
 
-        exp_lags_map = {
-            'OLS-BMA': 'OLS-BMA',
-            'OLS-Geom-BMA': 'OLS-Geom-BMA',
-            'Joint-BMA': 'Joint-BMA',
-            'Geom-BMA': 'Geom-BMA'
-        }
-        
         bma_exp_lags = df_renamed[df_renamed['Estimator'].isin([
             'OLS BMA (BIC-W)', 'OLS BMA (Geom-W, th=0.5)', 'Joint (p, tau) Grid BMA', 'Geom (p, tau) Grid BMA (th=0.5)'
         ])][['$p_0$', '$T$', 'Estimator', 'Mean Evaluated Lag']].copy()
         
-        # Map back to the CSV keys for a clean merge
         reverse_est_map = {
             'OLS BMA (BIC-W)': 'OLS-BMA',
             'OLS BMA (Geom-W, th=0.5)': 'OLS-Geom-BMA',
@@ -185,7 +205,6 @@ def main():
 
             p_cols = [c for c in [f"p={i}" for i in range(1, 13)] if c in dist_df_p4.columns]
             
-            # Safely grab Mean Evaluated Lag if it exists from the merge
             if 'Mean Evaluated Lag' in dist_df_p4.columns:
                 dist_df_p4 = dist_df_p4[['Mean Evaluated Lag'] + p_cols].rename(columns={'Mean Evaluated Lag': '$E[p]$'})
             else:
@@ -214,6 +233,44 @@ def main():
             print("[SAVED] Table 4: BMA_Distribution.tex")
 
     # -------------------------------------------------------------------
+    # TABLE 5: Ratio of MSE (p0 / p_max)
+    # -------------------------------------------------------------------
+    ratio_df = pd.DataFrame(index=pivot_mse.index)
+    taus_str = ['0.05', '0.20', '0.35', '0.50', '0.65', '0.80', '0.95']
+    
+    for t_val in taus_str:
+        suffix = t_val.split('.')[-1]
+        col_p0 = f'BVAR-WN-{suffix}-p0'
+        col_pmax = f'BVAR-WN-{suffix}'
+        
+        if col_p0 in pivot_mse.columns and col_pmax in pivot_mse.columns:
+            ratio_df[f'Tau={t_val}'] = pivot_mse[col_p0] / pivot_mse[col_pmax]
+            
+    if 'BVAR-MDD-p0' in pivot_mse.columns and 'BVAR-MDD' in pivot_mse.columns:
+        ratio_df['Tau=MDD'] = pivot_mse['BVAR-MDD-p0'] / pivot_mse['BVAR-MDD']
+
+    def bold_less_than_one(row):
+        return ['font-weight: bold' if pd.notna(v) and v < 1.0 else '' for v in row]
+
+    latex5 = (ratio_df.style
+              .format("{:.3f}", na_rep="-")
+              .apply(bold_less_than_one, axis=1)
+              .to_latex(caption=r"Ratio of Relative MSE: Estimating with True Lag Order ($p_0$) vs. Maximum Lag Order ($p_{\max}$). Values $< 1.0$ indicate $p_0$ outperforms $p_{\max}$.",
+                        label="tab:p0_vs_pmax",
+                        column_format="ll" + "c" * len(ratio_df.columns),
+                        position="htbp", position_float="centering", hrules=True,
+                        multirow_align="t", convert_css=True))
+                        
+    # Inject headers
+    for t_val in taus_str:
+        latex5 = latex5.replace(f'Tau={t_val}', fr'\begin{{tabular}}{{@{{}}c@{{}}}}$\lambda_1$ \\ {t_val}\end{{tabular}}')
+    latex5 = latex5.replace('Tau=MDD', r'\begin{tabular}{@{}c@{}}MDD \\ $\lambda_1$\end{tabular}')
+    
+    with open(os.path.join(tables_dir, "Table5_p0_vs_pmax_Ratio.tex"), "w") as f:
+        f.write(latex5)
+    print("[SAVED] Table 5: p0_vs_pmax_Ratio.tex")
+
+    # -------------------------------------------------------------------
     # 4. FIGURES
     # -------------------------------------------------------------------
     print("\n--- Generating Figures ---")
@@ -236,9 +293,9 @@ def main():
         for tau in TAU_DISCRETE:
             ax.axvline(tau, color='gray', linestyle=':', linewidth=0.9, alpha=0.5)
         ax.axvline(TAU_DISCRETE[0], color='gray', linestyle=':', linewidth=0.9, alpha=0.5,
-                   label=r'Estimated $\tau$ grid')
+                   label=r'Estimated $\lambda_1$ grid')
 
-        ax.set_xlabel(r'Shrinkage Parameter ($\tau$)')
+        ax.set_xlabel(r'Shrinkage Parameter ($\lambda_1$)')
         ax.set_ylabel('Relative Mean Squared Error')
         ax.set_title(r'Bias-Variance Tradeoff Curve ($p_0 = 4$)')
         ax.legend(title='Sample Size')
@@ -247,25 +304,65 @@ def main():
         plt.close(fig)
         print("[SAVED] Fig1_Tradeoff_Curve.pdf")
 
-    # Figure 2: MDD-selected tau distribution
+    # Figure 2: MDD-selected tau distribution (Evaluated at p_max)
     if os.path.exists(raw_taus_path):
         raw_taus = pd.read_csv(raw_taus_path)
-        if 'MDD_Tau' in raw_taus.columns:
-            raw_taus_p4 = raw_taus[raw_taus['p0'] == 4]
-            if not raw_taus_p4.empty:
-                fig, ax = plt.subplots(figsize=(8, 6))
-                sns.boxplot(data=raw_taus_p4, x='T', y='MDD_Tau', hue='T',
-                            palette='Blues', legend=False, showfliers=False, ax=ax)
-                sns.stripplot(data=raw_taus_p4, x='T', y='MDD_Tau',
-                              color='black', alpha=0.3, jitter=True, ax=ax)
-                ax.set_yticks(TAU_DISCRETE)
-                ax.set_xlabel('Sample Size ($T$)')
-                ax.set_ylabel(r'MDD-Selected Shrinkage Parameter ($\tau$)')
-                ax.set_title(r'MDD $\tau$ Selection Distribution ($p_0 = 4$)')
-                fig.tight_layout()
-                fig.savefig(os.path.join(figures_dir, "Fig2_Asymptotic_Relaxation.pdf"))
-                plt.close(fig)
-                print("[SAVED] Fig2_Asymptotic_Relaxation.pdf")
+        if 'MDD_Tau' in raw_taus.columns and not raw_taus.empty:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+            p0_order = sorted(raw_taus['p0'].unique())
+            
+            sns.boxplot(data=raw_taus, x='T', y='MDD_Tau', hue='p0', hue_order=p0_order,
+                        palette='Blues', showfliers=False, ax=ax,
+                        medianprops={'color': 'red', 'linewidth': 2})
+            
+            # Using palette='Blues' ensures scatter points match the box colors
+            sns.stripplot(data=raw_taus, x='T', y='MDD_Tau', hue='p0', hue_order=p0_order,
+                          dodge=True, palette='Blues', alpha=0.7, edgecolor='gray', 
+                          linewidth=0.5, jitter=True, ax=ax, legend=False)
+            
+            ax.set_yticks(TAU_DISCRETE)
+            ax.set_xlabel('Sample Size ($T$)')
+            ax.set_ylabel(r'MDD-Selected Shrinkage Parameter ($\lambda_1$)')
+            ax.set_title(r'MDD $\lambda_1$ Selection Distribution across True Lags ($p_{max}$)')
+            
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles[:len(p0_order)], labels[:len(p0_order)], title='True Lag ($p_0$)', loc='best')
+
+            fig.tight_layout()
+            fig.savefig(os.path.join(figures_dir, "Fig2_Asymptotic_Relaxation.pdf"))
+            plt.close(fig)
+            print("[SAVED] Fig2_Asymptotic_Relaxation.pdf")
+
+    # Figure 2b: MDD-selected tau distribution (Evaluated at p0)
+    if os.path.exists(raw_taus_p0_path):
+        raw_taus_p0 = pd.read_csv(raw_taus_p0_path)
+        if 'MDD_Tau_p0' in raw_taus_p0.columns and not raw_taus_p0.empty:
+            fig, ax = plt.subplots(figsize=(10, 6))
+            
+            p0_order = sorted(raw_taus_p0['p0'].unique())
+            
+            sns.boxplot(data=raw_taus_p0, x='T', y='MDD_Tau_p0', hue='p0', hue_order=p0_order,
+                        palette='Greens', showfliers=False, ax=ax,
+                        medianprops={'color': 'red', 'linewidth': 2})
+            
+            # Using palette='Greens' ensures scatter points match the box colors
+            sns.stripplot(data=raw_taus_p0, x='T', y='MDD_Tau_p0', hue='p0', hue_order=p0_order,
+                          dodge=True, palette='Greens', alpha=0.7, edgecolor='gray', 
+                          linewidth=0.5, jitter=True, ax=ax, legend=False)
+            
+            ax.set_yticks(TAU_DISCRETE)
+            ax.set_xlabel('Sample Size ($T$)')
+            ax.set_ylabel(r'MDD-Selected Shrinkage Parameter ($\lambda_1$)')
+            ax.set_title(r'MDD $\lambda_1$ Selection Distribution Evaluated at True Lag ($p = p_0$)')
+            
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles[:len(p0_order)], labels[:len(p0_order)], title='True Lag ($p_0$)', loc='best')
+
+            fig.tight_layout()
+            fig.savefig(os.path.join(figures_dir, "Fig2b_Asymptotic_Relaxation_p0.pdf"))
+            plt.close(fig)
+            print("[SAVED] Fig2b_Asymptotic_Relaxation_p0.pdf")
 
     # Figure 3: MDD Surface
     if os.path.exists(mdd_path):
@@ -278,9 +375,9 @@ def main():
             fig, ax = plt.subplots(figsize=(8, 6))
             sns.lineplot(data=mdd_df, x='Tau', y='MDD', color='purple', linewidth=2.5, ax=ax)
             ax.axvline(max_tau, color='black', linestyle='--', alpha=0.6,
-                       label=fr'Optimal $\tau \simeq {max_tau:.2f}$')
+                       label=fr'Optimal $\lambda_1 \simeq {max_tau:.2f}$')
             ax.plot(max_tau, max_mdd, 'ko', markersize=8)
-            ax.set_xlabel(r'Candidate Shrinkage Parameter ($\tau$)')
+            ax.set_xlabel(r'Candidate Shrinkage Parameter ($\lambda_1$)')
             ax.set_ylabel('Marginal Data Density (Log Likelihood)')
             ax.set_title('Objective Function Surface ($T = 480$)')
             ax.legend()
@@ -309,7 +406,7 @@ def main():
 
             ax.set_xlim(left=max(0.5, lo))
             ax.set_ylim(bottom=max(0.5, lo))
-            ax.set_xlabel(r'Joint BMA ($p, \tau$) Relative MSE')
+            ax.set_xlabel(r'Joint BMA ($p, \lambda_1$) Relative MSE')
             ax.set_ylabel('Hard Selection (BIC) Relative MSE')
             ax.set_title(r'Catastrophe Avoidance: Joint BMA vs.~Hard Selection ($p_0=4,\ T=96$)')
             ax.legend(loc='upper left')
@@ -323,7 +420,7 @@ def main():
         heatmap_configs = [
             ('OLS-BMA',      'OLS',      r'OLS BMA (BIC-W)',             'Fig5'),
             ('OLS-Geom-BMA', 'OLS_Geom', r'OLS BMA (Geom-W, $\theta=0.5$)', 'Fig6'),
-            ('Joint-BMA',    'Joint',    r'Joint BMA ($p, \tau$)',       'Fig7'),
+            ('Joint-BMA',    'Joint',    r'Joint BMA ($p, \lambda_1$)',       'Fig7'),
             ('Geom-BMA',     'Geom',     r'Geom BMA ($\theta=0.5$)',     'Fig8')
         ]
         

@@ -13,10 +13,8 @@ SEED = 12345
 os.environ.setdefault('PYTHONHASHSEED', str(SEED))
 os.environ.setdefault('NUMBA_NUM_THREADS', '1')
 
-# Grid for the Tradeoff Plot (30 points from tight to loose)
-TAU_GRID_PLOT = np.linspace(0.01, 1.5, 30)
-
-# Discrete tau grid used for BVAR-WN fixed-tau models and MDD tau selection
+# Discrete tau grid used for BVAR-WN fixed-tau models, MDD tau selection,
+# AND the Tradeoff/Surface CSV exports.
 TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
 WN_SEED_OFFSETS = [999, 1001, 1008, 1002, 1009, 1010, 1011]
 
@@ -218,12 +216,12 @@ def get_median_target_model(valid_irfs, accepted_count):
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
-    N_SE = 18
+    N_SE = 26
 
     nan_array = np.full(true_IRF_target.shape, np.nan)
 
     def fail(msg):
-        return (iter_idx,) + (None,) * N_SE + (None, (None,)*7, None, None, None, None, None, None, msg)
+        return (iter_idx,) + (None,) * N_SE + (None, None, (None,)*7, None, None, None, None, None, None, msg)
 
     try:
         ols_cache = {}
@@ -401,6 +399,34 @@ def single_monte_carlo_iteration(args):
         best_mdd_tau   = max(bvar_wn_MDDs, key=bvar_wn_MDDs.get)
         SE_minn_wn_mdd = bvar_wn_SEs[best_mdd_tau]
 
+        # ---------------- FIXED P_TRUE BVAR EVALUATIONS (Cached) ----------------
+        bvar_p0_SEs  = {}
+        bvar_p0_MDDs = {}
+        for tau_wn, seed_off in zip(TAU_DISCRETE, WN_SEED_OFFSETS):
+            # Extract from cache generated in the grid search loop
+            A_p0, SIGMA_p0 = bvar_cache[(true_p, tau_wn)]
+            mdd_p0 = bvar_mdd_grid[(true_p, tau_wn)]
+            
+            try: P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
+            except np.linalg.LinAlgError: SIGMA_p0 += np.eye(K) * 1e-8; P_p0 = np.ascontiguousarray(np.linalg.cholesky(SIGMA_p0))
+            
+            # Offset the seed strictly to avoid exact replication of draws from other evaluations
+            v_p0, _, acc_p0 = fast_draw_core(A_p0, P_p0, signs, true_p, K, Q_avg, h_max, mc_draws, max_loops, iteration_seed + seed_off + 2000)
+            
+            bvar_p0_MDDs[tau_wn] = mdd_p0
+            bvar_p0_SEs[tau_wn]  = (get_median_target_model(v_p0, acc_p0) - true_IRF_target)**2 if acc_p0 > 0 else nan_array
+
+        SE_minn_wn_005_p0 = bvar_p0_SEs[0.05]
+        SE_minn_wn_020_p0 = bvar_p0_SEs[0.20]
+        SE_minn_wn_035_p0 = bvar_p0_SEs[0.35]
+        SE_minn_wn_050_p0 = bvar_p0_SEs[0.50]
+        SE_minn_wn_065_p0 = bvar_p0_SEs[0.65]
+        SE_minn_wn_080_p0 = bvar_p0_SEs[0.80]
+        SE_minn_wn_095_p0 = bvar_p0_SEs[0.95]
+
+        best_mdd_tau_p0   = max(bvar_p0_MDDs, key=bvar_p0_MDDs.get)
+        SE_minn_wn_mdd_p0 = bvar_p0_SEs[best_mdd_tau_p0]
+
         # BVAR RW tau=0.20 and tau=0.50 (Evaluated Fresh)
         def eval_minn_rw(tau_val, seed_offset):
             y_s = np.ascontiguousarray(simulated_data)
@@ -440,11 +466,11 @@ def single_monte_carlo_iteration(args):
         mdd_surface   = None
 
         if true_p == 4 and (T_real == 96 or T_real == 480):
-            tradeoff_mses = np.zeros(len(TAU_GRID_PLOT))
+            tradeoff_mses = np.zeros(len(TAU_DISCRETE))
             y_plot = np.ascontiguousarray(simulated_data)
             x_plot = np.ascontiguousarray(X_exo)
 
-            for idx, t_val in enumerate(TAU_GRID_PLOT):
+            for idx, t_val in enumerate(TAU_DISCRETE):
                 try:
                     A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
                     try: P_m = np.ascontiguousarray(np.linalg.cholesky(SIGMA_m))
@@ -454,8 +480,8 @@ def single_monte_carlo_iteration(args):
                 except: tradeoff_mses[idx] = np.nan
 
             if T_real == 480 and iter_idx == 0:
-                mdd_surface = np.zeros(len(TAU_GRID_PLOT))
-                for idx, t_val in enumerate(TAU_GRID_PLOT):
+                mdd_surface = np.zeros(len(TAU_DISCRETE))
+                for idx, t_val in enumerate(TAU_DISCRETE):
                     _, _, log_mdd_surf, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
                     mdd_surface[idx] = log_mdd_surf
 
@@ -464,7 +490,10 @@ def single_monte_carlo_iteration(args):
                 SE_minn_wn_065, SE_minn_wn_080, SE_minn_wn_095,
                 SE_minn_rw_020, SE_minn_rw_050,
                 SE_joint_bma, SE_geom_bma, SE_minn_wn_mdd,
-                SE_p0, best_mdd_tau,
+                SE_p0,
+                SE_minn_wn_005_p0, SE_minn_wn_020_p0, SE_minn_wn_035_p0, SE_minn_wn_050_p0,
+                SE_minn_wn_065_p0, SE_minn_wn_080_p0, SE_minn_wn_095_p0, SE_minn_wn_mdd_p0,
+                best_mdd_tau, best_mdd_tau_p0,
                 (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid, exp_p_geom_ols, exp_p_joint, exp_p_geom),
                 final_bic_weights, geom_ols_p_dist, joint_p_dist, geom_p_dist,
                 tradeoff_mses, mdd_surface, "Success")
@@ -487,9 +516,10 @@ def main():
         [ 1,  1,  1, np.nan], [np.nan, np.nan, 1, np.nan]
     ], dtype=np.float64))
 
-    dgp_lag_orders, sample_sizes = [4, 6, 8, 10], [96, 144, 240, 480]
+    dgp_lag_orders, sample_sizes = [4, 6, 8, 10], [240, 300, 360, 480, 600]
     master_results_list, bma_weights_list = [], []
-    raw_taus_list, tradeoff_list, mdd_list = [], [], []
+    raw_taus_list, raw_taus_p0_list = [], []
+    tradeoff_list, mdd_list = [], []
     iteration_mses_list = []
 
     global_start_time = time.time()
@@ -517,7 +547,14 @@ def main():
             all_SE_minn_rw_020, all_SE_minn_rw_050 = [], []
             all_SE_joint_bma, all_SE_geom_bma, all_SE_minn_wn_mdd = [], [], []
             all_SE_p0 = []
-            all_mdd_taus = []
+            
+            # New p0 specific SE lists
+            all_SE_minn_wn_005_p0, all_SE_minn_wn_020_p0, all_SE_minn_wn_035_p0 = [], [], []
+            all_SE_minn_wn_050_p0, all_SE_minn_wn_065_p0, all_SE_minn_wn_080_p0, all_SE_minn_wn_095_p0 = [], [], [], []
+            all_SE_minn_wn_mdd_p0 = []
+
+            all_mdd_taus, all_mdd_taus_p0 = [], []
+            
             all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
             all_exp_p_hybrid, all_exp_p_geom_ols, all_exp_p_joint, all_exp_p_geom = [], [], [], []
             all_weights_hybrid, all_weights_geom_ols, all_weights_joint, all_weights_geom = [], [], [], []
@@ -549,9 +586,21 @@ def main():
                 all_SE_geom_bma.append(res[16])
                 all_SE_minn_wn_mdd.append(res[17])
                 all_SE_p0.append(res[18])
-                all_mdd_taus.append(res[19])
+                
+                # Unpack the new p0 SEs
+                all_SE_minn_wn_005_p0.append(res[19])
+                all_SE_minn_wn_020_p0.append(res[20])
+                all_SE_minn_wn_035_p0.append(res[21])
+                all_SE_minn_wn_050_p0.append(res[22])
+                all_SE_minn_wn_065_p0.append(res[23])
+                all_SE_minn_wn_080_p0.append(res[24])
+                all_SE_minn_wn_095_p0.append(res[25])
+                all_SE_minn_wn_mdd_p0.append(res[26])
 
-                p_tuple = res[20]
+                all_mdd_taus.append(res[27])
+                all_mdd_taus_p0.append(res[28])
+
+                p_tuple = res[29]
                 all_p_hats_aic.append(p_tuple[0])
                 all_p_hats_sic.append(p_tuple[1])
                 all_p_hats_hqc.append(p_tuple[2])
@@ -560,10 +609,10 @@ def main():
                 all_exp_p_joint.append(p_tuple[5])
                 all_exp_p_geom.append(p_tuple[6])
                 
-                all_weights_hybrid.append(res[21])
-                all_weights_geom_ols.append(res[22])
-                all_weights_joint.append(res[23])
-                all_weights_geom.append(res[24])
+                all_weights_hybrid.append(res[30])
+                all_weights_geom_ols.append(res[31])
+                all_weights_joint.append(res[32])
+                all_weights_geom.append(res[33])
 
                 se_sic_iter = np.sum(res[2]) if not (np.isscalar(res[2]) and np.isnan(res[2])) else np.nan
                 se_bma_iter = np.sum(res[15]) if not (np.isscalar(res[15]) and np.isnan(res[15])) else np.nan
@@ -575,11 +624,13 @@ def main():
                     'Joint_BMA_Rel_MSE': se_bma_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan
                 })
 
-                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[19]})
-                if res[25] is not None: all_tradeoffs_t.append(res[25])
-                if res[26] is not None:
-                    for i, t_val in enumerate(TAU_GRID_PLOT):
-                        mdd_list.append({'Tau': t_val, 'MDD': res[26][i]})
+                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[27]})
+                raw_taus_p0_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau_p0': res[28]})
+                
+                if res[34] is not None: all_tradeoffs_t.append(res[34])
+                if res[35] is not None:
+                    for i, t_val in enumerate(TAU_DISCRETE):
+                        mdd_list.append({'Tau': t_val, 'MDD': res[35][i]})
 
             if len(all_SE_aic) == 0:
                 print(" [FAILED]"); continue
@@ -610,7 +661,7 @@ def main():
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore", category=RuntimeWarning)
                     geom_mean_curve = np.exp(np.nanmean(np.log(ratio_matrix), axis=0))
-                for i, t_val in enumerate(TAU_GRID_PLOT):
+                for i, t_val in enumerate(TAU_DISCRETE):
                     tradeoff_list.append({'T': current_T, 'Tau': t_val, 'Rel_MSE': geom_mean_curve[i]})
 
             # Compute Average Weights for CSVs
@@ -668,6 +719,16 @@ def main():
                 ("Joint (p, tau) Grid BMA",          calc_met(all_SE_joint_bma,    all_exp_p_joint,    true_p)),
                 ("Geom (p, tau) Grid BMA (th=0.5)",  calc_met(all_SE_geom_bma,     all_exp_p_geom,     true_p)),
                 ("BVAR-WN (MDD tau, p_max)",         calc_met(all_SE_minn_wn_mdd,  None,               true_p, all_mdd_taus)),
+                
+                # --- New p0 Specific Additions ---
+                ("BVAR-WN (tau=0.05, p0)",           calc_met(all_SE_minn_wn_005_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.20, p0)",           calc_met(all_SE_minn_wn_020_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.35, p0)",           calc_met(all_SE_minn_wn_035_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.50, p0)",           calc_met(all_SE_minn_wn_050_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.65, p0)",           calc_met(all_SE_minn_wn_065_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.80, p0)",           calc_met(all_SE_minn_wn_080_p0,  None,            true_p)),
+                ("BVAR-WN (tau=0.95, p0)",           calc_met(all_SE_minn_wn_095_p0,  None,            true_p)),
+                ("BVAR-WN (MDD tau, p0)",            calc_met(all_SE_minn_wn_mdd_p0,  None,            true_p, all_mdd_taus_p0)),
             ]
 
             for m_name, m_data in models:
@@ -690,6 +751,7 @@ def main():
         df_master.to_csv(os.path.join(results_dir, f"Master_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(bma_weights_list).to_csv(os.path.join(results_dir, f"Master_BMA_Weights_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(raw_taus_list).to_csv(os.path.join(results_dir, f"Master_Raw_MDD_Tau_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(raw_taus_p0_list).to_csv(os.path.join(results_dir, f"Master_Raw_MDD_Tau_p0_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(tradeoff_list).to_csv(os.path.join(results_dir, f"Master_Tradeoff_Curve_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(mdd_list).to_csv(os.path.join(results_dir, f"Master_MDD_Surface_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(iteration_mses_list).to_csv(os.path.join(results_dir, f"Master_Iteration_MSEs_iters{N_iterations}_draws{mc_draws}.csv"), index=False)

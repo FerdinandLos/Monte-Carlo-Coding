@@ -13,6 +13,7 @@
 \usepackage{multirow}  % Allows the p0 values to span across the T rows seamlessly
 \usepackage{rotating}  % Allows for sideways tables (sidewaystable)
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
 
 % BibLaTeX setup for Zotero Better BibLaTeX
@@ -78,20 +79,42 @@ Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criter
 
 \input{Tables/Table4_BMA_Distribution.tex}
 
-\begin{figure}[htbp]
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
     \centering
-    \includegraphics[width=0.8\textwidth]{Figures/Fig4_Risk_Hedging_Scatter.pdf}
-    \caption{Catastrophe Avoidance: BMA vs. Hard Selection (BIC). Points above the 45-degree line indicate iterations where BMA outperformed BIC, notably smoothing out catastrophic tail risks.}
-    \label{fig:risk_hedging}
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5_BMA_Heatmap_OLS.pdf}
+        \caption{OLS BMA (BIC-W)}
+        \label{fig:heat_ols}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf}
+        \caption{OLS BMA (Geom-W, $\theta=0.5$)}
+        \label{fig:heat_ols_geom}
+    \end{subfigure}
+    
+    \vspace{2em} % Adds vertical space between the rows
+    
+    % Bottom Left: Figure 7
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig7_BMA_Heatmap_Joint.pdf}
+        \caption{Joint BMA ($p, \tau$)}
+        \label{fig:heat_joint}
+    \end{subfigure}
+    \hfill
+    % Bottom Right: Figure 8
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig8_BMA_Heatmap_Geom.pdf}
+        \caption{Geom BMA ($\theta=0.5$)}
+        \label{fig:heat_geom}
+    \end{subfigure}
+    
+    \caption{Posterior Weight Evolution across all four BMA architectures ($p_0=4$).}
+    \label{fig:bma_heatmaps_grid}
 \end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.85\textwidth]{Figures/Fig5_BMA_Heatmap.pdf}
-    \caption{Posterior Weight Evolution of SOTA-BMA. At small sample sizes, probability mass is dispersed to hedge uncertainty. As $T$ grows, the distribution concentrates precisely on the true DGP.}
-    \label{fig:bma_heatmap}
-\end{figure}
-
 \clearpage
 \section{Conclusion}
 \label{sec:conclusion}

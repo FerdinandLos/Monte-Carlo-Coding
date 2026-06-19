@@ -1,9 +1,9 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Paper2_BMA.blg'
-[151] biber-MSWIN64:342> INFO - === 
-[208] Biber.pm:421> INFO - Reading 'Paper2_BMA.bcf'
-[374] Biber.pm:1002> INFO - Found 0 citekeys in bib section 0
-[396] bbl.pm:676> INFO - Writing 'Paper2_BMA.bbl' with encoding 'UTF-8'
-[396] bbl.pm:779> INFO - Output to Paper2_BMA.bbl
-[397] Biber.pm:132> WARN - The file 'Paper2_BMA.bcf' does not contain any citations!
-[397] Biber.pm:134> INFO - WARNINGS: 1
+[158] biber-MSWIN64:342> INFO - === 
+[211] Biber.pm:421> INFO - Reading 'Paper2_BMA.bcf'
+[410] Biber.pm:1002> INFO - Found 0 citekeys in bib section 0
+[430] bbl.pm:676> INFO - Writing 'Paper2_BMA.bbl' with encoding 'UTF-8'
+[431] bbl.pm:779> INFO - Output to Paper2_BMA.bbl
+[431] Biber.pm:132> WARN - The file 'Paper2_BMA.bcf' does not contain any citations!
+[431] Biber.pm:134> INFO - WARNINGS: 1

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  18 JUN 2026 22:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  19 JUN 2026 21:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -650,52 +650,58 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<Figures/Fig3_MDD_Surface.pdf, id=51, 578.16pt x 433.62pt>
+<Figures/Fig3_MDD_Surface.pdf, id=56, 578.16pt x 433.62pt>
 File: Figures/Fig3_MDD_Surface.pdf Graphic file (type pdf)
 <use Figures/Fig3_MDD_Surface.pdf>
-Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 60.
+Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 62.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
- [2 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table3_IC_Lags.tex) (./Tables/Table1_Shrinkage.tex)
-<Figures/Fig1_Tradeoff_Curve.pdf, id=142, 650.43pt x 433.62pt>
+ (./Tables/Table3_IC_Lags.tex) [2] [3 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table1_Shrinkage.tex
+Overfull \hbox (116.4432pt too wide) in paragraph at lines 5--28
+ [][] 
+ []
+
+) (./Tables/Table5_p0_vs_pmax_Ratio.tex)
+<Figures/Fig1_Tradeoff_Curve.pdf, id=157, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve.pdf>
-Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 81.
+Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 85.
 (pdftex.def)             Requested size: 385.02547pt x 256.6871pt.
-<Figures/Fig2_Asymptotic_Relaxation.pdf, id=143, 578.16pt x 433.62pt>
+<Figures/Fig2_Asymptotic_Relaxation.pdf, id=158, 722.7pt x 433.62pt>
 File: Figures/Fig2_Asymptotic_Relaxation.pdf Graphic file (type pdf)
 <use Figures/Fig2_Asymptotic_Relaxation.pdf>
-Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 88.
-(pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
- [3] [4] [5 <./Figures/Fig1_Tradeoff_Curve.pdf> <./Figures/Fig2_Asymptotic_Relaxation.pdf>] [6
+Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 92.
+(pdftex.def)             Requested size: 385.02547pt x 231.01509pt.
+<Figures/Fig2b_Asymptotic_Relaxation_p0.pdf, id=159, 722.7pt x 433.62pt>
+File: Figures/Fig2b_Asymptotic_Relaxation_p0.pdf Graphic file (type pdf)
+<use Figures/Fig2b_Asymptotic_Relaxation_p0.pdf>
+Package pdftex.def Info: Figures/Fig2b_Asymptotic_Relaxation_p0.pdf  used on input line 99.
+(pdftex.def)             Requested size: 385.02547pt x 231.01509pt.
+ [4 <./Figures/Fig1_Tradeoff_Curve.pdf>] [5] [6 <./Figures/Fig2_Asymptotic_Relaxation.pdf>] [7 <./Figures/Fig2b_Asymptotic_Relaxation_p0.pdf>] [8
 
-]
-
-LaTeX Warning: Empty bibliography on input line 101.
-
-(./Paper1_BVAR.aux)
+] [9] (./Paper1_BVAR.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `Paper1_BVAR.out' has not changed.
-(rerunfilecheck)             Checksum: 457F5722529E01C509B5C3FD00149563;1469.
+(rerunfilecheck)             Checksum: 35946C87AD9708D8C7A3D99485871C7B;1502.
 Package logreq Info: Writing requests to 'Paper1_BVAR.run.xml'.
 \openout1 = `Paper1_BVAR.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19334 strings out of 469513
- 337949 string characters out of 5468178
- 1173352 words of memory out of 5000000
- 47741 multiletter control sequences out of 15000+600000
- 647536 words of font info for 94 fonts, out of 8000000 for 9000
+ 19575 strings out of 469513
+ 343470 string characters out of 5468178
+ 1194716 words of memory out of 5000000
+ 47977 multiletter control sequences out of 15000+600000
+ 646439 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,12n,79p,777b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
-Output written on Paper1_BVAR.pdf (6 pages, 183838 bytes).
+ 75i,17n,79p,1403b,1354s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+Output written on Paper1_BVAR.pdf (9 pages, 269080 bytes).
 PDF statistics:
- 636 PDF objects out of 1000 (max. 8388607)
- 183 compressed objects within 2 object streams
- 20 named destinations out of 1000 (max. 500000)
- 80 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 847 PDF objects out of 1000 (max. 8388607)
+ 240 compressed objects within 3 object streams
+ 28 named destinations out of 1000 (max. 500000)
+ 85 words of extra memory for PDF output out of 10000 (max. 10000000)
 
