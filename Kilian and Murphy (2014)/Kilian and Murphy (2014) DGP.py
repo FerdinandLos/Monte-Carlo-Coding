@@ -289,7 +289,7 @@ def main():
     ], dtype=np.float64)
 
     h_max = 24  
-    n_draws = 1000 
+    n_draws = 100000 
 
     for config in dgp_configs:
         p = config["p"]
@@ -336,7 +336,10 @@ def main():
                  B_tilde_true=B_tilde_true, 
                  True_IRF=True_IRF, 
                  V_true=V, 
-                 p_true=p)       
+                 p_true=p,
+                 empirical_data=km_data_array.T,    # <-- ADD THIS (Shape K x T)
+                 empirical_residuals=U)             # <-- ADD THIS (Shape K x T_eff)         
+    
 
         dgp_results[config_name]["B_tilde_true"] = B_tilde_true
         dgp_results[config_name]["True_IRF"] = True_IRF

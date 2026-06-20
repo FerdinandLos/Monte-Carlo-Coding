@@ -7,8 +7,8 @@ import seaborn as sns
 # SIMULATION CONFIGURATION
 # Match these to your CSV file numbers
 # =====================================================================
-ITERS = 100  # Adjust back to your production run numbers
-DRAWS = 50
+ITERS = 2  # Adjust back to your production run numbers
+DRAWS = 2
 FILE_SUFFIX = f"iters{ITERS}_draws{DRAWS}.csv"
 
 TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]

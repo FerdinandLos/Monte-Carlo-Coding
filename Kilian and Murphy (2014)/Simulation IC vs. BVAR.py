@@ -19,18 +19,35 @@ TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
 WN_SEED_OFFSETS = [999, 1001, 1008, 1002, 1009, 1010, 1011]
 
 # -------------------------------------------------------------------
-# 1. NUMBA-OPTIMIZED DATA GENERATING PROCESS (DGP)
+# 1. NUMBA-OPTIMIZED HYBRID DATA GENERATING PROCESS (DGP)
 # -------------------------------------------------------------------
 @njit
-def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
+def simulate_var_dgp_hybrid(A, V, B_tilde, p, T_target, seed_val, empirical_data):
+    """
+    Hybrid DGP: 
+    Initializes using a random contiguous block of empirical data.
+    Iterates forward using purely parametric structural shocks.
+    """
     np.random.seed(seed_val)
     K = A.shape[0]
-    T_total = T_target + burn_in
-
-    structural_shocks = np.random.randn(K, T_total)
-    reduced_residuals = B_tilde @ structural_shocks
+    
+    # No burn-in required because empirical data places us in a stationary state
+    T_total = T_target 
     y_sim = np.zeros((K, T_total))
 
+    # --- 1. EMPIRICAL WARM START ---
+    T_emp = empirical_data.shape[1]
+    max_start_idx = T_emp - p
+    start_idx = np.random.randint(0, max_start_idx + 1)
+    
+    for t in range(p):
+        y_sim[:, t] = empirical_data[:, start_idx + t]
+
+    # --- 2. PARAMETRIC STRUCTURAL SHOCKS ---
+    structural_shocks = np.random.randn(K, T_total)
+    reduced_residuals = B_tilde @ structural_shocks
+
+    # --- 3. AUTOREGRESSIVE LOOP ---
     for t in range(p, T_total):
         d_t = np.zeros((12, 1))
         d_t[0, 0] = 1.0
@@ -46,10 +63,11 @@ def simulate_var_dgp_fast(A, V, B_tilde, p, T_target, burn_in, seed_val):
                 y_lags[(lag-1)*K + k, 0] = y_sim[k, t - lag]
 
         autoregressive_term = A @ y_lags
+        
         y_t = deterministic_term + autoregressive_term + reduced_residuals[:, t:t+1]
         y_sim[:, t] = y_t[:, 0]
 
-    return np.ascontiguousarray(y_sim[:, burn_in:].T)
+    return np.ascontiguousarray(y_sim.T)
 
 # -------------------------------------------------------------------
 # 2. FAST VAR ESTIMATORS (OLS & ALEXANDRIA BVAR)
@@ -215,7 +233,8 @@ def get_median_target_model(valid_irfs, accepted_count):
 # 4. THE SINGLE MONTE CARLO ITERATION
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
-    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max = args
+    # Added empirical_data parameter extraction
+    iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max, empirical_data = args
     N_SE = 26
 
     nan_array = np.full(true_IRF_target.shape, np.nan)
@@ -228,7 +247,9 @@ def single_monte_carlo_iteration(args):
         bic_scores = {}
 
         K = true_A.shape[0]
-        simulated_data = simulate_var_dgp_fast(true_A, true_V, true_B_tilde, true_p, T_real, 120, iteration_seed)
+        
+        # Updated to call the hybrid DGP (burn_in removed)
+        simulated_data = simulate_var_dgp_hybrid(true_A, true_V, true_B_tilde, true_p, T_real, iteration_seed, empirical_data)
 
         best_aic, best_sic, best_hqc = float('inf'), float('inf'), float('inf')
         p_hat_aic, p_hat_sic, p_hat_hqc = 1, 1, 1
@@ -509,7 +530,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 100, 50, 5000
+    N_iterations, mc_draws, max_loops = 2, 3, 5000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
@@ -526,7 +547,7 @@ def main():
     n_cores = multiprocessing.cpu_count()
 
     print("\n" + "="*90)
-    print(f" STARTING MASTER ASYMPTOTIC MONTE CARLO (2x2 Matrix: BMA & Geometric Priors)")
+    print(f" STARTING MASTER HYBRID MONTE CARLO (Parametric Shocks + Empirical Initial Values)")
     print("="*90)
 
     for current_p0 in dgp_lag_orders:
@@ -536,6 +557,14 @@ def main():
         true_A, true_V, true_B_tilde = np.ascontiguousarray(dgp['A_true']), np.ascontiguousarray(dgp['V_true']), np.ascontiguousarray(dgp['B_tilde_true'])
         true_IRF, true_p = np.ascontiguousarray(dgp['True_IRF']), int(dgp['p_true'])
         p_max = max(12, true_p)
+
+        # --- EXTRACT EMPIRICAL DATA FOR THE WARM START ---
+        try:
+            empirical_data = np.ascontiguousarray(dgp['empirical_data']) 
+        except KeyError:
+            print(f"\n[ERROR] Missing 'empirical_data' in {current_p0}_lags.npz")
+            print("Please ensure your DGP extraction script saved the empirical dataset.")
+            continue
 
         for current_T in sample_sizes:
             print(f"    Running Simulation for T = {current_T} ...", end="", flush=True)
@@ -560,7 +589,11 @@ def main():
             all_weights_hybrid, all_weights_geom_ols, all_weights_joint, all_weights_geom = [], [], [], []
             all_tradeoffs_t = []
 
-            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, mc_draws, max_loops, current_T, p_max) for i in range(N_iterations)]
+            # Passed empirical_data cleanly into the task tuples
+            tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), 
+                      true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, 
+                      mc_draws, max_loops, current_T, p_max, empirical_data) for i in range(N_iterations)]
+                      
             results = Parallel(n_jobs=n_cores, backend='loky')(delayed(single_monte_carlo_iteration)(task) for task in tasks)
 
             for res in results:
