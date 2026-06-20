@@ -8,7 +8,7 @@ import seaborn as sns
 # Match these to your CSV file numbers
 # =====================================================================
 ITERS = 2  # Adjust back to your production run numbers
-DRAWS = 2
+DRAWS = 3
 FILE_SUFFIX = f"iters{ITERS}_draws{DRAWS}.csv"
 
 TAU_DISCRETE = [0.05, 0.20, 0.35, 0.50, 0.65, 0.80, 0.95]
@@ -43,6 +43,7 @@ def main():
     tradeoff_path    = os.path.join(results_dir, f"Master_Tradeoff_Curve_{FILE_SUFFIX}")
     mdd_path         = os.path.join(results_dir, f"Master_MDD_Surface_{FILE_SUFFIX}")
     iter_mse_path    = os.path.join(results_dir, f"Master_Iteration_MSEs_{FILE_SUFFIX}")
+    tau_path         = os.path.join(results_dir, f"Master_Expected_Tau_given_p_{FILE_SUFFIX}")
 
     if not os.path.exists(main_path):
         print(f"\n[CRITICAL ERROR] Main results CSV not found! The script aborted.")
@@ -283,10 +284,10 @@ def main():
         sns.lineplot(data=tradeoff_df, x='Tau', y='Rel_MSE', hue='T', marker='o',
                      palette="Set1", linewidth=2.5, ax=ax)
 
-        for T_val, ls, lbl in [(96, '--', 'SIC Baseline ($T=96$)'), (480, ':', 'SIC Baseline ($T=480$)')]:
+        for T_val, ls, lbl in [(240, '--', 'BIC Baseline ($T=240$)'), (600, ':', 'BIC Baseline ($T=600$)')]:
             row = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'] == T_val) & (df['Estimator'] == 'SIC (BIC)')]
             if len(row):
-                color = '#E41A1C' if T_val == 96 else '#377EB8'
+                color = '#E41A1C' if T_val == 240 else '#377EB8'
                 ax.axhline(row['Geom Mean MSE Ratio'].values[0], color=color, linestyle=ls,
                            alpha=0.7, label=lbl)
 
@@ -364,32 +365,43 @@ def main():
             plt.close(fig)
             print("[SAVED] Fig2b_Asymptotic_Relaxation_p0.pdf")
 
-    # Figure 3: MDD Surface
-    if os.path.exists(mdd_path):
-        mdd_df = pd.read_csv(mdd_path)
-        if not mdd_df.empty:
-            max_idx = mdd_df['MDD'].idxmax()
-            max_tau = mdd_df['Tau'][max_idx]
-            max_mdd = mdd_df['MDD'][max_idx]
-
-            fig, ax = plt.subplots(figsize=(8, 6))
-            sns.lineplot(data=mdd_df, x='Tau', y='MDD', color='purple', linewidth=2.5, ax=ax)
+    # Figure 3: MDD Surface (Multiple Samples & Iterations)
+    mdd_df = pd.read_csv(mdd_path)
+    if mdd_df is not None and not mdd_df.empty:
+        fig, ax = plt.subplots(figsize=(9, 6))
+        
+        # Seaborn automatically calculates the mean and 95% confidence interval 
+        # because there are multiple iterations per Tau and T combination.
+        sns.lineplot(data=mdd_df, x='Tau', y='MDD', hue='T', 
+                     palette=['#E41A1C', '#377EB8'], linewidth=2.5, 
+                     marker='o', markersize=8, errorbar='sd', ax=ax)
+        
+        # Optionally: Find the peak of the average curve for T=600 to annotate
+        mean_mdd_600 = mdd_df[mdd_df['T'] == 600].groupby('Tau')['MDD'].mean()
+        if not mean_mdd_600.empty:
+            max_tau = mean_mdd_600.idxmax()
             ax.axvline(max_tau, color='black', linestyle='--', alpha=0.6,
-                       label=fr'Optimal $\lambda_1 \simeq {max_tau:.2f}$')
-            ax.plot(max_tau, max_mdd, 'ko', markersize=8)
-            ax.set_xlabel(r'Candidate Shrinkage Parameter ($\lambda_1$)')
-            ax.set_ylabel('Marginal Data Density (Log Likelihood)')
-            ax.set_title('Objective Function Surface ($T = 480$)')
-            ax.legend()
-            fig.tight_layout()
-            fig.savefig(os.path.join(figures_dir, "Fig3_MDD_Surface.pdf"))
-            plt.close(fig)
-            print("[SAVED] Fig3_MDD_Surface.pdf")
+                       label=fr'Optimal $\lambda_1 \simeq {max_tau:.2f}$ ($T=600$)')
+
+        ax.set_xlabel(r'Candidate Shrinkage Parameter ($\lambda_1$)')
+        ax.set_ylabel('Marginal Data Density (Log Likelihood)')
+        ax.set_title(r'Objective Function Surface by Sample Size ($p_0 = 4$)')
+        
+        # Clean up legend
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(title='Sample Size ($T$)', loc='best')
+        
+        fig.tight_layout()
+        fig.savefig(os.path.join(figures_dir, "Fig3_MDD_Surface.pdf"))
+        plt.close(fig)
+        print("[SAVED] Fig3_MDD_Surface.pdf")
+    else:
+        print("[SKIPPED] Fig3_MDD_Surface (No data found)")
 
     # Figure 4: Risk Hedging Scatter
     if os.path.exists(iter_mse_path):
         iter_df = pd.read_csv(iter_mse_path)
-        scatter_df = iter_df[(iter_df['p0'] == 4) & (iter_df['T'] == 96)].dropna(
+        scatter_df = iter_df.dropna(
             subset=['Joint_BMA_Rel_MSE', 'BIC_Rel_MSE'])
 
         if not scatter_df.empty:
@@ -456,6 +468,35 @@ def main():
             fig.savefig(os.path.join(figures_dir, save_name))
             plt.close(fig)
             print(f"[SAVED] {save_name}")
+
+    # Figure 9 Optimal tau for integrated BMA
+    # Figure 9 Optimal tau for integrated BMA
+    target_T = 600
+    
+    if os.path.exists(tau_path):
+        df = pd.read_csv(tau_path)
+        
+        # Filter for a specific Sample Size to directly compare the estimators
+        df_filtered = df[df['T'] == target_T]
+        
+        fig, ax = plt.subplots(figsize=(8, 6))
+        
+        sns.lineplot(data=df_filtered, x='p', y='Expected_Tau', 
+                     hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
+                     marker='o', linewidth=2.5, ax=ax)
+        
+        ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}$)')
+        ax.set_xlabel('Candidate Lag Order ($p$)')
+        ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\tau \mid p]$)')
+        
+        ax.set_xticks(range(1, int(df['p'].max()) + 1))
+        ax.grid(True, linestyle='--', alpha=0.6)
+        
+        fig.tight_layout()
+        save_name = os.path.join(figures_dir, f"Fig9_Tau_Comparison_T{target_T}.pdf")
+        fig.savefig(save_name)
+        plt.close(fig)
+        print(f"[SAVED] {save_name}")
 
     print("\n" + "="*80)
     print(" VISUALIZATION PROCESS COMPLETE!")

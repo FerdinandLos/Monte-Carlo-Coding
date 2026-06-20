@@ -240,7 +240,8 @@ def single_monte_carlo_iteration(args):
     nan_array = np.full(true_IRF_target.shape, np.nan)
 
     def fail(msg):
-        return (iter_idx,) + (None,) * N_SE + (None, None, (None,)*7, None, None, None, None, None, None, msg)
+        # Added one extra None to account for the expected_tau_dict return
+        return (iter_idx,) + (None,) * N_SE + (None, None, (None,)*7, None, None, None, None, None, None, None, msg)
 
     try:
         ols_cache = {}
@@ -482,15 +483,31 @@ def single_monte_carlo_iteration(args):
         SE_joint_bma = pool_bma_draws(final_joint_weights, 7000)
         SE_geom_bma  = pool_bma_draws(final_geom_weights, 8000)
 
+        # ---------------- EXPECTED TAU GIVEN P (JOINT & GEOM BMA) ----------------
+        expected_tau_dict = {}
+        for p_val in range(1, p_max + 1):
+            # 1. Expected Tau for Joint BMA
+            w_joint = {k: w for k, w in final_joint_weights.items() if k[0] == p_val}
+            sum_w_j = sum(w_joint.values())
+            exp_tau_j = sum(k[1] * w for k, w in w_joint.items()) / sum_w_j if sum_w_j > 0 else np.nan
+            
+            # 2. Expected Tau for Geom BMA
+            w_geom = {k: w for k, w in final_geom_weights.items() if k[0] == p_val}
+            sum_w_g = sum(w_geom.values())
+            exp_tau_g = sum(k[1] * w for k, w in w_geom.items()) / sum_w_g if sum_w_g > 0 else np.nan
+            
+            expected_tau_dict[p_val] = {'Joint-BMA': exp_tau_j, 'Geom-BMA': exp_tau_g}
+
         # ---------------- TRADEOFF & SURFACE EVALUATIONS ----------------
         tradeoff_mses = None
-        mdd_surface   = None
+        mdd_surface_data = [] # Changed from None to an empty list
 
-        if true_p == 4 and (T_real == 96 or T_real == 480):
-            tradeoff_mses = np.zeros(len(TAU_DISCRETE))
+        if true_p == 4 and T_real in [240, 600]: # Pick your two target T values
             y_plot = np.ascontiguousarray(simulated_data)
             x_plot = np.ascontiguousarray(X_exo)
-
+            
+            # 1. Tradeoff Curve (Keep existing logic)
+            tradeoff_mses = np.zeros(len(TAU_DISCRETE))
             for idx, t_val in enumerate(TAU_DISCRETE):
                 try:
                     A_m, SIGMA_m, _, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
@@ -500,11 +517,10 @@ def single_monte_carlo_iteration(args):
                     tradeoff_mses[idx] = np.sum((get_median_target_model(v_m, acc_m) - true_IRF_target)**2) if acc_m > 0 else np.nan
                 except: tradeoff_mses[idx] = np.nan
 
-            if T_real == 480 and iter_idx == 0:
-                mdd_surface = np.zeros(len(TAU_DISCRETE))
-                for idx, t_val in enumerate(TAU_DISCRETE):
-                    _, _, log_mdd_surf, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
-                    mdd_surface[idx] = log_mdd_surf
+            # 2. MDD Surface (Now runs for ALL iterations)
+            for t_val in TAU_DISCRETE:
+                _, _, log_mdd_surf, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
+                mdd_surface_data.append({'Tau': t_val, 'MDD': log_mdd_surf})
 
         return (iter_idx, SE_aic, SE_sic, SE_hqc, SE_ols_bma, SE_ols_geom,
                 SE_minn_wn_005, SE_minn_wn_020, SE_minn_wn_035, SE_minn_wn_050,
@@ -517,7 +533,7 @@ def single_monte_carlo_iteration(args):
                 best_mdd_tau, best_mdd_tau_p0,
                 (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid, exp_p_geom_ols, exp_p_joint, exp_p_geom),
                 final_bic_weights, geom_ols_p_dist, joint_p_dist, geom_p_dist,
-                tradeoff_mses, mdd_surface, "Success")
+                tradeoff_mses, mdd_surface_data, expected_tau_dict, "Success")
 
     except Exception as e:
         return fail(f"Error: {str(e)}")
@@ -542,6 +558,7 @@ def main():
     raw_taus_list, raw_taus_p0_list = [], []
     tradeoff_list, mdd_list = [], []
     iteration_mses_list = []
+    expected_tau_list = []
 
     global_start_time = time.time()
     n_cores = multiprocessing.cpu_count()
@@ -661,9 +678,31 @@ def main():
                 raw_taus_p0_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau_p0': res[28]})
                 
                 if res[34] is not None: all_tradeoffs_t.append(res[34])
-                if res[35] is not None:
-                    for i, t_val in enumerate(TAU_DISCRETE):
-                        mdd_list.append({'Tau': t_val, 'MDD': res[35][i]})
+                
+                # New unpack logic for MDD surface
+                if res[35]: # If the list is not empty
+                    for item in res[35]:
+                        mdd_list.append({
+                            'p0': current_p0, 
+                            'T': current_T, 
+                            'Iter': res[0], 
+                            'Tau': item['Tau'], 
+                            'MDD': item['MDD']
+                        })
+
+                # Unpack logic for Expected Tau (res[36])
+                exp_tau_dict = res[36]
+                for p_val, taus in exp_tau_dict.items():
+                    if not np.isnan(taus['Joint-BMA']):
+                        expected_tau_list.append({
+                            'p0': current_p0, 'T': current_T, 'Iter': res[0], 
+                            'p': p_val, 'Estimator': 'Joint-BMA', 'Expected_Tau': taus['Joint-BMA']
+                        })
+                    if not np.isnan(taus['Geom-BMA']):
+                        expected_tau_list.append({
+                            'p0': current_p0, 'T': current_T, 'Iter': res[0], 
+                            'p': p_val, 'Estimator': 'Geom-BMA', 'Expected_Tau': taus['Geom-BMA']
+                        })
 
             if len(all_SE_aic) == 0:
                 print(" [FAILED]"); continue
@@ -788,6 +827,7 @@ def main():
         pd.DataFrame(tradeoff_list).to_csv(os.path.join(results_dir, f"Master_Tradeoff_Curve_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(mdd_list).to_csv(os.path.join(results_dir, f"Master_MDD_Surface_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
         pd.DataFrame(iteration_mses_list).to_csv(os.path.join(results_dir, f"Master_Iteration_MSEs_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(expected_tau_list).to_csv(os.path.join(results_dir, f"Master_Expected_Tau_given_p_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
 
         print("\n" + "="*90)
         print(" RESULTS PREVIEW:")
@@ -797,6 +837,8 @@ def main():
         print("\n" + "="*90)
         print(" SUCCESS: Simulation complete and CSVs generated in 'Results'!")
         print("="*90)
+
+        print(f"Simulation took {time.time() - global_start_time} seconds")
     else:
         print("\n[ERROR] No data generated. Check file paths.")
 

@@ -76,6 +76,57 @@
       \verb https://www.degruyter.com/document/doi/10.2202/1558-3708.1219/html
       \endverb
     \endentry
+    \entry{kilianNotAllOil2009}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9170e9b9292218b3597d8f9f52d2a454}{%
+           family={Kilian},
+           familyi={K\bibinitperiod},
+           given={Lutz},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{fullhash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{fullhashraw}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{bibnamehash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{authorbibnamehash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{authornamehash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{authorfullhash}{9170e9b9292218b3597d8f9f52d2a454}
+      \strng{authorfullhashraw}{9170e9b9292218b3597d8f9f52d2a454}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{Shocks to the real price of oil may reflect oil supply shocks, shocks to the global demand for all industrial commodities, or demand shocks that are specific to the crude oil market. Each shock has different effects on the real price of oil and on US macroeconomic aggregates. Changes in the composition of shocks help explain why regressions of macroeconomic aggregates on oil prices tend to be unstable. Evidence that the recent surge in oil prices was driven primarily by global demand shocks helps explain why this shock so far has failed to cause a major recession in the United States. (JEL E31, E32, Q41, Q43)}
+      \field{issn}{0002-8282}
+      \field{journaltitle}{American Economic Review}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{number}{3}
+      \field{shorttitle}{Not {{All Oil Price Shocks Are Alike}}}
+      \field{title}{Not {{All Oil Price Shocks Are Alike}}: {{Disentangling Demand}} and {{Supply Shocks}} in the {{Crude Oil Market}}}
+      \field{urlday}{19}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{99}
+      \field{year}{2009}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1053\bibrangedash 1069}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.1257/aer.99.3.1053
+      \endverb
+      \verb{urlraw}
+      \verb https://www.aeaweb.org/articles?id=10.1257/aer.99.3.1053
+      \endverb
+      \verb{url}
+      \verb https://www.aeaweb.org/articles?id=10.1257/aer.99.3.1053
+      \endverb
+      \keyw{Business Fluctuations; Cycles,Cycles Energy: Demand and Supply Energy and the Macroeconomy,Deflation Business Fluctuations,Energy and the Macroeconomy,Energy: Demand and Supply,Inflation,Price Level,Price Level; Inflation; Deflation}
+    \endentry
     \entry{kilianRoleInventoriesSpeculative2014}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=9170e9b9292218b3597d8f9f52d2a454}{%
@@ -136,6 +187,111 @@
       \endverb
       \verb{url}
       \verb https://onlinelibrary.wiley.com/doi/10.1002/jae.2322
+      \endverb
+    \endentry
+    \entry{lutkepohlComparisonCriteriaEstimating1985}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=d400c31862099db9f37a97b35e10814d}{%
+           family={Lütkepohl},
+           familyi={L\bibinitperiod},
+           given={Helmut},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{d400c31862099db9f37a97b35e10814d}
+      \strng{fullhash}{d400c31862099db9f37a97b35e10814d}
+      \strng{fullhashraw}{d400c31862099db9f37a97b35e10814d}
+      \strng{bibnamehash}{d400c31862099db9f37a97b35e10814d}
+      \strng{authorbibnamehash}{d400c31862099db9f37a97b35e10814d}
+      \strng{authornamehash}{d400c31862099db9f37a97b35e10814d}
+      \strng{authorfullhash}{d400c31862099db9f37a97b35e10814d}
+      \strng{authorfullhashraw}{d400c31862099db9f37a97b35e10814d}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Abstract. Various criteria for estimating the order of a vector autoregressive process are compared in a simulation study. For the considered processes Schwarz's BIC criterion chooses the correct autoregressive order most often and leads to the smallest mean squared forecasting error in samples of the size usually available in practice.}
+      \field{issn}{1467-9892}
+      \field{journaltitle}{Journal of Time Series Analysis}
+      \field{langid}{english}
+      \field{number}{1}
+      \field{title}{Comparison of {{Criteria}} for {{Estimating}} the {{Order}} of a {{Vector Autoregressive Process}}}
+      \field{urlday}{22}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{6}
+      \field{year}{1985}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{35\bibrangedash 52}
+      \range{pages}{18}
+      \verb{doi}
+      \verb 10.1111/j.1467-9892.1985.tb00396.x
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\ferdi\\Zotero\\storage\\LXCJWMQN\\Lütkepohl - 1985 - Comparison of Criteria for Estimating the Order of a Vector Autoregressive Process.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\C8KC3H45\\j.1467-9892.1985.tb00396.html
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9892.1985.tb00396.x
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9892.1985.tb00396.x
+      \endverb
+      \keyw{AR order determination,Autoregressive process,Model selection criteria,Sequential testing}
+    \endentry
+    \entry{uhligWhatAreEffects2005}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=23c65b2fd3969e3b79f89556ae2384b8}{%
+           family={Uhlig},
+           familyi={U\bibinitperiod},
+           given={Harald},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{fullhash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{fullhashraw}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{bibnamehash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{authorbibnamehash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{authornamehash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{authorfullhash}{23c65b2fd3969e3b79f89556ae2384b8}
+      \strng{authorfullhashraw}{23c65b2fd3969e3b79f89556ae2384b8}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{issn}{03043932}
+      \field{journaltitle}{Journal of Monetary Economics}
+      \field{langid}{english}
+      \field{month}{3}
+      \field{number}{2}
+      \field{shortjournal}{Journal of Monetary Economics}
+      \field{shorttitle}{What Are the Effects of Monetary Policy on Output?}
+      \field{title}{What Are the Effects of Monetary Policy on Output? {{Results}} from an Agnostic Identification Procedure}
+      \field{urlday}{11}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{52}
+      \field{year}{2005}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{381\bibrangedash 419}
+      \range{pages}{39}
+      \verb{doi}
+      \verb 10.1016/j.jmoneco.2004.05.007
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\99RJ8P57\Uhlig - 2005 - What are the effects of monetary policy on output Results from an agnostic identification procedure.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0304393205000073
+      \endverb
+      \verb{url}
+      \verb https://linkinghub.elsevier.com/retrieve/pii/S0304393205000073
       \endverb
     \endentry
   \enddatalist
