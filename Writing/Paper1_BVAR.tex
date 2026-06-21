@@ -17,16 +17,15 @@
 
 % BibLaTeX setup for Zotero Better BibLaTeX
 \usepackage[style=authoryear, backend=biber, natbib=true, maxcitenames=2]{biblatex}
-\addbibresource{Monte Carlo Simulations.bib}
+\addbibresource{Monte Carlo Simulations2.bib}
 
 % Title and Author Information
-\title{Embracing Lag Uncertainty: Bayesian Model Averaging in Set-Identified Structural VARs}
+\title{To Shrink or to Select? Evaluating Finite-Sample Performance in Set-Identified Structural VARs}
 \author{
     Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de}} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
 }
-\date{\today}
-
+\date{\today \\ \vspace{0.5cm} \textit{Seminar Evaluating Econometric Methods using Monte Carlo Simulations }(Prof. Derya Uysal)}
 \begin{document}
 
 \maketitle
@@ -45,14 +44,150 @@ This is the abstract for your paper. Briefly state the purpose of the research, 
 \section{Introduction}
 \label{sec:introduction}
 
-Structural Vector Autoregressions (VAR) remain the cornerstone of a big section of empirical macroeconomics, especially for monetary policy, shock transmission, and financial markets. While forecasting may be the main goal for some actors, especially for central banks or national economic institutes, many researchers use it in order to estimate the relationship between different factors in determining macroeconomic movements. For this purpose, Impulse Response Functions (IRF) are deduced from the VAR parameters, establishing a link to how a shock in one variable affects the development of another period, both contemporaneously as well as over a horizon of several months or even years. For example, it may be applied to study how shocks in speculative oil demand affect oil demand and supply flows \citep{kilianRoleInventoriesSpeculative2014} or how interest rate shocks impact credit costs \citep{gertlerMonetaryPolicySurprises2015} (change to add newer papers). The specification of the VAR model, as well as the method to decompose it into structural form, are the two crucial specifications that a researcher has to decide on. Traditionally, VAR models were specified with a lag order determined by economic theory or an information criterion (IC) and then estimated by Ordinary Least Squares (OLS) or Maximum Likelihood (ML). The past 15 years saw a surge in popularity of Bayesian methods, in which not one single lag order is specified, but lag orders are weighed and/or shrunk based on a prior as well as a posterior probability distribution. These methods enable the researcher to not only rely on one specification but to incorporate a larger model or set of models while still keeping variance low. The deduction methodology of IRFs has also developed a lot ever since \ref{simsMacroeconomicsReality1980} showed that structural IRFs may be retrieved by Cholesky decomposition, i.e., pre-determined causal ordering of the relationships between variables. Newer methods typically require weaker assumptions and follow a more agnostic approach to the inference of economic relationships. The most dominant approach nowadays is set identification using sign restrictions based on economic theory. Unlike with Cholesky decomposition, all variables can simultaneously react to each other's shocks, and sign restrictions can reduce the possible set of IRFs to only include those that fit the researcher's assumptions. In the end, there is a set of admissible IRFs of which the median target, the IRF overall closest to the median of all IRFs, is usually selected as the main result.
+Structural Vector Autoregressions (VAR) remain the cornerstone of a big section of empirical macroeconomics, especially for monetary policy, shock transmission, and financial markets. While forecasting may be the main goal for some actors, especially for central banks or national economic institutes, many researchers use it in order to estimate the relationship between different factors in determining macroeconomic movements. For this purpose, Impulse Response Functions (IRF) are deduced from the VAR parameters, establishing a link to how a shock in one variable affects the development of another period, both contemporaneously as well as over a horizon of several months or even years. For example, it may be applied to study how shocks in speculative oil demand affect oil demand and supply flows \citep{kilianRoleInventoriesSpeculative2014} or how interest rate shocks impact credit costs \citep{gertlerMonetaryPolicySurprises2015} (change to add newer papers). The specification of the VAR model, as well as the method to decompose it into structural form, are the two crucial specifications that a researcher has to decide on. Traditionally, VAR models were specified with a lag order determined by economic theory or an information criterion (IC) and then estimated by Ordinary Least Squares (OLS) or Maximum Likelihood (ML). The past 15 years saw a surge in popularity of Bayesian methods, in which not one single lag order is specified, but lag orders are weighed and/or shrunk based on a prior as well as a posterior probability distribution. These methods enable the researcher to not only rely on one specification but to incorporate a larger model or set of models while still keeping variance low. The deduction methodology of IRFs has also developed a lot ever since \citet{simsMacroeconomicsReality1980} showed that structural IRFs may be retrieved by Cholesky decomposition, i.e., pre-determined causal ordering of the relationships between variables. Newer methods typically require weaker assumptions and follow a more agnostic approach to the inference of economic relationships. The most dominant approach nowadays is set identification using sign restrictions based on economic theory. Unlike with Cholesky decomposition, all variables can simultaneously react to each other's shocks, and sign restrictions can reduce the possible set of IRFs to only include those that fit the researcher's assumptions. In the end, there is a set of admissible IRFs of which the median target, the IRF overall closest to the median of all IRFs, is usually selected as the main result.
 
 This study takes inspiration from \citet{ivanovPractitionersGuideLag2005}, the first paper to study which specification of a VAR model is the best at retrieving the true IRF by using the Monte Carlo simulation method. In 2005, this meant testing criteria for lag selection for how well they can fit VAR models to retrieve structural IRFs by Cholesky decomposition. We aim to update this to the more recent world of VAR methodology where IRFs are determined by set identification and estimation doesn't only rely on information criteria, but also on Bayesian methods. We construct a realistic DGP based on \citet{kilianRoleInventoriesSpeculative2014}'s study of the oil market, using the set identification method. Then we compare different methods over repeated simulations in how well they can retrieve the true IRF by means of the median target of their identified set. This study focuses on comparing the information criteria AIC, BIC, and HQC with BVAR estimations using different overall shrinkage parameters $\lambda_1$.  An accompanying paper by (CITATION) also uses the popular method of Bayesian Model Averaging. We find that BVARs can significantly outperform OLS estimated VAR models; however, with strong differences in performance depending on $\lambda_1$. Optimization of $\lambda_1$ using marginal density distribution (MDD), which optimizes on out-of-sample performance, is found not to always be able to select the best $\lambda_1$ for the purpose of IRF decomposition. We therefore show that the goal of forecasting and IRF analysis do not necessarily work together in VAR estimation.
 
-The rest of the paper is structured as follows: 
+The rest of the paper is structured as follows: Section~\ref{sec:theory} introduces the reader to the theoretical foundations needed to understand the methodology of this simulation study. It first introduces the VAR framework, Section~\ref{sec:VAR_IRF}, then explains the sign restriction approach for IRF decomposition, Section~\ref{sec:sign_restrictions}, and explains information criteria as well as the BVAR method, Section~\ref{sec:IC}~and~\ref{sec:BVAR}. We aim to both convey the intuition behind these methods as well as derive key properties. Section~\ref{sec:simulation} explains the simulation design and Section~\ref{sec:results} presents our results. Finally, the conclusion, Section~\ref{sec:conclusion}, summarizes and discusses our key findings.
+
+
+\section{Theoretical Background}
+\label{sec:theory}
+
+ First, we introduce the backbones of the analysis to familiarize the reader with these concepts for a clearer understanding. We believe it will be more convenient to discuss the theoretical background under two different subheadings.
+ 
+\subsection{VAR Framework and IRFs}
+\label{sec:VAR_IRF}
+ 
+The simulation design of \citet{ivanovPractitionersGuideLag2005} requires several data-generating processes whose characteristics are obtained from actual published VAR studies. The authors fit a reduced form VAR($p_0$) model to data used in other studies, with the "true lag order" imposed by the authors: 
+
+\begin{equation} \label{eq:VAR}
+    Y_t = v + A_{1}Y_{t-1}+A_2Y_{t-2}+...+A_{p_0}Y_{t-p_0}+e_t
+\end{equation}
+
+Here, $Y_t$ is a ($K \times 1$) vector of endogenous variables, $v$ is a vector of intercepts, $A_1, \dots, A_{p_0}$ are ($K \times K$) coefficient matrices, $e_t$ is a white-noise innovation vector with $\mathbb{E}[e_t] = 0$ and covariance matrix $\mathbb{E}[e_t e_t'] = \Sigma$, and $p_0$ denotes the lag order. This is the standard reduced-form representation of a VAR process \cite{lutkepohlNewIntroductionMultiple2005,simsMacroeconomicsReality1980}. However, reduced-form innovations are composed of structural shocks and are therefore uninformative about the effects of any individual shock. To identify the structural shocks of interest, restrictive assumptions must be imposed. The relationship between the two is given by:
+\begin{equation} \label{eq:VAR_error}
+    e_t = B \epsilon_t
+\end{equation}
+where $\epsilon_t$ denotes the vector of mutually uncorrelated structural shocks (that are normalized to unit variance i.e $\mathbb{E}[\epsilon_t \epsilon_t'] = I$) and $B$ is a matrix satisfying $\Sigma = BB'$. Since there are infinitely many candidate matrices $B$ (for any valid factor $\tilde{B}$ and any orthogonal matrix $D$, the product $\tilde{B} D$ also satisfies $\Sigma = (\tilde{B} D)(\tilde{B} D)'$), restrictive assumptions are required to single out a unique $B$. The literature offers several strategies for this purpose, including short-run (recursive) restrictions \citep{simsMacroeconomicsReality1980,christianoMonetaryPolicyShocks1999}, long-run restrictions \citep{blanchardDynamicEffectsAggregate1989}, and sign restrictions \citep{faustRobustnessIdentifiedVAR1998, uhligWhatAreEffects2005,rubio-ramirezStructuralVectorAutoregressions2010}; see \citet{kilianStructuralVectorAutoregressive2017} for a comprehensive treatment. Following \citet{ivanovPractitionersGuideLag2005}, we do not commit to a single scheme mentioned above but instead adopt, for each data-generating process, the identifying assumptions used in the original study on which it is based.
+
+In general, interpreting the dynamics implied by VAR coefficients is difficult. Therefore, practitioners use Impulse Response Functions (IRF) to summarize the main dynamics that they want to explain. To obtain the coefficient set that constructs the impulse response function we express the VAR model in terms of an infinite VMA process. Using \eqref{eq:VAR}:
+\begin{equation} \label{eq:VMA}
+    Y_t = [I-A_1L-A_2L^2-...-A_{p_0}L^{p_0}]^{-1}v + [I-A_1L-A_2L^2-...-A_{p_0}L^{p_0}]^{-1}e_t
+\end{equation}
+
+
+Which is equivalent to: 
+\begin{equation} \label{eq:VMA2}
+    Y_t = \mu + \sum_{i=0}^{\infty} \Phi_i\,e_{t-i} \quad \text{and} \qquad \Phi_0 = I_K
+\end{equation}
+
+
+where $\mu = [I - A_1 - \cdots - A_{p_0}]^{-1}v$ is the unconditional mean vector and the moving average coefficient matrices are obtained recursively as $\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j}$ where $A_j = 0 \quad \text{for} \quad j>p_0$ (see appendix for detailed derivation). Finally, in order to obtain the structural impulse response functions, we plug the relationship given in \eqref{eq:VAR_error} in \eqref{eq:VMA2}:
+\begin{equation} \label{eq:SVAR}
+    Y_t = \mu + \sum_{i=0}^{\infty} \Phi_i\,B\epsilon_{t-i} = \mu + \sum_{i=0}^{\infty} \Theta_i\,\epsilon_{t-i}
+\end{equation}
+Here, the matrices $\Theta_i$ are the structural impulse response matrices, and they contain the coefficients required to construct the impulse response function. To illustrate, the equation for the first endogenous variable can be written as: 
+\begin{equation} \label{eq:SVAR2}
+    Y_{1t} = \mu_1 + \sum_{k=1}^{K} \theta_{1k,0} \, \epsilon_{k\,t} + \sum_{k=1}^{K} \theta_{1k,1} \, \epsilon_{k\,t-1} + \sum_{k=1}^{K} \theta_{1k,2} \, \epsilon_{k\,t-2} \, + \, ...
+\end{equation} 
+where $\theta_{jk,i}$ denotes the response of variable j to structural shock k at horizon i, i.e., the (j,k) element of $\Theta_i$. 
+
+The structural impulse responses in (6) depend on the model through two distinct channels. First, the moving average coefficients $\Phi_i$ are determined by the reduced-form autoregressive coefficients $A_1,...,A_{p_0}$, so the impulse responses depend on the lag order $p_0$; in practice $p_0$ is unknown and must be estimated, which is the subject of the lag-order selection criteria discussed in Section 3. Second, the mapping from reduced-form to structural form impulse responses requires the identification of $B$ introduced above. We calibrate our data-generating process to the model of \citet{kilianRoleInventoriesSpeculative2014} and accordingly employ a sign-restriction algorithm to identify the impact matrix (though we omit the elasticity bounds for computational feasibility). A key feature of this approach is that sign restrictions deliver only partial identification: rather than a single impact matrix, they identify a \textit{set} of candidate matrices consistent with the a priori restrictions implied by economic theory. This raises several questions about the identification strategy, which are the focus of the next subsection.
+
+\subsection{Sign Restrictions}
+\label{sec:sign_restrictions}
+
+In the previous section, specifically in equation \eqref{eq:VAR_error}, we emphasized the existence of infinitely many impact matrices—which in turn leads to infinitely many possible IRF structures—and the need for an identification assumption that rules out the IRFs inconsistent with that assumption. Point identification strategies, such as the Cholesky decomposition, impose an assumption restrictive enough to single out a unique impact matrix; in the Cholesky case, this is a recursive ordering that determines the contemporaneous causal structure among the endogenous variables. \citet{uhligWhatAreEffects2005}, however, criticizes such strategies on the grounds that these restrictive assumptions may not reflect the underlying economic reality, but instead may impose the very conclusions the researcher expects to find.
+
+\citet{uhligWhatAreEffects2005} proposes an alternative he terms an "agnostic" identification procedure. The agnostic approach imposes only minimal restrictions---and, crucially, leaves the response of the variable of central interest entirely unrestricted---so that the answer to the research question is determined by the data rather than by the identifying assumptions. The restrictions that are imposed are deliberately weak: they consist only of sign restrictions on a few responses that can be reasonably agreed upon across economists. This minimalism comes at a cost, however. Imposing only sign restrictions does not single out a unique impact matrix; instead, it identifies a set of candidate impact matrices consistent with the assigned signs. This set-identification (or partial identification) strategy is less restrictive, but it comes at the cost of ambiguity, since the object of interest is no longer a single value but a range. Moreover, as emphasized by \citet{uhligWhatAreEffects2005}, sign restrictions introduce a further choice that point-identifying schemes do not: the horizon over which the restrictions are imposed. In addition to specifying the sign of a response on impact, the practitioner must decide how many subsequent periods that sign is required to hold---the longer this horizon, the more candidate models are discarded and the narrower the identified set becomes.
+
+This trade-off is described by \citet{PartialIdentificationProbability2003a} as the Law of Decreasing Credibility: the credibility of inference decreases as the strength of the maintained assumptions increases. Point identification strategies impose stronger assumptions and are therefore more informative—they reduce the identified object to a single point—but they are less credible, since their validity rests entirely on assumptions that may not hold. Partial identification strategies, by contrast, are less informative—they deliver a trimmed range rather than a single element—but more credible, precisely because they rely on weaker and more defensible assumptions. 
+
+Here, we follow \citet{kilianRoleInventoriesSpeculative2014}\footnote{\citet{kilianRoleInventoriesSpeculative2014} argue that agnostic sign restrictions alone are not sufficient to narrow the set of admissible models adequately, and they therefore impose additional quantitative restrictions—bounds on the implied oil supply and demand elasticities. We omit these elasticity restrictions for reasons of computational feasibility: in our finite samples the acceptance rate under the elasticity bounds is prohibitively low, so that obtaining a sufficient number of admissible models in each of the many Monte Carlo replications would require an impractical number of draws.} with slight differences due to computational feasibility: further restrictions on impulse response functions are omitted (dynamic restrictions and elasticity bounds) while the sign restrictions are left unchanged. First, we fit VAR($p_0$) model to the data of \citet{kilianRoleInventoriesSpeculative2014} and obtain the reduced-form autoregressive coefficients ($\hat A$) and the variance-covariance matrix of the reduced-form errors ($\hat \Sigma$). We then factor this covariance matrix using Cholesky decomposition ($\hat \Sigma = PP'$).\footnote{\citet{kilianRoleInventoriesSpeculative2014} uses eigendecomposition here. However, it doesn't make any difference. Any two factors satisfying $BB' = \tilde B \tilde B' = \hat \Sigma$ differ only by an orthogonal rotation ($B = \tilde B D$). Since our procedure applies the full set of Haar-distributed rotations to the initial factor, the resulting set of admissible models is invariant to the initial decomposition. Only element we need is an initial factor to run the algorithm.} Next, following \citet{rubio-ramirezStructuralVectorAutoregressions2010}, we generate random orthogonal matrices: we draw a matrix of independent standard normal entries, compute its QR decomposition, and normalize the sign of each column so that the diagonal of ($R$) is positive. This procedure yields orthogonal matrices ($Q$) (with $QQ'=I_K$) that are uniformly distributed with respect to the Haar measure, ensuring that the space of admissible rotations is sampled without bias. For each draw we form a candidate impact matrix ($\tilde B = PQ$) and check whether it satisfies the imposed sign restrictions; candidates that violate the restrictions are discarded. Finally, we retain 1,000 admissible impulse response structures and select the median target as our true IRF (population response).\footnote{Median Target is the admissible model whose impulse responses are closest to the pointwise median across all retained models.} For the sake of clarity, we find it appropriate to outline the step-by-step blueprint of this algorithm:
+
+1. Draw a ($K \times K$) matrix $W$, where each element is drawn independently from a standard normal distribution: $W_{ij} \sim N(0,1)$.
+
+2. Compute the QR decomposition $W = QR$, where $Q$ is an orthogonal matrix (the rotation matrix) and $R$ is upper triangular. Normalize the sign of each column of $Q$ so that the diagonal of $R$ is positive, which renders the decomposition unique and ensures that $Q$ is distributed according to the Haar measure.
+
+3. Construct the candidate impact matrix $\tilde B = PQ$, and then check whether $\tilde B$ satisfies the imposed restrictions.
+
+4. Repeat this process by drawing new $W$ matrices (i.e., obtaining new rotation matrices $Q$) until the desired number of admissible models (1,000 in our case) is reached.
+
+5. Among the retained models, select the median target $m^{*}$ as the representative (true) model. 
+
+The selection of a representative model is a much-debated issue in the literature, particularly the comparison between the pointwise median and the median target. Since we must obtain a single population response rather than a set—otherwise the mean squared error could not be computed against a unique true IRF—we adopt the approach most appropriate for our design. \citet{frySignRestrictionsStructural2011} criticize the pointwise median for a compelling reason: the pointwise median does not correspond to any single admissible model, as it combines responses drawn from different models with different impact matrices. Consequently, this synthetic profile may appear plausible but need not correspond to any $B$ satisfying $\hat \Sigma = BB'$. This implies that the shocks may not be properly isolated, so the pointwise median cannot be used for variance decomposition. To address this, Fry and Pagan propose the median target approach: 
+
+\begin{equation} \label{eq:Median_Target}
+    \begin{aligned} 
+        m^* &= \arg\min_m \sum_{j,k,i} \left(\frac{\theta_{jk,i}^{(m)} - \mathrm{med}_{jk,i}}{\sigma_{jk,i}}\right)^2, \\ \text{where}\quad \mathrm{med}_{jk,i} &= \operatorname{median}_m\{\theta_{jk,i}^{(m)}\}, \quad \sigma_{jk,i} = \operatorname{std}_m\{\theta_{jk,i}^{(m)}\}. 
+    \end{aligned} 
+\end{equation}
+
+Solving this minimization yields the admissible model whose impulse responses are closest to the pointwise median ($m^{*} \in M$) Since $m^{*}$ is an actual admissible model rather than a synthetic construct, it satisfies $\hat \Sigma = BB'$ (which makes sure that shocks are orthogonalized) and can be used for variance decomposition. We adopt this approach due to the coherence concerns described above and take the median target as our representative true IRF. 
+
+Identification is an essential part of recovering the underlying impulse response function. As noted earlier, however, it is not the only factor that matters: the specification of the reduced-form VAR also plays a role. Recall that $\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j}$ where $A_j = 0 \quad \text{for} \quad j>p_0$, so the moving-average coefficients—and hence the impulse responses—depend on the lag order ($p_0$). The practitioner must therefore choose the lag order carefully. We address this in the third section.
+
+\subsection{Information Criteria}
+\label{sec:IC}
+
+In this section, we briefly discuss the problem of choosing the lag order, then introduce the information criteria and explain their relevance for our analysis. The main issue is that $p_0$ is not known when estimating a reduced-form VAR; it is a matter of specification. Adding too many lags may lead to overfitting, which inflates the variance of the impulse response estimates by requiring the estimation of additional parameters. Underfitting is also problematic, as it introduces bias. The bias–variance trade-off is therefore central to lag-order selection. In practice, information criteria are used to address this issue, and their working principle is essentially the same (see Lütkepohl, 2005, Ch. 4): 
+\begin{equation} \label{eq:IC}
+    \mathrm{IC}(p) = \ln{|\hat{\Sigma}(p)|} + \underbrace{c_T \,\frac{K^2 p}{N}}_{\text{penalty term}}
+\end{equation}
+Information criteria are formulas that embody the bias–variance trade-off described above. The $\ln|\hat{\Sigma}(p)|$ term is the log-determinant of the reduced-form error covariance matrix, estimated by quasi-maximum likelihood; this term penalizes underfitting, since a model with too few lags leaves $\hat \Sigma(p)$ large and thus raises $\mathrm{IC}(p)$. The Penalty weight $c_T$ depends on the specific criterion, and the penalty term increases with the lag order; the second component therefore penalizes overfitting. The lag order is estimated by: 
+\begin{equation} \label{eq:lag_selection}
+    \hat{p} = \arg\min_{p} \mathrm{IC}(p), \qquad 1 \leq p \leq \bar{p}
+\end{equation}
+Following \citet{ivanovPractitionersGuideLag2005}, we set the maximum lag order to $\bar{p}=12$ for our monthly data, corresponding to one year. This choice exceeds the largest true lag order considered $p_0 = 10$, ensuring that all criteria can both identify and overfit relative to the true order, and it makes our results directly comparable to those of \citet{ivanovPractitionersGuideLag2005}. 
+
+Although there are different types of $\mathrm{IC}(p)$, three are mainly used: 
+\begin{equation} \label{eq:AIC}
+    \mathrm{AIC}(p) = \ln|\hat{\Sigma}(p)| + \frac{2}{N}\, K^2 p
+\end{equation}
+The Akaike Information Criterion (Akaike, 1974) is the least overfitting-averse of these three criteria. It uses $c_T = 2$ and tends to overfit in practice.\footnote{In the literature, the AIC is generally regarded as prone to overfitting. In the VAR setting, however, this tendency is attenuated: adding one more lag requires estimating an entire ($K \times K$) coefficient matrix, so the penalty grows by $\frac {2K^{2}}{N}$ at each step. Because each additional lag is this costly, even the AIC—the most lenient of the three criteria—can underfit in practice.}
+\begin{equation} \label{eq:BIC}
+    \mathrm{BIC}(p) = \ln|\hat{\Sigma}(p)| + \frac{\ln N}{N}\, K^2 p
+\end{equation}
+The Bayesian Information Criterion (BIC), also called the Schwarz Information Criterion \citet{schwarzEstimatingDimensionModel1978}, penalizes overfitting the most. It uses $c_T = \ln {N}$ and is a consistent estimator of the true lag order $\left( \operatorname*{plim}\limits_{N \to \infty} \hat{p}^{\mathrm{BIC}} = p_0 \right)$.  
+\begin{equation} \label{eq:HQC}
+    \mathrm{HQC}(p) = \ln|\hat{\Sigma}(p)| + \frac{2\ln\ln N}{N}\, K^2 p
+\end{equation}
+The Hannan-Quinn Information Criterion (Hannan and Quinn, 1979) is neither as harsh against overfitting as the Schwarz criterion nor as tolerant as the Akaike criterion. It uses $c_T = 2 \ln {\ln N}$ as its penalty weight and, like the Schwarz criterion, is a consistent estimator of the true lag order.  
+
+The three criteria share the same fit term and differ only in the penalty weight $c_T$, which equals $2$ for the AIC, $2 \ln \ln N$ for the HQC, and $\ln N$ for the BIC. A heavier penalty makes each additional lag more costly and therefore yields a more parsimonious model. Comparing the weights gives: 
+\begin{equation} \label{eq:IC_comp}
+    2 \;\leq\; 2\ln\ln N \;\leq\; \ln N
+\end{equation}
+where the first inequality holds for $N \ge 16$ and the second for all $N$.\footnote{The weights coincide at $N = e^{e} \approx 15.2$ (for $2 = 2\ln{\ln N}$) and never cross for $\ln N$ versus $2 \ln \ln N$, since $x - 2 \ln x > 0$ for all $x > 0$. The condition $\ln N \ge 2$ (BIC versus AIC) holds for $N \ge 8$. Therefore, $N \ge 16$ is the requirement for (14) to hold.} Consequently, the implied lag-order estimates satisfy: 
+
+\begin{equation} \label{eq:IC_comp}
+    \hat{p}^{\mathrm{BIC}} \;\leq\; \hat{p}^{\mathrm{HQC}} \;\leq\; \hat{p}^{\mathrm{AIC}}
+\end{equation}
+
+so that the BIC is the most parsimonious criterion and the AIC the least, with the HQC in between (\citet{ivanovPractitionersGuideLag2005}). Since $N \ge 16$ holds across all sample sizes in our study, this ordering applies throughout.
+
+\citet{lutkepohlComparisonCriteriaEstimating1985} compares information criteria based on their ability to recover the true lag order. \citet{ivanovPractitionersGuideLag2005}, by contrast, object to this approach on the grounds of the bias-variance trade-off discussed above. To see why, it is helpful to consider the decomposition of the mean squared error: 
+\begin{equation} \label{eq:MSE}
+    MSE(\hat \theta) = E[(\hat \theta - \theta)^2] = E[(\hat \theta - E[\hat \theta] + E[\hat \theta] - \theta)^{2}]
+\end{equation}
+Following (15): 
+\begin{equation} \label{eq:MSE2}
+    MSE(\hat \theta) = E \left[ \left(\hat \theta - E[\hat \theta] \right)^{2} + \underbrace{2\left(\hat \theta - E[\hat \theta] \right)\left(E[\hat\theta]-\theta\right)}_{= 0} + \left(E[\hat\theta]-\theta \right)^{2} \right]
+\end{equation}
+
+after we distribute the expected value operator: 
+\begin{equation} \label{eq:MSE3}
+    MSE(\hat \theta) = Var(\hat \theta) + Bias(\hat\theta)^{2}
+\end{equation}
+
+Decomposition (17) can be interpreted in the bias-variance sense. In small samples, if underfitting produces a reduction in variance large enough to offset the resulting increase in bias, the MSE falls; and if we take the MSE as a proxy for accuracy, this matters more than a criterion's ability to recover the true lag order. The lag order selected by a criterion that underfits may therefore outperform the true lag order—one of the central remarks of \citet{ivanovPractitionersGuideLag2005}. 
+
+\subsection{Bayesian VAR (BVAR)}
+\label{sec:BVAR}
 
 \section{Simulation Design}
-\label{sec:methodology}
+\label{sec:simulation}
 
 This Monte Carlo simulation study follows \citet{ivanovPractitionersGuideLag2005} design with several alterations in order to make our extensions feasible and to fit the needs of our analysis. First of all, we only use one monthly DGP based on the empirical VAR study of \citet{kilianRoleInventoriesSpeculative2014}. Therefore, we do not get estimations for quarterly VAR series or VEC series, and additionally, we do not have additional robustness by including several different series with different macroeconomic indicators and movements. The main reason for this is our tight time constraint. However, this concern is also not to be overstated as \citet{ivanovPractitionersGuideLag2005} did not find big differences between different DGPs of the same type (monthly, quarterly, VEC). We use the dataset from \citet{kilianRoleInventoriesSpeculative2014} containing the following 4 variables: percent change in global oil production, real activity index from \citet{kilianNotAllOil2009}, the log real price of oil, and changes in OECD crude oil inventories. Just as in the original study, we first estimate a VAR with a set lag order of these 4 variables and then use the sign restrictions approach explained earlier to identify structural IRFs. Therefore, our estimation becomes much more complex and updates the findings of \citet{ivanovPractitionersGuideLag2005} to a more modern and widely used approach in the literature. All papers used for the DGP generation in \citet{ivanovPractitionersGuideLag2005} are from the 1990s and early 2000s and are based on the Cholesky decomposition approach for identification. Cholesky decomposition only gives one unique set of IRFs, whereas the sign restrictions approach principally has an infinite number of possible sets of IRFs. 
 
@@ -137,6 +272,69 @@ Summarize the main findings, specifically highlighting how optimal $\tau$ select
 
 \section*{References}
 \printbibliography
+
+\section*{Appendix}
+
+\subsection*{A. Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
+
+For clarity, several intermediate steps were omitted in the main text. We collect them here. To derive the relationship in equation \eqref{eq:VAR_error}, we begin from the structural form:
+\begin{equation}
+Y_t = B_0Y_t + B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t \tag{x}
+\end{equation}
+
+Moving the contemporaneous term $B_0Y_t$ to the left-hand side gives:
+\begin{equation}
+\underbrace{(I-B_0)}_{B^*}Y_t = B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t \tag{x}
+\end{equation}
+
+Premultiplying by the inverse of $B^*$ yields the reduced form:
+\begin{equation}
+Y_t = \underbrace{(B^*)^{-1} B_1}_{A_1} Y_{t-1} + \underbrace{(B^*)^{-1} B_2}_{A_2} Y_{t-2} + \cdots + \underbrace{(B^*)^{-1} B_{p_0}}_{A_{p_0}} Y_{t-p_0} + \underbrace{(B^*)^{-1} \varepsilon_t}_{e_t} \tag{x}
+\end{equation}
+which is the explicit reduced-form representation. The relationship defined in \eqref{eq:VAR_error} is now apparent: writing $(B^*)^{-1} = B$, we have:
+\begin{equation}
+e_t = B \varepsilon_t \tag{x}
+\end{equation}
+
+Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporaneous coefficient matrix, which governs the simultaneous interactions among the endogenous variables in the structural form, whereas $B = (I-B_0)^{-1}$ is the impact matrix that maps the unit-variance structural shocks $\varepsilon_t$ into the reduced-form innovations $e_t$. The former is a primitive of the structural model; the latter is the object recovered through the identification procedure in the main text.
+
+\subsection*{B. Derivation of the Recursive Coefficients and the Mean}
+
+We now derive the recursion in (4). It is convenient to define the autoregressive lag polynomial: 
+\begin{equation}
+A(L) = I - A_1L - A_2L^2 - \cdots - A_{p_0}L^{p_0} \tag{x}
+\end{equation}
+
+Its inverse admits a power-series representation in the lag operator:
+\begin{equation}
+A(L)^{-1} = \Phi(L) = \sum_{i=0}^{\infty} \Phi_i L^{i} = \Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots \tag{x}
+\end{equation}
+
+Which leads to: 
+\begin{equation}
+A(L)A(L)^{-1} = A(L)\Phi(L) = (I - A_1L - A_2L^2 - \cdots)(\Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots) = I \tag{x}
+\end{equation}
+
+Matching coefficients on equal powers of $L$ gives: 
+\begin{align*}
+I\Phi_0 &= I_K \implies \Phi_0 = I_K \\
+\Phi_1 - A_1\Phi_0 &= 0 \implies \Phi_1 = A_1\Phi_0 \\
+\Phi_2 - A_1\Phi_1 - A_2\Phi_0 &= 0 \implies \Phi_2 = A_1\Phi_1 + A_2\Phi_0
+\end{align*}
+and, in general, the recursion: 
+\begin{equation}
+\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j} \tag{x}
+\end{equation}
+
+The unconditional mean is $\mu = (I-A_1-A_2-\cdots-A_{p_0})^{-1}v$ provided the process is weakly stationary. To derive it, take expectations of (1) under weak stationarity, so that $\mathbb{E}[Y_t] = \mu$ for all $t$:
+\begin{equation}
+\mathbb{E}[Y_t] = v + A_1\mathbb{E}[Y_{t-1}] + A_2\mathbb{E}[Y_{t-2}] + \cdots + A_{p_0}\mathbb{E}[Y_{t-p_0}] \iff [I-A_1-A_2-\cdots-A_{p_0}]\mu = v \tag{x}
+\end{equation}
+
+which gives: 
+\begin{equation}
+\mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v \tag{x}
+\end{equation}
 
 \section*{Declaration of AI Usage}
 

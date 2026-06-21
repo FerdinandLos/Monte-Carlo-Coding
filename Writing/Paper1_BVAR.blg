@@ -1,15 +1,17 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Paper1_BVAR.blg'
-[209] biber-MSWIN64:342> INFO - === 
-[275] Biber.pm:421> INFO - Reading 'Paper1_BVAR.bcf'
-[537] Biber.pm:1002> INFO - Found 6 citekeys in bib section 0
-[565] Biber.pm:4487> INFO - Processing section 0
-[588] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations.bib' for section 0
-[687] bibtex.pm:1713> INFO - LaTeX decoding ...
-[848] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations.bib'
-[961] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[962] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[962] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[962] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
-[983] bbl.pm:676> INFO - Writing 'Paper1_BVAR.bbl' with encoding 'UTF-8'
-[989] bbl.pm:779> INFO - Output to Paper1_BVAR.bbl
+[107] biber-MSWIN64:342> INFO - === 
+[140] Biber.pm:421> INFO - Reading 'Paper1_BVAR.bcf'
+[236] Biber.pm:1002> INFO - Found 16 citekeys in bib section 0
+[248] Biber.pm:4487> INFO - Processing section 0
+[259] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations2.bib' for section 0
+[311] bibtex.pm:1713> INFO - LaTeX decoding ...
+[399] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations2.bib'
+[570] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[570] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[570] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[570] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
+[593] bbl.pm:676> INFO - Writing 'Paper1_BVAR.bbl' with encoding 'UTF-8'
+[605] bbl.pm:779> INFO - Output to Paper1_BVAR.bbl
+[605] Biber.pm:132> WARN - ISBN '978-3-540-40172-8 978-3-540-27752-1' in entry 'lutkepohlNewIntroductionMultiple2005' is invalid - run biber with '--validate_datamodel' for details.
+[606] Biber.pm:134> INFO - WARNINGS: 1

@@ -80,7 +80,7 @@
       <file>Paper1_BVAR.bcf</file>
     </requires>
     <requires type="editable">
-      <file>Monte Carlo Simulations.bib</file>
+      <file>Monte Carlo Simulations2.bib</file>
     </requires>
   </external>
 </requests>
