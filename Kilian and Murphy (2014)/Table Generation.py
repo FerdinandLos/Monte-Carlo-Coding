@@ -74,6 +74,8 @@ def main():
         'BVAR-RW (tau=0.50, p_max)': 'BVAR-RW-50',
         'OLS BMA (BIC-W)': 'OLS-BMA',
         'OLS BMA (Geom-W, th=0.5)': 'OLS-GEOM-BMA',
+        'OLS BMA (AIC-W)': 'OLS_GEOM_BMA',
+        'OLS BMA (Geom-AIC-W, th=0.5)': 'OLS_GEOM_BMA_AIC',
         'BVAR-WN (MDD tau, p_max)': 'BVAR-MDD',
         'Joint (p, tau) Grid BMA': 'JOINT-BMA',
         'Geom (p, tau) Grid BMA (th=0.5)': 'GEOM-BMA',
@@ -113,7 +115,7 @@ def main():
 
     # TABLE 1: Shrinkage strategy
     cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-35', 'BVAR-WN-50',
-             'BVAR-WN-65', 'BVAR-WN-80', 'BVAR-WN-95', 'BVAR-RW-20', 'BVAR-RW-50', 'BVAR-MDD']
+             'BVAR-WN-65', 'BVAR-WN-80', 'BVAR-WN-95', 'BVAR-MDD']
     n1 = len([c for c in cols1 if c in pivot_mse.columns])
     latex1 = styled_mse_latex(
         cols1,
@@ -135,8 +137,6 @@ def main():
         .replace('BVAR-WN-65', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.65$)\end{tabular}')
         .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular}')
         .replace('BVAR-WN-95', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.95$)\end{tabular}')
-        .replace('BVAR-RW-20', r'\begin{tabular}{@{}c@{}}BVAR RW \\ ($\lambda_1=0.20$)\end{tabular}')
-        .replace('BVAR-RW-50', r'\begin{tabular}{@{}c@{}}BVAR RW \\ ($\lambda_1=0.50$)\end{tabular}')
         .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
     )
     
@@ -145,7 +145,7 @@ def main():
     print("[SAVED] Table 1: Shrinkage.tex")
 
     # TABLE 2: Model uncertainty (2x2 Matrix Included)
-    cols2 = ['AIC', 'SIC (BIC)', 'HQC', 'OLS-BMA', 'OLS-GEOM-BMA', 'JOINT-BMA', 'GEOM-BMA']
+    cols2 = ['AIC', 'SIC (BIC)', 'HQC', 'OLS-BMA', 'OLS-GEOM-BMA', 'OLS_BMA_AIC', 'OLS_GEOM_BMA_AIC',  'JOINT-BMA', 'GEOM-BMA']
     n2 = len([c for c in cols2 if c in pivot_mse.columns])
     latex2 = styled_mse_latex(
         cols2,
@@ -160,7 +160,9 @@ def main():
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
-        .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom.)\end{tabular}')
+        .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
+        .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
+        .replace('OLS_GEOM_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular}')
         .replace('JOINT-BMA', 'Joint Grid BMA')
         .replace('GEOM-BMA', 'Geom. Grid BMA')
         .replace('SIC (BIC)', 'BIC')
@@ -427,13 +429,15 @@ def main():
             plt.close(fig)
             print("[SAVED] Fig4_Risk_Hedging_Scatter.pdf")
 
-    # Figure 5-8: BMA Posterior Weight Heatmaps (All 4 Included)
+    # Figure 5: BMA Posterior Weight Heatmaps (All 6 Included)
     if weights_df is not None:
         heatmap_configs = [
-            ('OLS-BMA',      'OLS',      r'OLS BMA (BIC-W)',             'Fig5'),
-            ('OLS-Geom-BMA', 'OLS_Geom', r'OLS BMA (Geom-W, $\theta=0.5$)', 'Fig6'),
-            ('Joint-BMA',    'Joint',    r'Joint BMA ($p, \lambda_1$)',       'Fig7'),
-            ('Geom-BMA',     'Geom',     r'Geom BMA ($\theta=0.5$)',     'Fig8')
+            ('OLS-BMA',      'OLS',      r'OLS BMA (BIC-W)',             'Fig5a'),
+            ('OLS-Geom-BMA', 'OLS_Geom', r'OLS BMA (Geom-BIC-W, $\theta=0.5$)', 'Fig5b'),
+            ('OLS-BMA (AIC-W)',      'OLS_AIC',      r'OLS BMA (AIC-W)',             'Fig5c'),
+            ('OLS-Geom-BMA (AIC-W)', 'OLS_Geom_AIC', r'OLS BMA (Geom-AIC-W, $\theta=0.5$)', 'Fig5d'),
+            ('Joint-BMA',    'Joint',    r'Joint BMA ($p, \lambda_1$)',       'Fig5e'),
+            ('Geom-BMA',     'Geom',     r'Geom BMA ($\theta=0.5$)',     'Fig5f'),
         ]
         
         for est_name, file_suffix, title_str, fig_num in heatmap_configs:
@@ -472,12 +476,13 @@ def main():
     # Figure 9 Optimal tau for integrated BMA
     # Figure 9 Optimal tau for integrated BMA
     target_T = 600
+    target_p0 = 4  # <-- Define your target p0 here
     
     if os.path.exists(tau_path):
         df = pd.read_csv(tau_path)
         
-        # Filter for a specific Sample Size to directly compare the estimators
-        df_filtered = df[df['T'] == target_T]
+        # Filter for a specific Sample Size AND a specific True Lag (p0)
+        df_filtered = df[(df['T'] == target_T) & (df['p0'] == target_p0)]
         
         fig, ax = plt.subplots(figsize=(8, 6))
         
@@ -485,7 +490,8 @@ def main():
                      hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
                      marker='o', linewidth=2.5, ax=ax)
         
-        ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}$)')
+        # Updated title to reflect both T and p0
+        ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}, p_0={target_p0}$)')
         ax.set_xlabel('Candidate Lag Order ($p$)')
         ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\tau \mid p]$)')
         
@@ -493,7 +499,7 @@ def main():
         ax.grid(True, linestyle='--', alpha=0.6)
         
         fig.tight_layout()
-        save_name = os.path.join(figures_dir, f"Fig9_Tau_Comparison_T{target_T}.pdf")
+        save_name = os.path.join(figures_dir, f"Fig9_Tau_Comparison_T{target_T}_p0{target_p0}.pdf")
         fig.savefig(save_name)
         plt.close(fig)
         print(f"[SAVED] {save_name}")

@@ -21,7 +21,7 @@
 \addbibresource{Monte Carlo Simulations.bib}
 
 % Title and Author Information
-\title{BVAR vs. Information Criteria: A Monte Carlo Simulation Study}
+\title{To Shrink or to Select? Evaluating Finite-Sample Performance in Set-Identified Structural VARs}
 \author{
     Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de}} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
@@ -36,8 +36,8 @@
 \noindent
 This is the abstract for your paper. Briefly state the purpose of the research, the principal results, and major conclusions. The abstract should be self-contained and citation-free.
 \vspace{1em}\\
-\noindent\textbf{Keywords:} Keyword 1, Keyword 2, Keyword 3 \\
-\noindent\textbf{JEL Codes:} C15, C32 % Update with relevant JEL classification codes
+\noindent\textbf{Keywords:} Structural Vector Autoregression (SVAR), Set Identification, Bayesian Model Averaging (BMA), Model Uncertainty, Lag Order Selection, Monte Carlo Simulation \\
+\noindent\textbf{JEL Codes:} C11, C15, C32, C52 % Update with relevant JEL classification codes
 \end{abstract}
 
 \newpage
@@ -49,27 +49,27 @@ Introduce the problem of lag selection and parameter proliferation in Structural
 \section{Simulation Design}
 \label{sec:methodology}
 
-This Monte Carlo simulation study follows \citet{ivanovPractitionersGuideLag2005} design with several alterations in order to make our extensions feasible and to fit the needs of our analysis. First of all, we only use one monthly DGP based on the empirical VAR study of \citet{kilianRoleInventoriesSpeculative2014}. Therefore, we do not get estimations for quarterly VAR series or VEC series and additionally do not have additional robustness by including several different series with different macroeconomic indicators and movements. The main reason for this is our tight time constraint. However, this concern is also not to be overstated as \citet{ivanovPractitionersGuideLag2005} did not find strong differences between different DGPs of the same type (monthly, quarterly, VEC). We use the dataset from \citet{kilianRoleInventoriesSpeculative2014} containing the following 4 variables: percent change in global oil production, real activity index from \citet{kilianNotAllOil2009}, the log real price of oil, and changes in OECD crude oil inventories. Just as in the original study, we first estimate a VAR with a set lag order of these 4 variables and then use the sign restrictions approach explained earlier to identify structural IRFs. Therefore, our estimation becomes much more complex and updates the findings of \citet{ivanovPractitionersGuideLag2005} to a more modern and widely used approach in the literature. All papers used for the DGP generation in \citet{ivanovPractitionersGuideLag2005} are from the 1990s and early 2000s and are based on the Cholesky decomposition approach for identification. Cholesky decomposition only gives one unique set of IRFs, whereas the sign restrictions approach principally has infinite possible sets of IRFs. 
+This Monte Carlo simulation study follows \citet{ivanovPractitionersGuideLag2005} design with several alterations in order to make our extensions feasible and to fit the needs of our analysis. First of all, we only use one monthly DGP based on the empirical VAR study of \citet{kilianRoleInventoriesSpeculative2014}. Therefore, we do not get estimations for quarterly VAR series or VEC series, and additionally, we do not have additional robustness by including several different series with different macroeconomic indicators and movements. The main reason for this is our tight time constraint. However, this concern is also not to be overstated as \citet{ivanovPractitionersGuideLag2005} did not find big differences between different DGPs of the same type (monthly, quarterly, VEC). We use the dataset from \citet{kilianRoleInventoriesSpeculative2014} containing the following 4 variables: percent change in global oil production, real activity index from \citet{kilianNotAllOil2009}, the log real price of oil, and changes in OECD crude oil inventories. Just as in the original study, we first estimate a VAR with a set lag order of these 4 variables and then use the sign restrictions approach explained earlier to identify structural IRFs. Therefore, our estimation becomes much more complex and updates the findings of \citet{ivanovPractitionersGuideLag2005} to a more modern and widely used approach in the literature. All papers used for the DGP generation in \citet{ivanovPractitionersGuideLag2005} are from the 1990s and early 2000s and are based on the Cholesky decomposition approach for identification. Cholesky decomposition only gives one unique set of IRFs, whereas the sign restrictions approach principally has an infinite number of possible sets of IRFs. 
 
-We follow \citet{kilianRoleInventoriesSpeculative2014} in searching for a large number of admissible IRFs by randomly drawing from the space of rotation matrices. We use exactly the same sign restriction matrix, however we limit the number of periods for which dynamic sign restrictions are imposted to 3 instead of 12 and do not include additional elasticity bounds. This is a significant diversion from the original study as it makes the identification more agnostic and opens up the space of admissible IRFs. We are therefore closer to the original sign restrictions approach of \citet{uhligWhatAreEffects2005}. We understand that the additional restrictions of \citet{kilianRoleInventoriesSpeculative2014} are motivated by limiting the set to fit theory and other empirical evidence, however we have to take the less restrictive approach in order to make the estimation feasible. Especially for low lag orders and smaller samples, these restrictions have proven to be so strong that even several million draws of the rotation matrix do not give us enough admissible IRFs to make a good inference. For the simulation, this exceedingly high number of draws would need to then be repeated hundreds of times.
+We follow \citet{kilianRoleInventoriesSpeculative2014} in searching for a large number of admissible IRFs by randomly drawing from the space of rotation matrices. We use exactly the same sign restriction matrix, but limit the number of periods for which dynamic sign restrictions are imposed to 3 instead of 12, and do not include additional elasticity bounds. This is a significant diversion from the original study as it makes the identification more agnostic and opens up the space of admissible IRFs. We are therefore closer to the original sign restrictions approach of \citet{uhligWhatAreEffects2005}. We understand that the additional restrictions of \citet{kilianRoleInventoriesSpeculative2014} are motivated by limiting the set to fit theory and other empirical evidence, we have to take the less restrictive approach in order to make the estimation feasible. Especially for low lag orders and smaller samples, these restrictions have proven to be so strong that even several million draws of the rotation matrix do not give us enough admissible IRFs to make a good inference. For the simulation, this exceedingly high number of draws would need to then be repeated hundreds of times.
 
-Out of this set we select the median target IRF as our true IRF which is defined as the IRF that has the smallest distance to the median of all admissible IRFs. The DGP follows this IRF as it is generated by a structural VAR model using the structural impact matrix $\tilde{B}$ that corresponds to the median target IRF as the parameter for the structural shocks $e_t$ which is drawn from an i.i.d. standard normal distribution. The formula for the DGP is represented by a structural VAR model using the estimated reduced form parameters $A$ (for the lag coefficients $y_{t-p}$) and $V$ (for the monthly dummy parameters $d_t$) and the structural impact matrix $\tilde{B}$ as follows:
+Out of this set, we select the median target IRF as our true IRF, which is defined as the IRF that has the smallest distance to the median of all admissible IRFs. The DGP follows this IRF as it is generated by a structural VAR model using the structural impact matrix $\tilde{B}$ that corresponds to the median target IRF as the parameter for the structural shocks $e_t$, which is drawn from an i.i.d. standard normal distribution. The formula for the DGP is represented by a structural VAR model using the estimated reduced form parameters $A$ (for the lag coefficients $y_{t-p}$) and $V$ (for the monthly dummy parameters $d_t$) and the structural impact matrix $\tilde{B}$ as follows:
 
 \begin{equation}
     y_t = V d_t + A y_{t-p} + \tilde{B} e_t
 \end{equation}
 
-We estimate these parameters using the original data for five different lag orders, $p_0 \in {4,6,8,10}$ and create DGPs with different sample sizes, $T \in {240, 300, 360, 480, 600}$ where $T=N+\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations, it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. These specifications directly follow \citet{ivanovPractitionersGuideLag2005}. We do not increase the number of lags or higher sample sizes in order to keep the comparison intact and to keep computational capacities available for the switch to sign restriction decomposition and the addition of BVAR. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
+We estimate these parameters using the original data for five different lag orders, $p_0 \in {4,6,8,10}$ and create DGPs with different sample sizes, $T \in {240, 300, 360, 480, 600}$, where $T=N+\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. These specifications directly follow \citet{ivanovPractitionersGuideLag2005}. We do not increase the number of lags or higher sample sizes in order to keep the comparison intact and to keep computational capacities available for the switch to sign restriction decomposition and the addition of BVAR. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
 
-On each of these samples, OLS VARs fitted by lag orders selected by both the three ICs as well as the BMA determined OLS VARs and BVARs, for both the geometric and BIC based approach, are estimated, a fixed number of admissable IRFs found and the median target IRF determined. The four different BMA estimations follow the methodology described in the previous section. The space of optimal shrinkage parameters for the implementation with BVAR is limited to $\lambda_1 \in \{0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95\}$ in order to make computation in the simulation feasible. It still captures a good range of typically used $lambda_1$-values, both tighter and looser specifications. 
+On each of these samples, OLS VARs fitted by lag orders selected by both the three ICs as well as the BMA determined OLS VARs and BVARs, for both the geometric and BIC-based approach, are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We only include AIC, BIC and HQC as information criteria and omit the Likelihood Ratio tests and the Lagrange Multiplier test for lag selection as these have become practically irrelevant in the last 20 years for macroeconomic time series analysis and were also shown to perform poorly in \citet{ivanovPractitionersGuideLag2005}. The four different BMA estimations follow the methodology described in the previous section. The space of optimal shrinkage parameters for the implementation with BVAR is limited to $\lambda_1 \in \{0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95\}$ in order to make computation in the simulation feasible. It still captures a good range of typically used $lambda_1$-values, both tighter and looser specifications. 
 
-Finally, the squared error matrix of the selected median target IRF to the true DGP IRF is calculated, collapsed into a scalar total squared error by summation. Then we estimate the ratio of this squared error of a specific estimation approach to the model fitted by the true lag order $p_0$. Therefore, the deviations of the true IRF are directly put into relation to how well a correctly specified model compares for the given sample. Finally, we estimate the MSE by calculating the geometric mean of these individual ratios. The geometric mean is preferred over the arithmetic mean as the ratios are bounded for outperformance at 0 and unbounded for performing worse than the correctly specified model. Outliers on the right side are hence overweighted in the arithmetic mean. The relative MSE for one method for one true lag order $p_0$ and one sample size $T$ is given by the following formula:
+Finally, the squared error matrix of the selected median target IRF to the true DGP IRF is calculated, collapsed into a scalar total squared error by summation. Then we estimate the ratio of this squared error of a specific estimation approach to the model fitted by the true lag order $p_0$. Therefore, the deviations of the true IRF are directly put into relation to how well a correctly specified model compares for the given sample. Finally, we estimate the MSE by calculating the geometric mean of these individual ratios. The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. The relative MSE for one method for one true lag order $p_0$ and one sample size $T$ is given by the following formula:
 
 \begin{equation}
     MSE_{relative} = \exp\left( \frac{1}{n} \sum_{i=1}^{n} \ln(r_i) \right) \text{ where } r_i=\frac{TSE_i}{TSE^{p_0}_{i}}
 \end{equation}
 
-While, for a single estimation it is possible to estimate millions of admissable IRFs, the Monte Carlo simulation approach doesn't allow for such a large number of draws. In establishing the median target IRF specific to the DGP, we set the number of discovered admissible IRFs to 1 million so as to have a very accurate median target IRF for the specific dataset. In the Monte Carlo Simulation, we reduce this number drastically to 100 as it has proven to be the absolute limit that still allows us to have an acceptable number of Monte Carlo iterations, 1000, for our set of different methods. Even with computational optimization by parallel processing, more draws are not applicable under our hardware constraints. For each individual iteration, the median target IRF is therefore less accurately determined. However, because we use relative MSEs as our performance measure and repeat the process 1000 times, this should not impact the interpretability of our results. 
+While, for a single estimation it is possible to estimate millions of admissible IRFs, the Monte Carlo simulation approach doesn't allow for such a large number of draws. In establishing the median target IRF specific to the DGP, we set the number of discovered admissible IRFs to 1 million so as to have a very accurate median target IRF for the specific dataset. In the Monte Carlo Simulation, we reduce this number drastically to 100 as it has proven to be the absolute limit that still allows us to have an acceptable number of Monte Carlo iterations, 1000, for our set of different methods. Even with computational optimization by parallel processing, more draws are not applicable under our hardware constraints. For each individual iteration, the median target IRF is therefore less accurately determined. However, because we use relative MSEs as our performance measure and repeat the process 1000 times, this should not impact the interpretability of our results. 
 
 % Placing the MDD Surface here visually justifies your optimization approach.
 \begin{figure}[htbp]
@@ -105,14 +105,14 @@ Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criter
     % Top Left: Figure 5
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{Figures/Fig5_BMA_Heatmap_OLS.pdf}
-        \caption{OLS BMA (BIC-W)}
+        \caption{OLS BMA (BIC-weighted)}
         \label{fig:heat_ols}
     \end{subfigure}
     \hfill % Adds horizontal space between the two columns
     % Top Right: Figure 6
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf}
-        \caption{OLS BMA (Geom-W, $\theta=0.5$)}
+        \caption{OLS BMA (Geom. BIC-weighted, $\theta=0.5$)}
         \label{fig:heat_ols_geom}
     \end{subfigure}
     
@@ -121,14 +121,14 @@ Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criter
     % Bottom Left: Figure 7
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{Figures/Fig7_BMA_Heatmap_Joint.pdf}
-        \caption{Joint BMA ($p, \tau$)}
+        \caption{Joint Grid BMA ($p, \tau$)}
         \label{fig:heat_joint}
     \end{subfigure}
     \hfill
     % Bottom Right: Figure 8
     \begin{subfigure}[b]{0.48\textwidth}
         \includegraphics[width=\textwidth]{Figures/Fig8_BMA_Heatmap_Geom.pdf}
-        \caption{Geom BMA ($\theta=0.5$)}
+        \caption{Geometric Grid BMA ($\theta=0.5$)}
         \label{fig:heat_geom}
     \end{subfigure}
     

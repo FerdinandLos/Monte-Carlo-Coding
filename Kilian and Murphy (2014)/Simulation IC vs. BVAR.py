@@ -233,23 +233,23 @@ def get_median_target_model(valid_irfs, accepted_count):
 # 4. THE SINGLE MONTE CARLO ITERATION
 # -------------------------------------------------------------------
 def single_monte_carlo_iteration(args):
-    # Added empirical_data parameter extraction
     iter_idx, iteration_seed, true_A, true_V, true_B_tilde, true_p, true_IRF_target, signs, Q_avg, h_max, mc_draws, max_loops, T_real, p_max, empirical_data = args
-    N_SE = 26
-
+    
+    # N_SE increased by 2 to account for SE_ols_bma_aic and SE_ols_geom_aic
+    N_SE = 28
     nan_array = np.full(true_IRF_target.shape, np.nan)
 
     def fail(msg):
-        # Added one extra None to account for the expected_tau_dict return
-        return (iter_idx,) + (None,) * N_SE + (None, None, (None,)*7, None, None, None, None, None, None, None, msg)
+        # Updated fail tuple length to perfectly match the extended return (42 items total)
+        return (iter_idx,) + (None,) * N_SE + (None, None, (None,)*9, None, None, None, None, None, None, None, None, None, msg)
 
     try:
         ols_cache = {}
         bic_scores = {}
+        aic_scores = {}
 
         K = true_A.shape[0]
         
-        # Updated to call the hybrid DGP (burn_in removed)
         simulated_data = simulate_var_dgp_hybrid(true_A, true_V, true_B_tilde, true_p, T_real, iteration_seed, empirical_data)
 
         best_aic, best_sic, best_hqc = float('inf'), float('inf'), float('inf')
@@ -292,6 +292,7 @@ def single_monte_carlo_iteration(args):
                 hqc_val = logdet_ml + (2.0 * np.log(np.log(N_eff_total)) / N_eff_total) * num_params
 
                 bic_scores[p_test] = sic_val
+                aic_scores[p_test] = aic_val
 
                 if aic_val < best_aic: best_aic, p_hat_aic = aic_val, p_test
                 if sic_val < best_sic: best_sic, p_hat_sic = sic_val, p_test
@@ -325,6 +326,25 @@ def single_monte_carlo_iteration(args):
         
         exp_p_geom_ols = sum(p * w for p, w in final_geom_ols_weights.items())
         geom_ols_p_dist = {p: final_geom_ols_weights.get(p, 0.0) for p in range(1, p_max+1)}
+
+        # 1c. OLS AIC Weights (Uniform Prior)
+        min_aic = min(aic_scores.values())
+        raw_weights_aic = {p: np.exp(-0.5 * N_eff_total * (score - min_aic)) for p, score in aic_scores.items()}
+        weight_sum_aic = sum(raw_weights_aic.values())
+        kept_lags_aic = [p for p, w in raw_weights_aic.items() if (w / weight_sum_aic) > 0.01]
+        final_aic_weights = {p: raw_weights_aic[p] / sum(raw_weights_aic[p] for p in kept_lags_aic) for p in kept_lags_aic}
+        exp_p_aic_bma = sum(p * w for p, w in final_aic_weights.items())
+        aic_p_dist = {p: final_aic_weights.get(p, 0.0) for p in range(1, p_max+1)}
+
+        # 1d. OLS AIC Geometric Weights (theta = 0.5)
+        raw_geom_aic = {p: np.exp(-0.5 * N_eff_total * (score - min_aic)) * (theta**p) for p, score in aic_scores.items()}
+        sum_geom_aic = sum(raw_geom_aic.values())
+        kept_geom_aic = {p: w for p, w in raw_geom_aic.items() if (w / sum_geom_aic) > 0.01}
+        sum_kept_geom_aic = sum(kept_geom_aic.values())
+        final_geom_aic_weights = {p: w / sum_kept_geom_aic for p, w in kept_geom_aic.items()}
+        
+        exp_p_geom_aic = sum(p * w for p, w in final_geom_aic_weights.items())
+        geom_aic_p_dist = {p: final_geom_aic_weights.get(p, 0.0) for p in range(1, p_max+1)}
 
         # 2. Joint Grid BVAR Weights (MDD Uniform Prior)
         max_mdd = max(bvar_mdd_grid.values())
@@ -395,6 +415,33 @@ def single_monte_carlo_iteration(args):
             if acc > 0: ols_geom_pool.append(v_irfs[:acc]); ols_geom_accepted += acc
 
         SE_ols_geom = (get_median_target_model(np.vstack(ols_geom_pool), ols_geom_accepted) - true_IRF_target)**2 if ols_geom_accepted > 0 else nan_array
+
+        # OLS BMA (AIC) Evaluation
+        ols_aic_pool, ols_aic_accepted = [], 0
+        for p_bma in kept_lags_aic:
+            td = int(round(mc_draws * final_aic_weights[p_bma]))
+            if td == 0: continue
+            A_est, SIGMA_est = ols_cache[p_bma]
+            try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            except np.linalg.LinAlgError: SIGMA_est += np.eye(K) * 1e-8; P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 6000 + p_bma)
+            if acc > 0: ols_aic_pool.append(v_irfs[:acc]); ols_aic_accepted += acc
+
+        SE_ols_bma_aic = (get_median_target_model(np.vstack(ols_aic_pool), ols_aic_accepted) - true_IRF_target)**2 if ols_aic_accepted > 0 else nan_array
+
+        # OLS BMA (AIC Geometric) Evaluation
+        ols_geom_aic_pool, ols_geom_aic_accepted = [], 0
+        for p_bma in kept_geom_aic:
+            td = int(round(mc_draws * final_geom_aic_weights[p_bma]))
+            if td == 0: continue
+            A_est, SIGMA_est = ols_cache[p_bma]
+            try: P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            except np.linalg.LinAlgError: SIGMA_est += np.eye(K) * 1e-8; P_est = np.ascontiguousarray(np.linalg.cholesky(SIGMA_est))
+            v_irfs, att, acc = fast_draw_core(A_est, P_est, signs, p_bma, K, Q_avg, h_max, td, max_loops, iteration_seed + 11000 + p_bma)
+            if acc > 0: ols_geom_aic_pool.append(v_irfs[:acc]); ols_geom_aic_accepted += acc
+
+        SE_ols_geom_aic = (get_median_target_model(np.vstack(ols_geom_aic_pool), ols_geom_aic_accepted) - true_IRF_target)**2 if ols_geom_aic_accepted > 0 else nan_array
+
 
         # ---------------- FIXED P_MAX BVAR EVALUATIONS (Cached) ----------------
         bvar_wn_SEs  = {}
@@ -500,9 +547,9 @@ def single_monte_carlo_iteration(args):
 
         # ---------------- TRADEOFF & SURFACE EVALUATIONS ----------------
         tradeoff_mses = None
-        mdd_surface_data = [] # Changed from None to an empty list
+        mdd_surface_data = [] 
 
-        if true_p == 4 and T_real in [240, 600]: # Pick your two target T values
+        if true_p == 4 and T_real in [240, 600]: 
             y_plot = np.ascontiguousarray(simulated_data)
             x_plot = np.ascontiguousarray(X_exo)
             
@@ -517,12 +564,14 @@ def single_monte_carlo_iteration(args):
                     tradeoff_mses[idx] = np.sum((get_median_target_model(v_m, acc_m) - true_IRF_target)**2) if acc_m > 0 else np.nan
                 except: tradeoff_mses[idx] = np.nan
 
-            # 2. MDD Surface (Now runs for ALL iterations)
+            # 2. MDD Surface
             for t_val in TAU_DISCRETE:
                 _, _, log_mdd_surf, _ = estimate_alexandria_bvar(y_plot, p_max, X_exo=x_plot, tau_val=t_val, prior_mean=delta_wn, optimize_tau=False)
                 mdd_surface_data.append({'Tau': t_val, 'MDD': log_mdd_surf})
 
-        return (iter_idx, SE_aic, SE_sic, SE_hqc, SE_ols_bma, SE_ols_geom,
+        return (iter_idx, 
+                SE_aic, SE_sic, SE_hqc, SE_ols_bma, SE_ols_geom, 
+                SE_ols_bma_aic, SE_ols_geom_aic, # <--- NEW SEs
                 SE_minn_wn_005, SE_minn_wn_020, SE_minn_wn_035, SE_minn_wn_050,
                 SE_minn_wn_065, SE_minn_wn_080, SE_minn_wn_095,
                 SE_minn_rw_020, SE_minn_rw_050,
@@ -531,8 +580,8 @@ def single_monte_carlo_iteration(args):
                 SE_minn_wn_005_p0, SE_minn_wn_020_p0, SE_minn_wn_035_p0, SE_minn_wn_050_p0,
                 SE_minn_wn_065_p0, SE_minn_wn_080_p0, SE_minn_wn_095_p0, SE_minn_wn_mdd_p0,
                 best_mdd_tau, best_mdd_tau_p0,
-                (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid, exp_p_geom_ols, exp_p_joint, exp_p_geom),
-                final_bic_weights, geom_ols_p_dist, joint_p_dist, geom_p_dist,
+                (p_hat_aic, p_hat_sic, p_hat_hqc, exp_p_hybrid, exp_p_geom_ols, exp_p_aic_bma, exp_p_geom_aic, exp_p_joint, exp_p_geom), # <--- NEW Exp Ps
+                final_bic_weights, geom_ols_p_dist, aic_p_dist, geom_aic_p_dist, joint_p_dist, geom_p_dist, # <--- NEW Weight dicts
                 tradeoff_mses, mdd_surface_data, expected_tau_dict, "Success")
 
     except Exception as e:
@@ -546,7 +595,7 @@ def main():
     km_base = os.path.join(script_dir, 'Kilian and Murphy (2014)') if os.path.basename(script_dir) != 'Kilian and Murphy (2014)' else script_dir
 
     Q_avg, h_max = 72.3, 24
-    N_iterations, mc_draws, max_loops = 2, 3, 5000
+    N_iterations, mc_draws, max_loops = 500, 1000, 5000000
 
     sign_matrix = np.ascontiguousarray(np.array([
         [-1,  1,  1, np.nan], [-1,  1, -1, np.nan],
@@ -588,13 +637,13 @@ def main():
 
             all_SE_aic, all_SE_sic, all_SE_hqc = [], [], []
             all_SE_ols_bma, all_SE_ols_geom = [], []
+            all_SE_ols_bma_aic, all_SE_ols_geom_aic = [], [] # <--- NEW Lists
             all_SE_minn_wn_005, all_SE_minn_wn_020, all_SE_minn_wn_035 = [], [], []
             all_SE_minn_wn_050, all_SE_minn_wn_065, all_SE_minn_wn_080, all_SE_minn_wn_095 = [], [], [], []
             all_SE_minn_rw_020, all_SE_minn_rw_050 = [], []
             all_SE_joint_bma, all_SE_geom_bma, all_SE_minn_wn_mdd = [], [], []
             all_SE_p0 = []
             
-            # New p0 specific SE lists
             all_SE_minn_wn_005_p0, all_SE_minn_wn_020_p0, all_SE_minn_wn_035_p0 = [], [], []
             all_SE_minn_wn_050_p0, all_SE_minn_wn_065_p0, all_SE_minn_wn_080_p0, all_SE_minn_wn_095_p0 = [], [], [], []
             all_SE_minn_wn_mdd_p0 = []
@@ -603,10 +652,11 @@ def main():
             
             all_p_hats_aic, all_p_hats_sic, all_p_hats_hqc = [], [], []
             all_exp_p_hybrid, all_exp_p_geom_ols, all_exp_p_joint, all_exp_p_geom = [], [], [], []
+            all_exp_p_aic_bma, all_exp_p_geom_aic = [], [] # <--- NEW Lists
             all_weights_hybrid, all_weights_geom_ols, all_weights_joint, all_weights_geom = [], [], [], []
+            all_weights_aic_bma, all_weights_geom_aic = [], [] # <--- NEW Lists
             all_tradeoffs_t = []
 
-            # Passed empirical_data cleanly into the task tuples
             tasks = [(i, SEED + i + (current_p0 * 10000) + (current_T * 100000), 
                       true_A, true_V, true_B_tilde, true_p, true_IRF, sign_matrix, Q_avg, h_max, 
                       mc_draws, max_loops, current_T, p_max, empirical_data) for i in range(N_iterations)]
@@ -623,50 +673,55 @@ def main():
                 all_SE_hqc.append(res[3])
                 all_SE_ols_bma.append(res[4])
                 all_SE_ols_geom.append(res[5])
-                all_SE_minn_wn_005.append(res[6])
-                all_SE_minn_wn_020.append(res[7])
-                all_SE_minn_wn_035.append(res[8])
-                all_SE_minn_wn_050.append(res[9])
-                all_SE_minn_wn_065.append(res[10])
-                all_SE_minn_wn_080.append(res[11])
-                all_SE_minn_wn_095.append(res[12])
-                all_SE_minn_rw_020.append(res[13])
-                all_SE_minn_rw_050.append(res[14])
-                all_SE_joint_bma.append(res[15])
-                all_SE_geom_bma.append(res[16])
-                all_SE_minn_wn_mdd.append(res[17])
-                all_SE_p0.append(res[18])
+                all_SE_ols_bma_aic.append(res[6])     # <--- NEW
+                all_SE_ols_geom_aic.append(res[7])    # <--- NEW
+                all_SE_minn_wn_005.append(res[8])
+                all_SE_minn_wn_020.append(res[9])
+                all_SE_minn_wn_035.append(res[10])
+                all_SE_minn_wn_050.append(res[11])
+                all_SE_minn_wn_065.append(res[12])
+                all_SE_minn_wn_080.append(res[13])
+                all_SE_minn_wn_095.append(res[14])
+                all_SE_minn_rw_020.append(res[15])
+                all_SE_minn_rw_050.append(res[16])
+                all_SE_joint_bma.append(res[17])
+                all_SE_geom_bma.append(res[18])
+                all_SE_minn_wn_mdd.append(res[19])
+                all_SE_p0.append(res[20])
                 
-                # Unpack the new p0 SEs
-                all_SE_minn_wn_005_p0.append(res[19])
-                all_SE_minn_wn_020_p0.append(res[20])
-                all_SE_minn_wn_035_p0.append(res[21])
-                all_SE_minn_wn_050_p0.append(res[22])
-                all_SE_minn_wn_065_p0.append(res[23])
-                all_SE_minn_wn_080_p0.append(res[24])
-                all_SE_minn_wn_095_p0.append(res[25])
-                all_SE_minn_wn_mdd_p0.append(res[26])
+                all_SE_minn_wn_005_p0.append(res[21])
+                all_SE_minn_wn_020_p0.append(res[22])
+                all_SE_minn_wn_035_p0.append(res[23])
+                all_SE_minn_wn_050_p0.append(res[24])
+                all_SE_minn_wn_065_p0.append(res[25])
+                all_SE_minn_wn_080_p0.append(res[26])
+                all_SE_minn_wn_095_p0.append(res[27])
+                all_SE_minn_wn_mdd_p0.append(res[28])
 
-                all_mdd_taus.append(res[27])
-                all_mdd_taus_p0.append(res[28])
+                all_mdd_taus.append(res[29])
+                all_mdd_taus_p0.append(res[30])
 
-                p_tuple = res[29]
+                p_tuple = res[31]
                 all_p_hats_aic.append(p_tuple[0])
                 all_p_hats_sic.append(p_tuple[1])
                 all_p_hats_hqc.append(p_tuple[2])
                 all_exp_p_hybrid.append(p_tuple[3])
                 all_exp_p_geom_ols.append(p_tuple[4])
-                all_exp_p_joint.append(p_tuple[5])
-                all_exp_p_geom.append(p_tuple[6])
+                all_exp_p_aic_bma.append(p_tuple[5])   # <--- NEW
+                all_exp_p_geom_aic.append(p_tuple[6])  # <--- NEW
+                all_exp_p_joint.append(p_tuple[7])
+                all_exp_p_geom.append(p_tuple[8])
                 
-                all_weights_hybrid.append(res[30])
-                all_weights_geom_ols.append(res[31])
-                all_weights_joint.append(res[32])
-                all_weights_geom.append(res[33])
+                all_weights_hybrid.append(res[32])
+                all_weights_geom_ols.append(res[33])
+                all_weights_aic_bma.append(res[34])    # <--- NEW
+                all_weights_geom_aic.append(res[35])   # <--- NEW
+                all_weights_joint.append(res[36])
+                all_weights_geom.append(res[37])
 
                 se_sic_iter = np.sum(res[2]) if not (np.isscalar(res[2]) and np.isnan(res[2])) else np.nan
-                se_bma_iter = np.sum(res[15]) if not (np.isscalar(res[15]) and np.isnan(res[15])) else np.nan
-                se_p0_iter  = np.sum(res[18]) + 1e-12 if not (np.isscalar(res[18]) and np.isnan(res[18])) else np.nan
+                se_bma_iter = np.sum(res[17]) if not (np.isscalar(res[17]) and np.isnan(res[17])) else np.nan
+                se_p0_iter  = np.sum(res[20]) + 1e-12 if not (np.isscalar(res[20]) and np.isnan(res[20])) else np.nan
 
                 iteration_mses_list.append({
                     'p0': current_p0, 'T': current_T, 'Iter': res[0],
@@ -674,14 +729,13 @@ def main():
                     'Joint_BMA_Rel_MSE': se_bma_iter / se_p0_iter if pd.notna(se_p0_iter) else np.nan
                 })
 
-                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[27]})
-                raw_taus_p0_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau_p0': res[28]})
+                raw_taus_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau': res[29]})
+                raw_taus_p0_list.append({'p0': current_p0, 'T': current_T, 'iter': res[0], 'MDD_Tau_p0': res[30]})
                 
-                if res[34] is not None: all_tradeoffs_t.append(res[34])
+                if res[38] is not None: all_tradeoffs_t.append(res[38])
                 
-                # New unpack logic for MDD surface
-                if res[35]: # If the list is not empty
-                    for item in res[35]:
+                if res[39]: 
+                    for item in res[39]:
                         mdd_list.append({
                             'p0': current_p0, 
                             'T': current_T, 
@@ -690,8 +744,7 @@ def main():
                             'MDD': item['MDD']
                         })
 
-                # Unpack logic for Expected Tau (res[36])
-                exp_tau_dict = res[36]
+                exp_tau_dict = res[40]
                 for p_val, taus in exp_tau_dict.items():
                     if not np.isnan(taus['Joint-BMA']):
                         expected_tau_list.append({
@@ -739,11 +792,15 @@ def main():
             # Compute Average Weights for CSVs
             avg_hybrid_dist   = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_hybrid]) for p in range(1, p_max + 1)}
             avg_geom_ols_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom_ols]) for p in range(1, p_max + 1)}
+            avg_aic_dist      = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_aic_bma]) for p in range(1, p_max + 1)} # <--- NEW
+            avg_geom_aic_dist = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom_aic]) for p in range(1, p_max + 1)} # <--- NEW
             avg_joint_dist    = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_joint]) for p in range(1, p_max + 1)}
             avg_geom_dist     = {f"p={p}": np.mean([w.get(p, 0.0) for w in all_weights_geom]) for p in range(1, p_max + 1)}
 
             bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-BMA", **avg_hybrid_dist})
             bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-Geom-BMA", **avg_geom_ols_dist})
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-BMA (AIC-W)", **avg_aic_dist}) # <--- NEW
+            bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "OLS-Geom-BMA (AIC-W)", **avg_geom_aic_dist}) # <--- NEW
             bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "Joint-BMA", **avg_joint_dist})
             bma_weights_list.append({"True DGP (p0)": current_p0, "Sample Size (T)": current_T, "Estimator": "Geom-BMA", **avg_geom_dist})
 
@@ -779,6 +836,8 @@ def main():
                 ("HQC",                              calc_met(all_SE_hqc,          all_p_hats_hqc,     true_p)),
                 ("OLS BMA (BIC-W)",                  calc_met(all_SE_ols_bma,      all_exp_p_hybrid,   true_p)),
                 ("OLS BMA (Geom-W, th=0.5)",         calc_met(all_SE_ols_geom,     all_exp_p_geom_ols, true_p)),
+                ("OLS BMA (AIC-W)",                  calc_met(all_SE_ols_bma_aic,  all_exp_p_aic_bma,  true_p)), # <--- NEW
+                ("OLS BMA (Geom-AIC-W, th=0.5)",     calc_met(all_SE_ols_geom_aic, all_exp_p_geom_aic, true_p)), # <--- NEW
                 ("BVAR-WN (tau=0.05, p_max)",        calc_met(all_SE_minn_wn_005,  None,               true_p)),
                 ("BVAR-WN (tau=0.20, p_max)",        calc_met(all_SE_minn_wn_020,  None,               true_p)),
                 ("BVAR-WN (tau=0.35, p_max)",        calc_met(all_SE_minn_wn_035,  None,               true_p)),
@@ -792,7 +851,6 @@ def main():
                 ("Geom (p, tau) Grid BMA (th=0.5)",  calc_met(all_SE_geom_bma,     all_exp_p_geom,     true_p)),
                 ("BVAR-WN (MDD tau, p_max)",         calc_met(all_SE_minn_wn_mdd,  None,               true_p, all_mdd_taus)),
                 
-                # --- New p0 Specific Additions ---
                 ("BVAR-WN (tau=0.05, p0)",           calc_met(all_SE_minn_wn_005_p0,  None,            true_p)),
                 ("BVAR-WN (tau=0.20, p0)",           calc_met(all_SE_minn_wn_020_p0,  None,            true_p)),
                 ("BVAR-WN (tau=0.35, p0)",           calc_met(all_SE_minn_wn_035_p0,  None,            true_p)),

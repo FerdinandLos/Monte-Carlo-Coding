@@ -19,6 +19,66 @@
 
 \refsection{0}
   \datalist[entry]{nyt/global//global/global/global}
+    \entry{gertlerMonetaryPolicySurprises2015}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=732a7645c3f5314d26682b07972f06a2}{%
+           family={Gertler},
+           familyi={G\bibinitperiod},
+           given={Mark},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=75f6d47bff4a3d2b5ce170696229ff4c}{%
+           family={Karadi},
+           familyi={K\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{fullhash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{fullhashraw}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{bibnamehash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{authorbibnamehash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{authornamehash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{authorfullhash}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \strng{authorfullhashraw}{adbf98ee88d39e2a5cc0cf895a952f4f}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We provide evidence on the transmission of monetary policy shocks in a setting with both economic and financial variables. We first show that shocks identified using high frequency surprises around policy announcements as external instruments produce responses in output and inflation that are typical in monetary VAR analysis. We also find, however, that the resulting “modest” movements in short rates lead to “large” movements in credit costs, which are due mainly to the reaction of both term premia and credit spreads. Finally, we show that forward guidance is important to the overall strength of policy transmission. (JEL E31, E32, E43, E44, E52, G01)}
+      \field{day}{1}
+      \field{issn}{1945-7707, 1945-7715}
+      \field{journaltitle}{American Economic Journal: Macroeconomics}
+      \field{langid}{english}
+      \field{month}{1}
+      \field{number}{1}
+      \field{shortjournal}{American Economic Journal: Macroeconomics}
+      \field{title}{Monetary {{Policy Surprises}}, {{Credit Costs}}, and {{Economic Activity}}}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{volume}{7}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{44\bibrangedash 76}
+      \range{pages}{33}
+      \verb{doi}
+      \verb 10.1257/mac.20130329
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\NNU2NCXE\Gertler and Karadi - 2015 - Monetary Policy Surprises, Credit Costs, and Economic Activity.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://pubs.aeaweb.org/doi/10.1257/mac.20130329
+      \endverb
+      \verb{url}
+      \verb https://pubs.aeaweb.org/doi/10.1257/mac.20130329
+      \endverb
+    \endentry
     \entry{ivanovPractitionersGuideLag2005}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=00521ac0e81e2b785c14001ee0bdabaa}{%
