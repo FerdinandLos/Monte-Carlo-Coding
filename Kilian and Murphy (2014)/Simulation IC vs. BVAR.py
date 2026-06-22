@@ -560,7 +560,7 @@ def main():
         [ 1,  1,  1, np.nan], [np.nan, np.nan, 1, np.nan]
     ], dtype=np.float64))
 
-    dgp_lag_orders, sample_sizes = [4, 10], [240, 600]
+    dgp_lag_orders, sample_sizes = [4, 10], [360, 480]
     master_results_list, bma_weights_list = [], []
     raw_taus_list = []
     tradeoff_list, mdd_list = [], []
@@ -801,13 +801,13 @@ def main():
         os.makedirs(results_dir, exist_ok=True)
 
         df_master = pd.DataFrame(master_results_list)
-        df_master.to_csv(os.path.join(results_dir, f"Master_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(bma_weights_list).to_csv(os.path.join(results_dir, f"Master_BMA_Weights_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(raw_taus_list).to_csv(os.path.join(results_dir, f"Master_Raw_MDD_Tau_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(tradeoff_list).to_csv(os.path.join(results_dir, f"Master_Tradeoff_Curve_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(mdd_list).to_csv(os.path.join(results_dir, f"Master_MDD_Surface_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(iteration_mses_list).to_csv(os.path.join(results_dir, f"Master_Iteration_MSEs_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
-        pd.DataFrame(expected_tau_list).to_csv(os.path.join(results_dir, f"Master_Expected_Tau_given_p_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        df_master.to_csv(os.path.join(results_dir, f"Master2_Final_SVAR_Comparison_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(bma_weights_list).to_csv(os.path.join(results_dir, f"Master2_BMA_Weights_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(raw_taus_list).to_csv(os.path.join(results_dir, f"Master2_Raw_MDD_Tau_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(tradeoff_list).to_csv(os.path.join(results_dir, f"Master2_Tradeoff_Curve_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(mdd_list).to_csv(os.path.join(results_dir, f"Master2_MDD_Surface_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(iteration_mses_list).to_csv(os.path.join(results_dir, f"Master2_Iteration_MSEs_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
+        pd.DataFrame(expected_tau_list).to_csv(os.path.join(results_dir, f"Master2_Expected_Tau_given_p_iters{N_iterations}_draws{mc_draws}.csv"), index=False)
 
         print("\n" + "="*90)
         print(" RESULTS PREVIEW:")
