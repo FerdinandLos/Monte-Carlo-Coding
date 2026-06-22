@@ -69,7 +69,7 @@ def main():
         'BVAR-WN (tau=0.80, p_max)': 'BVAR-WN-80',
         'OLS BMA (BIC-W)': 'OLS-BMA',
         'OLS BMA (Geom-W, th=0.5)': 'OLS-GEOM-BMA',
-        'OLS BMA (AIC-W)': 'OLS_GEOM_BMA',
+        'OLS BMA (AIC-W)': 'OLS_BMA_AIC',
         'OLS BMA (Geom-AIC-W, th=0.5)': 'OLS_GEOM_BMA_AIC',
         'BVAR-WN (MDD tau, p_max)': 'BVAR-MDD',
         'Joint (p, tau) Grid BMA': 'JOINT-BMA',
@@ -259,6 +259,51 @@ def main():
     else:
         print("[SKIPPED] Table 5 (AIC column not found in pivot table)")
 
+    # TABLE 6: BMA Specifications Relative to AIC
+    if 'AIC' in pivot_mse.columns:
+        # Include all BMA models to give Joint Grid BMA proper context
+        bma_cols = ['OLS-BMA', 'OLS-GEOM-BMA', 'OLS_BMA_AIC', 'OLS_GEOM_BMA_AIC', 'JOINT-BMA', 'GEOM-BMA']
+        bma_cols_present = [c for c in bma_cols if c in pivot_mse.columns]
+        
+        if bma_cols_present:
+            # Calculate relative MSE using AIC as the denominator
+            calc_cols = ['AIC'] + bma_cols_present
+            pivot_mse_rel_aic_bma = pivot_mse[calc_cols].div(pivot_mse['AIC'], axis=0)
+            
+            # Drop the AIC column 
+            pivot_mse_rel_aic_bma = pivot_mse_rel_aic_bma.drop(columns=['AIC'])
+            
+            row_min_bma = pivot_mse_rel_aic_bma.min(axis=1)
+            def bold_row_min_bma(row):
+                mn = row_min_bma[row.name]
+                return ['font-weight: bold' if (pd.notna(v) and pd.notna(mn) and v == mn) else '' 
+                        for v in row]
+
+            latex6 = (pivot_mse_rel_aic_bma.style
+                    .format("{:.3f}", na_rep="-")
+                    .apply(bold_row_min_bma, axis=1)
+                    .to_latex(
+                        caption=r"Relative Mean Squared Error of Bayesian Model Averaging Specifications vs.~AIC Baseline.",
+                        label="tab:bma_vs_aic",
+                        column_format="ll" + "c" * len(bma_cols_present),
+                        position="htbp", position_float="centering", hrules=True,
+                        multirow_align="t", convert_css=True
+                    ))
+            
+            latex6 = (latex6
+                .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
+                .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
+                .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
+                .replace('OLS_GEOM_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular}')
+                .replace('JOINT-BMA', 'Joint Grid BMA')
+                .replace('GEOM-BMA', 'Geom. Grid BMA')
+            )
+            
+            with open(os.path.join(tables_dir, "Table6_BMA_vs_AIC.tex"), "w") as f:
+                f.write(latex6)
+            print("[SAVED] Table 6: BMA_vs_AIC.tex")
+    else:
+        print("[SKIPPED] Table 6 (AIC column not found in pivot table)")
 
     # -------------------------------------------------------------------
     # 4. FIGURES
@@ -267,15 +312,37 @@ def main():
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
 
     # Figure 1: Bias-Variance Tradeoff Curve
-    if os.path.exists(tradeoff_path):
-        tradeoff_df = pd.read_csv(tradeoff_path)
+    # Rebuilt from main df to bypass corrupted tradeoff CSV
+    
+    # Map the exact estimator strings from the main df to their tau values
+    bvar_estimators = {
+        'BVAR-WN (tau=0.20, p_max)': 0.20,
+        'BVAR-WN (tau=0.40, p_max)': 0.40,
+        'BVAR-WN (tau=0.60, p_max)': 0.60,
+        'BVAR-WN (tau=0.80, p_max)': 0.80
+    }
+    
+    # Filter main dataframe for p0 = 4 and the relevant BVAR estimators
+    tradeoff_rows = df[(df['True DGP (p0)'] == 4) & (df['Estimator'].isin(bvar_estimators.keys()))]
+    
+    if not tradeoff_rows.empty:
+        # Rebuild the tradeoff data structure
+        rebuilt_data = []
+        for _, row in tradeoff_rows.iterrows():
+            tau_val = bvar_estimators[row['Estimator']]
+            t_val = row['Sample Size (T)']
+            rel_mse = row['Geom Mean MSE Ratio']
+            rebuilt_data.append({'Tau': tau_val, 'T': t_val, 'Rel_MSE': rel_mse})
+            
+        tradeoff_df_rebuilt = pd.DataFrame(rebuilt_data)
+        
         fig, ax = plt.subplots(figsize=(9, 6))
         
-        sns.lineplot(data=tradeoff_df, x='Tau', y='Rel_MSE', hue='T', marker='o',
+        # Plot the main tradeoff curve using the rebuilt data
+        sns.lineplot(data=tradeoff_df_rebuilt, x='Tau', y='Rel_MSE', hue='T', marker='o',
                      palette="Set1", linewidth=2.5, ax=ax, errorbar=None)
 
         # Define baselines: (T_val, linestyle, label, estimator_name)
-        # Using loosely dash-dot-dot for AIC T=600 to distinguish from BIC
         baselines = [
             (240, '--', 'AIC Baseline ($T=240$)', 'AIC'),
             (600, '--', 'AIC Baseline ($T=600$)', 'AIC') 
@@ -284,7 +351,6 @@ def main():
         for T_val, ls, lbl, estimator in baselines:
             row = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'] == T_val) & (df['Estimator'] == estimator)]
             if len(row):
-                # Keep colors consistent with the T value
                 color = '#E41A1C' if T_val == 240 else '#377EB8'
                 ax.axhline(row['Geom Mean MSE Ratio'].values[0], color=color, linestyle=ls,
                            alpha=0.7, label=lbl)
@@ -303,7 +369,106 @@ def main():
         fig.tight_layout()
         fig.savefig(os.path.join(figures_dir, "Fig1_Tradeoff_Curve.pdf"))
         plt.close(fig)
-        print("[SAVED] Fig1_Tradeoff_Curve.pdf")
+        print("[SAVED] Fig1_Tradeoff_Curve.pdf (Rebuilt from main data)")
+    else:
+        print("[SKIPPED] Fig1_Tradeoff_Curve (No BVAR-WN data found in main df)")
+    
+    # Figure 1b: Asymptotic Convergence Plot (Performance over T)
+    # Isolating the performance of hard selection vs BMA architectures
+    
+    target_estimators = [
+        'AIC',
+        'OLS BMA (AIC-W)',
+        'Joint (p, tau) Grid BMA'
+    ]
+
+    # Filter the main dataframe for the true lag and target estimators
+    conv_df = df[(df['True DGP (p0)'] == 4) & (df['Estimator'].isin(target_estimators))].copy()
+
+    if not conv_df.empty:
+        # Create cleaner labels for the legend
+        label_map = {
+            'AIC': 'AIC (Hard Selection)',
+            'OLS BMA (AIC-W)': 'OLS BMA (AIC Weights)',
+            'Joint (p, tau) Grid BMA': 'Joint Grid BMA'
+        }
+        conv_df['Model'] = conv_df['Estimator'].map(label_map)
+
+        fig, ax = plt.subplots(figsize=(9, 6))
+
+        # Plotting the convergence lines
+        # Using specific markers and distinct colors (Red, Green, Blue) for clarity
+        sns.lineplot(data=conv_df, x='Sample Size (T)', y='Geom Mean MSE Ratio',
+                     hue='Model', style='Model', markers=['o', 's', 'D'],
+                     dashes=['', (2, 2), ''], palette=['#E41A1C', '#4DAF4A', '#377EB8'],
+                     linewidth=2.5, markersize=8, ax=ax, errorbar=None)
+
+        ax.set_xlabel('Sample Size ($T$)')
+        ax.set_ylabel('Relative Mean Squared Error')
+
+        # Ensure x-axis ticks align perfectly with actual sample sizes in your CSV
+        t_values = sorted(conv_df['Sample Size (T)'].unique())
+        ax.set_xticks(t_values)
+
+        ax.legend(title='Estimator Architecture', loc='upper right')
+        ax.grid(True, linestyle='--', alpha=0.6)
+
+        fig.tight_layout()
+        save_name = os.path.join(figures_dir, "Fig1b_Asymptotic_Convergence_p4.pdf")
+        fig.savefig(save_name)
+        plt.close(fig)
+        print(f"[SAVED] Fig1b_Asymptotic_Convergence.pdf")
+    else:
+        print("[SKIPPED] Fig1b_Asymptotic_Convergence (Required estimators not found in main df)")
+
+    # Figure 1c: Asymptotic Convergence Plot (Performance over T)
+    # Isolating the performance of hard selection vs BMA architectures
+    
+    target_estimators = [
+        'AIC',
+        'OLS BMA (AIC-W)',
+        'Joint (p, tau) Grid BMA'
+    ]
+
+    # Filter the main dataframe for the true lag and target estimators
+    conv_df = df[(df['True DGP (p0)'] == 10) & (df['Estimator'].isin(target_estimators))].copy()
+
+    if not conv_df.empty:
+        # Create cleaner labels for the legend
+        label_map = {
+            'AIC': 'AIC (Hard Selection)',
+            'OLS BMA (AIC-W)': 'OLS BMA (AIC Weights)',
+            'Joint (p, tau) Grid BMA': 'Joint Grid BMA'
+        }
+        conv_df['Model'] = conv_df['Estimator'].map(label_map)
+
+        fig, ax = plt.subplots(figsize=(9, 6))
+
+        # Plotting the convergence lines
+        # Using specific markers and distinct colors (Red, Green, Blue) for clarity
+        sns.lineplot(data=conv_df, x='Sample Size (T)', y='Geom Mean MSE Ratio',
+                     hue='Model', style='Model', markers=['o', 's', 'D'],
+                     dashes=['', (2, 2), ''], palette=['#E41A1C', '#4DAF4A', '#377EB8'],
+                     linewidth=2.5, markersize=8, ax=ax, errorbar=None)
+
+        ax.set_xlabel('Sample Size ($T$)')
+        ax.set_ylabel('Relative Mean Squared Error')
+
+        # Ensure x-axis ticks align perfectly with actual sample sizes in your CSV
+        t_values = sorted(conv_df['Sample Size (T)'].unique())
+        ax.set_xticks(t_values)
+
+        ax.legend(title='Estimator Architecture', loc='upper right')
+        ax.grid(True, linestyle='--', alpha=0.6)
+
+        fig.tight_layout()
+        save_name = os.path.join(figures_dir, "Fig1c_Asymptotic_Convergence_p10.pdf")
+        fig.savefig(save_name)
+        plt.close(fig)
+        print(f"[SAVED] Fig1c_Asymptotic_Convergence.pdf")
+    else:
+        print("[SKIPPED] Fig1c_Asymptotic_Convergence (Required estimators not found in main df)")
+
 
     # Figure 2: MDD-selected tau distribution (Evaluated at p_max)
     if os.path.exists(raw_taus_path):
@@ -398,34 +563,7 @@ def main():
     else:
         print("[SKIPPED] Fig3_MDD_Surface (No data found)")
 
-    # Figure 4: Risk Hedging Scatter
-    if os.path.exists(iter_mse_path):
-        iter_df = pd.read_csv(iter_mse_path)
-        scatter_df = iter_df.dropna(
-            subset=['Joint_BMA_Rel_MSE', 'BIC_Rel_MSE'])
 
-        if not scatter_df.empty:
-            fig, ax = plt.subplots(figsize=(8, 8))
-            sns.scatterplot(data=scatter_df, x='Joint_BMA_Rel_MSE', y='BIC_Rel_MSE',
-                            alpha=0.6, color='#2CA02C', edgecolor='black', s=60, ax=ax)
-
-            lo = min(scatter_df['Joint_BMA_Rel_MSE'].min(), scatter_df['BIC_Rel_MSE'].min()) * 0.95
-            hi = max(scatter_df['Joint_BMA_Rel_MSE'].max(), scatter_df['BIC_Rel_MSE'].max()) * 1.05
-            ax.plot([lo, hi], [lo, hi], color='red', linestyle='--', linewidth=2,
-                    label='Equal Performance ($y=x$)')
-            ax.fill_between([lo, hi], [lo, hi], hi, color='green', alpha=0.05,
-                            label='Joint BMA Outperforms')
-
-            ax.set_xlim(left=max(0.5, lo))
-            ax.set_ylim(bottom=max(0.5, lo))
-            ax.set_xlabel(r'Joint BMA ($p, \lambda_1$) Relative MSE')
-            ax.set_ylabel('Hard Selection (BIC) Relative MSE')
-            ax.set_title(r'Catastrophe Avoidance: Joint BMA vs.~Hard Selection ($p_0=4,\ T=96$)')
-            ax.legend(loc='upper left')
-            fig.tight_layout()
-            fig.savefig(os.path.join(figures_dir, "Fig4_Risk_Hedging_Scatter.pdf"))
-            plt.close(fig)
-            print("[SAVED] Fig4_Risk_Hedging_Scatter.pdf")
 
     # Figure 5: BMA Posterior Weight Heatmaps (All 6 Included)
     if weights_df is not None:
@@ -472,7 +610,6 @@ def main():
             print(f"[SAVED] {save_name}")
 
     # Figure 9 Optimal tau for integrated BMA
-    # Figure 9 Optimal tau for integrated BMA
     target_T = 600
     target_p0 = 4  # <-- Define your target p0 here
     
@@ -486,12 +623,12 @@ def main():
         
         sns.lineplot(data=df_filtered, x='p', y='Expected_Tau', 
                      hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
-                     marker='o', linewidth=2.5, ax=ax)
+                     marker='o', linewidth=2.5, ax=ax, errorbar=None)
         
         # Updated title to reflect both T and p0
         ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}, p_0={target_p0}$)')
         ax.set_xlabel('Candidate Lag Order ($p$)')
-        ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\tau \mid p]$)')
+        ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\lambda_1 \mid p]$)')
         
         ax.set_xticks(range(1, int(df['p'].max()) + 1))
         ax.grid(True, linestyle='--', alpha=0.6)

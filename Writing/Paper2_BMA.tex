@@ -46,6 +46,74 @@ This is the abstract for your paper. Briefly state the purpose of the research, 
 \label{sec:introduction}
 Introduce the problem of lag selection and parameter proliferation in Structural VARs. Highlight the debate between hard lag selection (Information Criteria) and Bayesian methods (Shrinkage and Model Averaging).
 
+\subsection{Bayesian Model Averaging (BMA)}
+
+We find it important to discuss the common properties of four different BMA approaches listed above. We follow the canonical treatment of Hoeting et al. (1999) for this part. First, we start with the problem of choosing the right weight parameters (so that we can average the models based on the weights). Let $\Delta$ be our parameter of interest (Impulse response functions) and let $M_1,\dots,M_K$ be our candidate models (different reduced form VAR models). The posterior distribution of $\Delta$ given the data y (step 3 defined in the blueprint), averaged over all models, is:
+\begin{equation} \label{eq:x1}
+p(\Delta \mid y) = \sum_{k=1}^{K} p(\Delta \mid M_k, y) p(M_k \mid y)
+\end{equation}
+so this is the weighted average of the posterior distributions conditioned on the model $p(\Delta \mid M_k, y)$, weighted by $p(M_k \mid y)$ (posterior probability of model conditioned on data). By Bayes' theorem applied at the level of models, this weight is:
+\begin{equation} \label{eq:x2}
+p(M_k \mid y) = \frac{p(y \mid M_k) p(M_k)}{\sum_{l=1}^{K} p(y \mid M_l) p(M_l)}
+\end{equation}
+where $p(M_k)$ is the prior probability assigned to model $M_k$ and $p(y \mid M_k)$ is its marginal likelihood—the likelihood integrated over the model's parameters under their prior:
+\begin{equation} \label{eq:x3}
+p(y \mid M_k) = \int p(y \mid \theta_k, M_k) p(\theta_k \mid M_k) \, d\theta_k.
+\end{equation}
+
+The marginal likelihood (or marginal data density) in equation \eqref{eq:x3} is central to our procedure, as it is the primary input to the model weights in \eqref{eq:x2}.
+
+These 3 equations defined above are the backbones of the Bayesian Model Averaging methodology. In practice, these three equations map directly onto the steps of our procedure. Equation \eqref{eq:x3}—the marginal likelihood—is evaluated first: for each candidate model we obtain a measure of how well it explains the data once its parameters are integrated out. For the BVAR models, indexed by a lag order and tightness pair ($p$, $\lambda_1$), this quantity is the marginal data density returned in closed form by the conjugate Normal-Wishart estimator; for the OLS models, indexed by lag order alone ($p$), it is approximated by the Bayesian Information Criterion and Akaike Information Criterion\footnote{Steel (2020,\S3.7) mentions that marginal likelihood is approximated by Bayesian Information Criterion when closed form of equation \eqref{eq:x3} does not exist as BIC asymptotically converges to marginal likelihood. Also, Burnham \& Anderson (2002) justifies the usage of AIC as an approximation of Marginal Likelihood. Therefore, we use both criteria.}. Equation \eqref{eq:x2} then converts these marginal likelihoods into model weights: each is multiplied by its model prior ($p(M_k)$)—uniform or geometric—and normalized so that the weights across all candidate models sum to one (denominator). These weights are the posterior model probabilities. Finally, equation \eqref{eq:x1} is realized not by analytical combination but by Monte Carlo: from each model we draw admissible impulse responses in a number proportional to its weight, so that models the data favor contribute more draws, and we collect all draws into a single pool. This pool is the Monte Carlo representation of the model-averaged distribution in \eqref{eq:x1}. From it we select the median target as our single, coherent estimate of the impulse response, completing the averaging.
+
+So far, we have described the common structure they share. However, we use four different BMA methods and each has its own priors or estimation methods. We discuss the differences below.
+
+\section*{Weights and Priors}
+
+We use two weight sources and two model-space priors (uniform prior and geometric prior). Each combination yields a different metric:
+
+\begin{table}[htpb]
+\centering
+\begin{tabular}{lcc}
+\hline
+& Uniform prior & Geometric prior ($\theta = 0.5$) \\
+\hline
+OLS (BIC/AIC-weighted, $p$) & Uniform-OLS & Geometric-OLS \\
+BVAR (MDD-weighted, $p, \lambda_1$) & Joint Grid & Geometric Grid \\
+\hline
+\end{tabular}
+\end{table}
+
+We find it fruitful to discuss model priors that we use ($p(M_k)$) first. The uniform prior is straightforward. It represents the belief that every candidate model has the same probability of being the true model (reflecting the absence of any prior preference among lag orders):
+\begin{equation} \label{eq:x4}
+p(M_1) = p(M_2) = \dots = p(M_K) = \frac{1}{\bar p}
+\end{equation}
+
+On the other hand, geometric prior constructs the prior as:
+\begin{equation} \label{eq:x5}
+p(M_k) \propto \theta^p \quad \text{where} \quad \theta=0.5
+\end{equation}
+
+We set $\theta = 0.5$, under which each additional lag halves the prior weight—equivalently, the prior demands that the marginal likelihood favor a longer model by at least a factor of two before the additional lag is preferred. This value is a deliberate, interpretable benchmark rather than an optimized choice: it imposes a moderate preference for parsimony, neither so weak as to coincide with the uniform prior nor so strong as to dominate the evidence from the marginal likelihood.
+
+We use BIC and AIC for the models estimated via OLS. The reason is that it is not possible to calculate marginal likelihood since we don't have any priors (we don't form any beliefs regarding the parameters (no shrinking) as we use exactly one degree of freedom for each parameter we estimate under frequentist approach). We therefore approximate it by the Schwarz criterion, which Schwarz (1978), Raftery (1995) derived as an asymptotic approximation to the log marginal likelihood and which, in large samples, does not depend on a prior. For the BVAR models, by contrast, the Minnesota prior (discussed in paper A) supplies exactly the density \eqref{eq:x3} requires, and the conjugate structure makes the integral available in closed form, so the marginal data density is computed directly. 
+
+\section*{Advantages of the Bayesian Model Averaging}
+
+First of all, Bayesian Model Averaging is more honest about the model uncertainty. Following Hoeting (1999):
+\begin{equation} \label{eq:x6}
+\mathrm{Var}[\Delta \mid y] = \sum_{k} \left( \mathrm{Var}[\Delta \mid y, M_k] + \hat{\Delta}_k^2 \right) p(M_k \mid y) - E[\Delta \mid y]^2
+\end{equation}
+
+Here, $\hat \Delta_k = E[\Delta\mid y, M_k]$. After decomposing $\mathrm{Var}[\Delta \mid y]$, it is possible to see that BMA framework accounts for the model uncertainty:
+\begin{equation} \label{eq:x7}
+\mathrm{Var}[\Delta \mid y] = \underbrace{\sum_{k} \mathrm{Var}[\Delta \mid y, M_k] p(M_k \mid y)}_{\text{within-model}} + \underbrace{\sum_{k} \left( \hat{\Delta}_k - E[\Delta \mid y] \right)^2 p(M_k \mid y)}_{\text{across-model}}
+\end{equation}
+
+We can see from \eqref{eq:x7} that the perfect model satisfies $\hat \Delta_k = E[\Delta\mid y]$ so $\mathrm{Var}[\Delta \mid y]$ is only equal to within-model variance. That is clearly an advantage of Bayesian Model Averaging since it allows the practitioner to estimate the posterior variance in a more accurate way. 
+
+Second, its predictive ability is better compared to conventional methods (even though our work doesn't contain anything regarding forecasting, it's a strength of the methodology that we followed). Madigan-Raftery (1994), claims that under log-scoring BMA's predictive ability is better. Also Hoeting (1999) demonstrates a concrete example and shows that even the best performing model has a 17\% posterior probability weight. Therefore, it makes sense to use Bayesian Model Averaging in order to account for model uncertainty. Our main motivation to use this approach is to see whether accounting for model uncertainty leads to better MSE results or not.
+
+
 \section{Simulation Design}
 \label{sec:methodology}
 
@@ -93,25 +161,44 @@ Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criter
 
 \input{Tables/Table2_Uncertainty.tex}
 
-\ref{tab:bma_posterior} and \ref{fig:bma_heatmaps_grid} reveal how the weights are spread out for the four different BMA methods. Both OLS-based approaches produce a much more concentrated weighting scheme as higher lag orders are completely eliminated due to their high parameter variance in OLS-estimation. High lag orders are found to still introduce too much variance into the estimation to suffice a non-zero weight. On the other hand, both BVAR-based approaches spread out the weights much wider, and do not set high lag orders to 0. The additional parameter shrinkage of the BVAR estimation therefore enables BMA to still include more lag orders as their parameters are further shrunk towards 0. This shrinkage is further adapted to the specific chosen lag order $p$ as both geometric and joint grid BMA jointly optimize $p$ and the $p$-specific $\lambda_1$-value. A higher lag-order can therefore be combined with a tighter $\lambda_1$-value in order to shrink down the higher lags more drastically. 
+\input{Tables/Table6_BMA_vs_AIC.tex}
+
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1b_Asymptotic_Convergence_p4.pdf}
+        \caption{$p_0=4$}
+        \label{fig:convergence4}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1c_Asymptotic_Convergence_p10.pdf}
+        \caption{$p_0=10$}
+        \label{fig:convergence10}
+    \end{subfigure}
+  
+    \caption{Performance of BMA vs Hard Selection at different sample sizes $T$.}
+    \label{fig:convergence}
+\end{figure}
+
+Figure~\ref{fig:bma_heatmaps_grid} reveal how the weights are spread out for the four different BMA methods. Both OLS-based approaches produce a much more concentrated weighting scheme as higher lag orders are completely eliminated due to their high parameter variance in OLS-estimation. High lag orders are found to still introduce too much variance into the estimation to suffice a non-zero weight. On the other hand, both BVAR-based approaches spread out the weights much wider, and do not set high lag orders to 0. The additional parameter shrinkage of the BVAR estimation therefore enables BMA to still include more lag orders as their parameters are further shrunk towards 0. This shrinkage is further adapted to the specific chosen lag order $p$ as both geometric and joint grid BMA jointly optimize $p$ and the $p$-specific $\lambda_1$-value. A higher lag-order can therefore be combined with a tighter $\lambda_1$-value in order to shrink down the higher lags more drastically. 
 
 \ref{fig:tau_to_p} illustrates how smaller $\lambda_1$-values are selected for higher lag orders $p$.
-
-\input{Tables/Table4_BMA_Distribution.tex}
 
 \begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
     \centering
     
     % Top Left: Figure 5
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig5_BMA_Heatmap_OLS.pdf}
+        \includegraphics[width=\textwidth]{Figures/Fig5a_BMA_Heatmap_OLS.pdf}
         \caption{OLS BMA (BIC-weighted)}
         \label{fig:heat_ols}
     \end{subfigure}
     \hfill % Adds horizontal space between the two columns
     % Top Right: Figure 6
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf}
+        \includegraphics[width=\textwidth]{Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf}
         \caption{OLS BMA (Geom. BIC-weighted, $\theta=0.5$)}
         \label{fig:heat_ols_geom}
     \end{subfigure}
@@ -120,25 +207,46 @@ Here, we evaluate True Bayesian Model Averaging (BMA) against Information Criter
     
     % Bottom Left: Figure 7
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig7_BMA_Heatmap_Joint.pdf}
-        \caption{Joint Grid BMA ($p, \tau$)}
-        \label{fig:heat_joint}
+        \includegraphics[width=\textwidth]{Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf}
+        \caption{OLS BMA (AIC-weighted)}
+        \label{fig:heat_aic}
     \end{subfigure}
     \hfill
     % Bottom Right: Figure 8
     \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig8_BMA_Heatmap_Geom.pdf}
-        \caption{Geometric Grid BMA ($\theta=0.5$)}
-        \label{fig:heat_geom}
+        \includegraphics[width=\textwidth]{Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf}
+        \caption{OLS BMA (Geom. AIC-weighted, $\theta=0.5$)}
+        \label{fig:heat_aic_geom}
     \end{subfigure}
     
-    \caption{Posterior Weight Evolution across all four BMA architectures ($p_0=4$).}
+    \caption{Posterior Weight Evolution across the four OLS BMA architectures ($p_0=4$).}
     \label{fig:bma_heatmaps_grid}
+\end{figure}
+
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5e_BMA_Heatmap_Joint.pdf}
+        \caption{Joint Grid BMA}
+        \label{fig:heat_joint}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5f_BMA_Heatmap_Geom.pdf}
+        \caption{Geometric Grid BMA}
+        \label{fig:heat_geom}
+    \end{subfigure}
+  
+    \caption{Posterior Weight Evolution for the two BVAR-based BMAs ($p_0=4$).}
+    \label{fig:bma_heatmaps_grid_bvar}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{Figures/Fig9_Tau_Comparison_T600.pdf}
+    \includegraphics[width=0.85\textwidth]{Figures/Fig9_Tau_Comparison_T600_p04.pdf}
     \caption{Optimal $lambda_1$ is adapted to the lag order $p$.}
     \label{fig:tau_to_p}
 \end{figure}

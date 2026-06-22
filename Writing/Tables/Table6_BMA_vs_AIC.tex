@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Relative Mean Squared Error of Bayesian Model Averaging Specifications vs.~AIC Baseline.}
+\label{tab:bma_vs_aic}
+\begin{tabular}{llcccccc}
+\toprule
+ &  & \begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular} & Joint Grid BMA & Geom. Grid BMA \\
+$T$ & $p_0$ &  &  &  &  &  &  \\
+\midrule
+\multirow[t]{2}{*}{240} & 4 & 1.015 & 1.074 & 0.999 & 1.085 & \bfseries 0.831 & 1.040 \\
+ & 10 & 0.978 & 0.815 & 0.948 & 0.950 & \bfseries 0.775 & 0.821 \\
+\multirow[t]{2}{*}{600} & 4 & 1.231 & 1.141 & \bfseries 1.043 & 1.136 & 1.125 & 1.122 \\
+ & 10 & 1.248 & 1.062 & 0.852 & \bfseries 0.845 & 0.847 & 0.930 \\
+\bottomrule
+\end{tabular}
+\end{table}

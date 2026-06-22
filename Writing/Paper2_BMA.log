@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.6.18)  22 JUN 2026 14:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.6.18)  22 JUN 2026 21:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -655,68 +655,94 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{C:/Users/ferdi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2] [3]
-<Figures/Fig3_MDD_Surface.pdf, id=75, 650.43pt x 433.62pt>
+{C:/Users/ferdi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2] [3] [4] [5] [6]
+<Figures/Fig3_MDD_Surface.pdf, id=116, 650.43pt x 433.62pt>
 File: Figures/Fig3_MDD_Surface.pdf Graphic file (type pdf)
 <use Figures/Fig3_MDD_Surface.pdf>
-Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 77.
+Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 145.
 (pdftex.def)             Requested size: 385.02547pt x 256.6871pt.
- [4 <./Figures/Fig3_MDD_Surface.pdf>] (Tables/Table3_IC_Lags.tex) (Tables/Table2_Uncertainty.tex) (Tables/Table4_BMA_Distribution.tex
-Overfull \hbox (794.39749pt too wide) in paragraph at lines 5--26
+ [7 <./Figures/Fig3_MDD_Surface.pdf>] (Tables/Table3_IC_Lags.tex) (Tables/Table2_Uncertainty.tex
+Overfull \hbox (219.4835pt too wide) in paragraph at lines 5--16
+ [][] 
+ []
+
+) (Tables/Table6_BMA_vs_AIC.tex
+Overfull \hbox (99.22629pt too wide) in paragraph at lines 5--16
  [][] 
  []
 
 )
-<Figures/Fig5_BMA_Heatmap_OLS.pdf, id=177, 578.16pt x 505.89pt>
-File: Figures/Fig5_BMA_Heatmap_OLS.pdf Graphic file (type pdf)
-<use Figures/Fig5_BMA_Heatmap_OLS.pdf>
-Package pdftex.def Info: Figures/Fig5_BMA_Heatmap_OLS.pdf  used on input line 107.
+<Figures/Fig1b_Asymptotic_Convergence_p4.pdf, id=215, 650.43pt x 433.62pt>
+File: Figures/Fig1b_Asymptotic_Convergence_p4.pdf Graphic file (type pdf)
+<use Figures/Fig1b_Asymptotic_Convergence_p4.pdf>
+Package pdftex.def Info: Figures/Fig1b_Asymptotic_Convergence_p4.pdf  used on input line 170.
+(pdftex.def)             Requested size: 217.42265pt x 144.94766pt.
+<Figures/Fig1c_Asymptotic_Convergence_p10.pdf, id=216, 650.43pt x 433.62pt>
+File: Figures/Fig1c_Asymptotic_Convergence_p10.pdf Graphic file (type pdf)
+<use Figures/Fig1c_Asymptotic_Convergence_p10.pdf>
+Package pdftex.def Info: Figures/Fig1c_Asymptotic_Convergence_p10.pdf  used on input line 176.
+(pdftex.def)             Requested size: 217.42265pt x 144.94766pt.
+ [8]
+<Figures/Fig5a_BMA_Heatmap_OLS.pdf, id=228, 578.16pt x 505.89pt>
+File: Figures/Fig5a_BMA_Heatmap_OLS.pdf Graphic file (type pdf)
+<use Figures/Fig5a_BMA_Heatmap_OLS.pdf>
+Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS.pdf  used on input line 194.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf, id=178, 578.16pt x 505.89pt>
-File: Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf Graphic file (type pdf)
-<use Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf>
-Package pdftex.def Info: Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf  used on input line 114.
+<Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf, id=229, 578.16pt x 505.89pt>
+File: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf Graphic file (type pdf)
+<use Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf>
+Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf  used on input line 201.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig7_BMA_Heatmap_Joint.pdf, id=179, 578.16pt x 505.89pt>
-File: Figures/Fig7_BMA_Heatmap_Joint.pdf Graphic file (type pdf)
-<use Figures/Fig7_BMA_Heatmap_Joint.pdf>
-Package pdftex.def Info: Figures/Fig7_BMA_Heatmap_Joint.pdf  used on input line 123.
+<Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf, id=230, 578.16pt x 505.89pt>
+File: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf Graphic file (type pdf)
+<use Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf>
+Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf  used on input line 210.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig8_BMA_Heatmap_Geom.pdf, id=180, 578.16pt x 505.89pt>
-File: Figures/Fig8_BMA_Heatmap_Geom.pdf Graphic file (type pdf)
-<use Figures/Fig8_BMA_Heatmap_Geom.pdf>
-Package pdftex.def Info: Figures/Fig8_BMA_Heatmap_Geom.pdf  used on input line 130.
+<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf, id=231, 578.16pt x 505.89pt>
+File: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf Graphic file (type pdf)
+<use Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>
+Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf  used on input line 217.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig9_Tau_Comparison_T600.pdf, id=181, 578.16pt x 433.62pt>
-File: Figures/Fig9_Tau_Comparison_T600.pdf Graphic file (type pdf)
-<use Figures/Fig9_Tau_Comparison_T600.pdf>
-Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600.pdf  used on input line 141.
+<Figures/Fig5e_BMA_Heatmap_Joint.pdf, id=232, 578.16pt x 505.89pt>
+File: Figures/Fig5e_BMA_Heatmap_Joint.pdf Graphic file (type pdf)
+<use Figures/Fig5e_BMA_Heatmap_Joint.pdf>
+Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint.pdf  used on input line 231.
+(pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
+<Figures/Fig5f_BMA_Heatmap_Geom.pdf, id=233, 578.16pt x 505.89pt>
+File: Figures/Fig5f_BMA_Heatmap_Geom.pdf Graphic file (type pdf)
+<use Figures/Fig5f_BMA_Heatmap_Geom.pdf>
+Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom.pdf  used on input line 238.
+(pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
+<Figures/Fig9_Tau_Comparison_T600_p04.pdf, id=234, 578.16pt x 433.62pt>
+File: Figures/Fig9_Tau_Comparison_T600_p04.pdf Graphic file (type pdf)
+<use Figures/Fig9_Tau_Comparison_T600_p04.pdf>
+Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p04.pdf  used on input line 249.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
- [5] [6] [7 <./Figures/Fig5_BMA_Heatmap_OLS.pdf> <./Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf> <./Figures/Fig7_BMA_Heatmap_Joint.pdf> <./Figures/Fig8_BMA_Heatmap_Geom.pdf>] [8 <./Figures/Fig9_Tau_Comparison_T600.pdf>] [9
+ [9] [10 <./Figures/Fig1b_Asymptotic_Convergence_p4.pdf> <./Figures/Fig1c_Asymptotic_Convergence_p10.pdf> <./Figures/Fig5a_BMA_Heatmap_OLS.pdf> <./Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf> <./Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>] [11 <./Figures/Fig5e_BMA_Heatmap_Joint.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom.pdf> <./Figures/Fig9_Tau_Comparison_T600_p04.pdf>] [12
 
-] [10] (Paper2_BMA.aux)
+] [13] (Paper2_BMA.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
  ***********
 Package rerunfilecheck Info: File `Paper2_BMA.out' has not changed.
-(rerunfilecheck)             Checksum: A62374E96796CA80CA5A90D88D2A9CA4;996.
+(rerunfilecheck)             Checksum: 9E4CF8FAF44E6FF2DECD453AF0C4AD1F;1218.
 Package logreq Info: Writing requests to 'Paper2_BMA.run.xml'.
 \openout1 = `Paper2_BMA.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19793 strings out of 467509
- 348969 string characters out of 5408780
- 1196258 words of memory out of 5000000
- 48766 multiletter control sequences out of 15000+600000
+ 19849 strings out of 467509
+ 350701 string characters out of 5408780
+ 1194225 words of memory out of 5000000
+ 48805 multiletter control sequences out of 15000+600000
  650204 words of font info for 97 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,14n,79p,1924b,1353s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0700.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm2074.pk><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on Paper2_BMA.pdf (10 pages, 460924 bytes).
+ 74i,12n,79p,1981b,1351s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0700.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0700.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm2074.pk><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on Paper2_BMA.pdf (13 pages, 594851 bytes).
 PDF statistics:
- 1120 PDF objects out of 1200 (max. 8388607)
- 33 named destinations out of 1000 (max. 500000)
- 79 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1496 PDF objects out of 1728 (max. 8388607)
+ 50 named destinations out of 1000 (max. 500000)
+ 107 words of extra memory for PDF output out of 10000 (max. 10000000)
 

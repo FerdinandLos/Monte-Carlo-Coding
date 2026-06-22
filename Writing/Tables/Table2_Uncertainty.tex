@@ -2,15 +2,15 @@
 \centering
 \caption{Relative Mean Squared Error: Hard Selection vs.~Bayesian Model Averaging (Including Informative Priors).}
 \label{tab:uncertainty_mse}
-\begin{tabular}{llcccccccc}
+\begin{tabular}{llccccccccc}
 \toprule
- &  & AIC & BIC & HQC & \begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular} & Joint Grid BMA & Geom. Grid BMA \\
-$T$ & $p_0$ &  &  &  &  &  &  &  &  \\
+ &  & AIC & BIC & HQC & \begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular} & Joint Grid BMA & Geom. Grid BMA \\
+$T$ & $p_0$ &  &  &  &  &  &  &  &  &  \\
 \midrule
-\multirow[t]{2}{*}{240} & 4 & 1.083 & 1.108 & 1.129 & 1.100 & 1.163 & 1.175 & \bfseries 0.900 & 1.127 \\
- & 10 & 1.033 & 1.018 & 1.021 & 1.010 & 0.842 & 0.982 & \bfseries 0.800 & 0.849 \\
-\multirow[t]{2}{*}{600} & 4 & \bfseries 0.989 & 1.145 & 1.118 & 1.218 & 1.129 & 1.124 & 1.113 & 1.109 \\
- & 10 & 1.036 & 1.260 & 1.259 & 1.293 & 1.100 & \bfseries 0.875 & 0.878 & 0.964 \\
+\multirow[t]{2}{*}{240} & 4 & 1.083 & 1.108 & 1.129 & 1.100 & 1.163 & 1.082 & 1.175 & \bfseries 0.900 & 1.127 \\
+ & 10 & 1.033 & 1.018 & 1.021 & 1.010 & 0.842 & 0.979 & 0.982 & \bfseries 0.800 & 0.849 \\
+\multirow[t]{2}{*}{600} & 4 & \bfseries 0.989 & 1.145 & 1.118 & 1.218 & 1.129 & 1.032 & 1.124 & 1.113 & 1.109 \\
+ & 10 & 1.036 & 1.260 & 1.259 & 1.293 & 1.100 & 0.883 & \bfseries 0.875 & 0.878 & 0.964 \\
 \bottomrule
 \end{tabular}
 \end{table}

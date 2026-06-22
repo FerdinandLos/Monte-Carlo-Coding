@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber Paper1_BVAR"] 1782143351.87542 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782145750.45818 0
+["biber Paper1_BVAR"] 1782143351.87542 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782152417.95358 0
   "Monte Carlo Simulations2.bib" 1782144045 81429 b5c8f45276ce151768599d09b24719e7 ""
-  "Paper1_BVAR.bcf" 1782145750 113160 c665b4152ea26fd6154412d6617d622c "pdflatex"
+  "Paper1_BVAR.bcf" 1782152417 113160 c665b4152ea26fd6154412d6617d622c "pdflatex"
   (generated)
   "Paper1_BVAR.bbl"
   "Paper1_BVAR.blg"
   (rewritten before read)
-["pdflatex"] 1782145746.35184 "d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782145750.45922 0
+["pdflatex"] 1782152413.72861 "d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782152417.95474 0
   "C:/Users/ferdi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1781799252 81107 70b8516c68c2e617189c5e44bfd16b96 ""
   "C:/Users/ferdi/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1095.pk" 1781799262 28976 274be568fe0857e15d165013763b971f ""
   "C:/Users/ferdi/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1200.pk" 1781799254 31952 c561c1a2a9d5187f1376044ec82c19c6 ""
@@ -156,20 +156,20 @@
   "C:/Users/ferdi/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/ferdi/AppData/Local/Programs/MiKTeX/tex/latex/setspace/setspace.sty" 1670403145 22490 8cac309b79a4c53a4ffce4b1b07aead0 ""
   "C:/Users/ferdi/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "Figures/Fig1_Tradeoff_Curve.pdf" 1782145741 27563 54bb172a6aaf9039e6fd48decb370478 ""
-  "Figures/Fig2_Asymptotic_Relaxation.pdf" 1782145742 40483 d0f43c0d8a5a2a2960c3af0e12066dd9 ""
-  "Figures/Fig3_MDD_Surface.pdf" 1782145742 29135 f6f92e5289a993aebc9147fee959b911 ""
+  "Figures/Fig1_Tradeoff_Curve.pdf" 1782152409 27588 2e43e1851e0c0520060057a6cfca14ab ""
+  "Figures/Fig2_Asymptotic_Relaxation.pdf" 1782152410 40518 7bd120d6c95c0c0c65d1e58b8f8f6234 ""
+  "Figures/Fig3_MDD_Surface.pdf" 1782152410 29135 e7bdc81a0550b2d0ca5e5f85b9dbf04f ""
   "Figures/True_IRF_plot_Cumulative_10_lags.png" 1781952493 706312 583e30a6b90071d4b1a6b613f57fc378 ""
   "Figures/True_IRF_plot_Cumulative_4_lags.png" 1782058839 646718 e1ac04c1a96dd673935b41a9d61c97d3 ""
-  "Paper1_BVAR.aux" 1782145750 14351 9423e8093f265c57c2981d6ce5a5b0c1 "pdflatex"
+  "Paper1_BVAR.aux" 1782152417 14351 9423e8093f265c57c2981d6ce5a5b0c1 "pdflatex"
   "Paper1_BVAR.bbl" 1782143354 53949 bcd800be27b4afa0eba7f150a316d582 "biber Paper1_BVAR"
-  "Paper1_BVAR.out" 1782145750 1206 23b0a1c1da269a0044405d3d9179ad65 "pdflatex"
-  "Paper1_BVAR.run.xml" 1782145750 2408 9f6adcb5fdd98454ca9fa643a5f91979 "pdflatex"
-  "Paper1_BVAR.tex" 1782145685 41041 da8a8f029bc4306017115f8a308fd30d ""
-  "Tables/Table1_Shrinkage.tex" 1782145741 1000 52fb162c5057a37b265da9d98119a4ba ""
-  "Tables/Table3_IC_Lags.tex" 1782145741 461 556280ec2f361e47bf01efe2b2a479d6 ""
-  "Tables/Table5_BVAR_vs_AIC.tex" 1782145741 891 f91db019b7fe8138d36425d012c512a4 ""
-  "d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" 1782145685 41041 da8a8f029bc4306017115f8a308fd30d ""
+  "Paper1_BVAR.out" 1782152417 1206 23b0a1c1da269a0044405d3d9179ad65 "pdflatex"
+  "Paper1_BVAR.run.xml" 1782152417 2408 9f6adcb5fdd98454ca9fa643a5f91979 "pdflatex"
+  "Paper1_BVAR.tex" 1782149929 41044 65732b25337b51887d98d284c636d3c6 ""
+  "Tables/Table1_Shrinkage.tex" 1782152408 1000 52fb162c5057a37b265da9d98119a4ba ""
+  "Tables/Table3_IC_Lags.tex" 1782152408 461 556280ec2f361e47bf01efe2b2a479d6 ""
+  "Tables/Table5_BVAR_vs_AIC.tex" 1782152408 891 f91db019b7fe8138d36425d012c512a4 ""
+  "d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" 1782149929 41044 65732b25337b51887d98d284c636d3c6 ""
   (generated)
   "Paper1_BVAR.aux"
   "Paper1_BVAR.bcf"
