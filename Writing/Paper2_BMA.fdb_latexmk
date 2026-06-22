@@ -1,26 +1,26 @@
 # Fdb version 4
-["biber Paper2_BMA"] 1782076595.91018 "Paper2_BMA.bcf" "Paper2_BMA.bbl" "Paper2_BMA" 1782078339.03281 0
+["biber Paper2_BMA"] 1782076595.91018 "Paper2_BMA.bcf" "Paper2_BMA.bbl" "Paper2_BMA" 1782121652.02343 0
   "Monte Carlo Simulations.bib" 1782036879 61814 c3921b86ecc3fcecd518a6bdb3d0b32f ""
-  "Paper2_BMA.bcf" 1782078338 109747 8891cbe09cdd711b2407a09ac7e3c164 "pdflatex"
+  "Paper2_BMA.bcf" 1782121651 109747 8891cbe09cdd711b2407a09ac7e3c164 "pdflatex"
   (generated)
   "Paper2_BMA.bbl"
   "Paper2_BMA.blg"
   (rewritten before read)
-["pdflatex"] 1782078336.80698 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" "Paper2_BMA.pdf" "Paper2_BMA" 1782078339.03394 0
-  "Figures/Fig3_MDD_Surface.pdf" 1782078334 29130 c4a3ba41aac0e55b8938670a9104e474 ""
+["pdflatex"] 1782121649.91929 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" "Paper2_BMA.pdf" "Paper2_BMA" 1782121652.02483 0
+  "Figures/Fig3_MDD_Surface.pdf" 1782121478 29135 5a45d28677acfc130302e851a98ebd82 ""
   "Figures/Fig5_BMA_Heatmap_OLS.pdf" 1782045820 27711 c6798504a65ee9845493a1440021b6f0 ""
   "Figures/Fig6_BMA_Heatmap_OLS_Geom.pdf" 1782045820 30242 da120cf998cbfa9cead432277f52870f ""
   "Figures/Fig7_BMA_Heatmap_Joint.pdf" 1782045821 30393 48c7d6b0f8ab91cc155d9af0d0379d50 ""
   "Figures/Fig8_BMA_Heatmap_Geom.pdf" 1782045822 30574 89ade4facd4eacfe2b10d8747177b242 ""
   "Figures/Fig9_Tau_Comparison_T600.pdf" 1781977533 28802 edd964bb825cdf30316814cb2b5bb481 ""
-  "Paper2_BMA.aux" 1782078338 6371 0abb48d2d95208d2ca8fbbaafed4ce5f "pdflatex"
+  "Paper2_BMA.aux" 1782121651 6371 0abb48d2d95208d2ca8fbbaafed4ce5f "pdflatex"
   "Paper2_BMA.bbl" 1782076604 14649 8e5af5b529150d4f21203fdce3960fc6 "biber Paper2_BMA"
-  "Paper2_BMA.out" 1782078338 996 a62374e96796ca80ca5a90d88d2a9ca4 "pdflatex"
-  "Paper2_BMA.run.xml" 1782078338 2400 104da2feaf4191725187a22ee909d03d "pdflatex"
+  "Paper2_BMA.out" 1782121651 996 a62374e96796ca80ca5a90d88d2a9ca4 "pdflatex"
+  "Paper2_BMA.run.xml" 1782121651 2400 104da2feaf4191725187a22ee909d03d "pdflatex"
   "Paper2_BMA.tex" 1782076592 14793 2c731acb737bca34c7fed38fbc1f67d0 ""
-  "Tables/Table2_Uncertainty.tex" 1782078331 944 d8dd0766f51779304197d9c0284eeec3 ""
-  "Tables/Table3_IC_Lags.tex" 1782078331 461 bbcb260c76a9070b5b72faa268eaf4b0 ""
-  "Tables/Table4_BMA_Distribution.tex" 1782078331 1489 0a2675b29ce344da187e9f400ab85c71 ""
+  "Tables/Table2_Uncertainty.tex" 1782121474 944 059fe0615731e1f8cad302f01be18474 ""
+  "Tables/Table3_IC_Lags.tex" 1782121474 461 556280ec2f361e47bf01efe2b2a479d6 ""
+  "Tables/Table4_BMA_Distribution.tex" 1782121475 1597 77b0d6de5d9aea9c9716859ed6b38221 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1095.tfm" 1747240602 3584 21b378cca2e40816b0e6d74a4dc98f04 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1747240602 3584 402da0b29eafbad07963b1224b222f18 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1440.tfm" 1747240602 3584 13049b61b922a28b158a38aeff75ee9b ""
