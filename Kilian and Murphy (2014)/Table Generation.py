@@ -112,13 +112,11 @@ def main():
     )
     
     latex1 = (latex1
-        .replace('\\begin{table}', '\\begin{sidewaystable}')
-        .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('SIC (BIC)', 'BIC')
-        .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
-        .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
-        .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
-        .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular}')
+        .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular}')
+        .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular}')
+        .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.6$)\end{tabular}')
+        .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.8$)\end{tabular}')
         .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
     )
     
@@ -139,8 +137,6 @@ def main():
     )
     
     latex2 = (latex2
-        .replace('\\begin{table}', '\\begin{sidewaystable}')
-        .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
         .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
         .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -217,6 +213,52 @@ def main():
                 f.write(latex4)
             print("[SAVED] Table 4: BMA_Distribution.tex")
 
+    # TABLE 5: BVAR Specifications Relative to AIC
+    if 'AIC' in pivot_mse.columns:
+        bvar_cols = ['BVAR-WN-20', 'BVAR-WN-40', 'BVAR-WN-60', 'BVAR-WN-80', 'BVAR-MDD']
+        bvar_cols_present = [c for c in bvar_cols if c in pivot_mse.columns]
+        
+        if bvar_cols_present:
+            # 1. Calculate relative MSE using AIC as the denominator
+            calc_cols = ['AIC'] + bvar_cols_present
+            pivot_mse_rel_aic = pivot_mse[calc_cols].div(pivot_mse['AIC'], axis=0)
+            
+            # 2. Drop the AIC column so it does not appear in the generated table
+            pivot_mse_rel_aic = pivot_mse_rel_aic.drop(columns=['AIC'])
+            
+            # Custom styler for this normalized dataframe
+            row_min_aic = pivot_mse_rel_aic.min(axis=1)
+            def bold_row_min_aic(row):
+                mn = row_min_aic[row.name]
+                return ['font-weight: bold' if (pd.notna(v) and pd.notna(mn) and v == mn) else '' 
+                        for v in row]
+
+            latex5 = (pivot_mse_rel_aic.style
+                    .format("{:.3f}", na_rep="-")
+                    .apply(bold_row_min_aic, axis=1)
+                    .to_latex(
+                        caption=r"Relative Mean Squared Error of Bayesian Shrinkage Specifications vs.~AIC Baseline.",
+                        label="tab:bvar_vs_aic",
+                        column_format="ll" + "c" * len(bvar_cols_present),
+                        position="htbp", position_float="centering", hrules=True,
+                        multirow_align="t", convert_css=True
+                    ))
+            
+            # Apply your established LaTeX string replacements (Sideways table formatting removed)
+            latex5 = (latex5
+                .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
+                .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
+                .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
+                .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular}')
+                .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
+            )
+            
+            with open(os.path.join(tables_dir, "Table5_BVAR_vs_AIC.tex"), "w") as f:
+                f.write(latex5)
+            print("[SAVED] Table 5: BVAR_vs_AIC.tex")
+    else:
+        print("[SKIPPED] Table 5 (AIC column not found in pivot table)")
+
 
     # -------------------------------------------------------------------
     # 4. FIGURES
@@ -228,18 +270,28 @@ def main():
     if os.path.exists(tradeoff_path):
         tradeoff_df = pd.read_csv(tradeoff_path)
         fig, ax = plt.subplots(figsize=(9, 6))
+        
         sns.lineplot(data=tradeoff_df, x='Tau', y='Rel_MSE', hue='T', marker='o',
-                     palette="Set1", linewidth=2.5, ax=ax)
+                     palette="Set1", linewidth=2.5, ax=ax, errorbar=None)
 
-        for T_val, ls, lbl in [(240, '--', 'BIC Baseline ($T=240$)'), (600, ':', 'BIC Baseline ($T=600$)')]:
-            row = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'] == T_val) & (df['Estimator'] == 'SIC (BIC)')]
+        # Define baselines: (T_val, linestyle, label, estimator_name)
+        # Using loosely dash-dot-dot for AIC T=600 to distinguish from BIC
+        baselines = [
+            (240, '--', 'AIC Baseline ($T=240$)', 'AIC'),
+            (600, '--', 'AIC Baseline ($T=600$)', 'AIC') 
+        ]
+
+        for T_val, ls, lbl, estimator in baselines:
+            row = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'] == T_val) & (df['Estimator'] == estimator)]
             if len(row):
+                # Keep colors consistent with the T value
                 color = '#E41A1C' if T_val == 240 else '#377EB8'
                 ax.axhline(row['Geom Mean MSE Ratio'].values[0], color=color, linestyle=ls,
                            alpha=0.7, label=lbl)
 
         for tau in TAU_DISCRETE:
             ax.axvline(tau, color='gray', linestyle=':', linewidth=0.9, alpha=0.5)
+            
         ax.axvline(TAU_DISCRETE[0], color='gray', linestyle=':', linewidth=0.9, alpha=0.5,
                    label=r'Estimated $\lambda_1$ grid')
 
@@ -247,6 +299,7 @@ def main():
         ax.set_ylabel('Relative Mean Squared Error')
         ax.set_title(r'Bias-Variance Tradeoff Curve ($p_0 = 4$)')
         ax.legend(title='Sample Size')
+        
         fig.tight_layout()
         fig.savefig(os.path.join(figures_dir, "Fig1_Tradeoff_Curve.pdf"))
         plt.close(fig)
