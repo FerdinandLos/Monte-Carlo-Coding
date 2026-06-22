@@ -1,15 +1,15 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Paper2_BMA.blg'
-[132] biber-MSWIN64:342> INFO - === 
-[175] Biber.pm:421> INFO - Reading 'Paper2_BMA.bcf'
-[318] Biber.pm:1002> INFO - Found 5 citekeys in bib section 0
-[337] Biber.pm:4487> INFO - Processing section 0
-[351] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations.bib' for section 0
-[417] bibtex.pm:1713> INFO - LaTeX decoding ...
-[516] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations.bib'
-[591] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[591] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[592] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[592] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
-[603] bbl.pm:676> INFO - Writing 'Paper2_BMA.bbl' with encoding 'UTF-8'
-[608] bbl.pm:779> INFO - Output to Paper2_BMA.bbl
+[373] biber-MSWIN64:342> INFO - === 
+[509] Biber.pm:421> INFO - Reading 'Paper2_BMA.bcf'
+[714] Biber.pm:1002> INFO - Found 5 citekeys in bib section 0
+[741] Biber.pm:4487> INFO - Processing section 0
+[771] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations.bib' for section 0
+[855] bibtex.pm:1713> INFO - LaTeX decoding ...
+[1014] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations.bib'
+[1148] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[1148] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[1148] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[1148] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
+[1213] bbl.pm:676> INFO - Writing 'Paper2_BMA.bbl' with encoding 'UTF-8'
+[1219] bbl.pm:779> INFO - Output to Paper2_BMA.bbl

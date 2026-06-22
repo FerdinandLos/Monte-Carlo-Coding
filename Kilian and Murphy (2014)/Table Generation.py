@@ -63,15 +63,10 @@ def main():
     df_renamed = df.rename(columns={'True DGP (p0)': '$p_0$', 'Sample Size (T)': '$T$'})
 
     estimator_mapping = {
-        'BVAR-WN (tau=0.05, p_max)': 'BVAR-WN-05',
         'BVAR-WN (tau=0.20, p_max)': 'BVAR-WN-20',
-        'BVAR-WN (tau=0.35, p_max)': 'BVAR-WN-35',
-        'BVAR-WN (tau=0.50, p_max)': 'BVAR-WN-50',
-        'BVAR-WN (tau=0.65, p_max)': 'BVAR-WN-65',
+        'BVAR-WN (tau=0.40, p_max)': 'BVAR-WN-40',
+        'BVAR-WN (tau=0.60, p_max)': 'BVAR-WN-60',
         'BVAR-WN (tau=0.80, p_max)': 'BVAR-WN-80',
-        'BVAR-WN (tau=0.95, p_max)': 'BVAR-WN-95',
-        'BVAR-RW (tau=0.20, p_max)': 'BVAR-RW-20',
-        'BVAR-RW (tau=0.50, p_max)': 'BVAR-RW-50',
         'OLS BMA (BIC-W)': 'OLS-BMA',
         'OLS BMA (Geom-W, th=0.5)': 'OLS-GEOM-BMA',
         'OLS BMA (AIC-W)': 'OLS_GEOM_BMA',
@@ -79,16 +74,6 @@ def main():
         'BVAR-WN (MDD tau, p_max)': 'BVAR-MDD',
         'Joint (p, tau) Grid BMA': 'JOINT-BMA',
         'Geom (p, tau) Grid BMA (th=0.5)': 'GEOM-BMA',
-        
-        # --- Mapping for True Lag (p0) Estimators ---
-        'BVAR-WN (tau=0.05, p0)': 'BVAR-WN-05-p0',
-        'BVAR-WN (tau=0.20, p0)': 'BVAR-WN-20-p0',
-        'BVAR-WN (tau=0.35, p0)': 'BVAR-WN-35-p0',
-        'BVAR-WN (tau=0.50, p0)': 'BVAR-WN-50-p0',
-        'BVAR-WN (tau=0.65, p0)': 'BVAR-WN-65-p0',
-        'BVAR-WN (tau=0.80, p0)': 'BVAR-WN-80-p0',
-        'BVAR-WN (tau=0.95, p0)': 'BVAR-WN-95-p0',
-        'BVAR-WN (MDD tau, p0)': 'BVAR-MDD-p0',
     }
     df_renamed['Estimator_Mapped'] = df_renamed['Estimator'].replace(estimator_mapping)
 
@@ -114,8 +99,8 @@ def main():
                 .to_latex(caption=caption, label=label, **to_latex_kwargs))
 
     # TABLE 1: Shrinkage strategy
-    cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-35', 'BVAR-WN-50',
-             'BVAR-WN-65', 'BVAR-WN-80', 'BVAR-WN-95', 'BVAR-MDD']
+    cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-40', 
+             'BVAR-WN-60', 'BVAR-WN-80', 'BVAR-MDD']
     n1 = len([c for c in cols1 if c in pivot_mse.columns])
     latex1 = styled_mse_latex(
         cols1,
@@ -130,13 +115,10 @@ def main():
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('SIC (BIC)', 'BIC')
-        .replace('BVAR-WN-05', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.05$)\end{tabular}')
         .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
-        .replace('BVAR-WN-35', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.35$)\end{tabular}')
-        .replace('BVAR-WN-50', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.50$)\end{tabular}')
-        .replace('BVAR-WN-65', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.65$)\end{tabular}')
+        .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
+        .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
         .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular}')
-        .replace('BVAR-WN-95', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.95$)\end{tabular}')
         .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
     )
     
@@ -235,43 +217,6 @@ def main():
                 f.write(latex4)
             print("[SAVED] Table 4: BMA_Distribution.tex")
 
-    # -------------------------------------------------------------------
-    # TABLE 5: Ratio of MSE (p0 / p_max)
-    # -------------------------------------------------------------------
-    ratio_df = pd.DataFrame(index=pivot_mse.index)
-    taus_str = ['0.05', '0.20', '0.35', '0.50', '0.65', '0.80', '0.95']
-    
-    for t_val in taus_str:
-        suffix = t_val.split('.')[-1]
-        col_p0 = f'BVAR-WN-{suffix}-p0'
-        col_pmax = f'BVAR-WN-{suffix}'
-        
-        if col_p0 in pivot_mse.columns and col_pmax in pivot_mse.columns:
-            ratio_df[f'Tau={t_val}'] = pivot_mse[col_p0] / pivot_mse[col_pmax]
-            
-    if 'BVAR-MDD-p0' in pivot_mse.columns and 'BVAR-MDD' in pivot_mse.columns:
-        ratio_df['Tau=MDD'] = pivot_mse['BVAR-MDD-p0'] / pivot_mse['BVAR-MDD']
-
-    def bold_less_than_one(row):
-        return ['font-weight: bold' if pd.notna(v) and v < 1.0 else '' for v in row]
-
-    latex5 = (ratio_df.style
-              .format("{:.3f}", na_rep="-")
-              .apply(bold_less_than_one, axis=1)
-              .to_latex(caption=r"Ratio of Relative MSE: Estimating with True Lag Order ($p_0$) vs. Maximum Lag Order ($p_{\max}$). Values $< 1.0$ indicate $p_0$ outperforms $p_{\max}$.",
-                        label="tab:p0_vs_pmax",
-                        column_format="ll" + "c" * len(ratio_df.columns),
-                        position="htbp", position_float="centering", hrules=True,
-                        multirow_align="t", convert_css=True))
-                        
-    # Inject headers
-    for t_val in taus_str:
-        latex5 = latex5.replace(f'Tau={t_val}', fr'\begin{{tabular}}{{@{{}}c@{{}}}}$\lambda_1$ \\ {t_val}\end{{tabular}}')
-    latex5 = latex5.replace('Tau=MDD', r'\begin{tabular}{@{}c@{}}MDD \\ $\lambda_1$\end{tabular}')
-    
-    with open(os.path.join(tables_dir, "Table5_p0_vs_pmax_Ratio.tex"), "w") as f:
-        f.write(latex5)
-    print("[SAVED] Table 5: p0_vs_pmax_Ratio.tex")
 
     # -------------------------------------------------------------------
     # 4. FIGURES
