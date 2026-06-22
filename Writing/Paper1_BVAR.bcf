@@ -2393,8 +2393,9 @@
     <bcf:citekey order="12" intorder="2">christianoMonetaryPolicyShocks1999</bcf:citekey>
     <bcf:citekey order="13" intorder="1">blanchardDynamicEffectsAggregate1989</bcf:citekey>
     <bcf:citekey order="14" intorder="1">faustRobustnessIdentifiedVAR1998</bcf:citekey>
-    <bcf:citekey order="14" intorder="2">uhligWhatAreEffects2005</bcf:citekey>
-    <bcf:citekey order="14" intorder="3">rubio-ramirezStructuralVectorAutoregressions2010</bcf:citekey>
+    <bcf:citekey order="14" intorder="2">canovaMonetaryDisturbancesMatter2002</bcf:citekey>
+    <bcf:citekey order="14" intorder="3">uhligWhatAreEffects2005</bcf:citekey>
+    <bcf:citekey order="14" intorder="4">rubio-ramirezStructuralVectorAutoregressions2010</bcf:citekey>
     <bcf:citekey order="15" intorder="1">kilianStructuralVectorAutoregressive2017</bcf:citekey>
     <bcf:citekey order="16" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
     <bcf:citekey order="17" intorder="1">uhligWhatAreEffects2005</bcf:citekey>
@@ -2410,24 +2411,20 @@
     <bcf:citekey order="27" intorder="1">lutkepohlNewIntroductionMultiple2005</bcf:citekey>
     <bcf:citekey order="28" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
     <bcf:citekey order="29" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="30" intorder="1">schwarzEstimatingDimensionModel1978</bcf:citekey>
-    <bcf:citekey order="31" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="32" intorder="1">lutkepohlComparisonCriteriaEstimating1985</bcf:citekey>
-    <bcf:citekey order="33" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="30" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="31" intorder="1">akaikeNewLookStatistical1974</bcf:citekey>
+    <bcf:citekey order="32" intorder="1">schwarzEstimatingDimensionModel1978</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">hannanDeterminationOrderAutoregression1979</bcf:citekey>
     <bcf:citekey order="34" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="35" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="36" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">lutkepohlComparisonCriteriaEstimating1985</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
     <bcf:citekey order="37" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="38" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="39" intorder="1">kilianNotAllOil2009</bcf:citekey>
-    <bcf:citekey order="40" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="41" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="42" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="43" intorder="1">uhligWhatAreEffects2005</bcf:citekey>
-    <bcf:citekey order="44" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="45" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="46" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="47" intorder="1">lutkepohlComparisonCriteriaEstimating1985</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">kilianNotAllOil2009</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">

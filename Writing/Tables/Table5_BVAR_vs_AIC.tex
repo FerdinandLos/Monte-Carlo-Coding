@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Relative Mean Squared Error of Bayesian Shrinkage Specifications vs.~AIC Baseline.}
+\label{tab:bvar_vs_aic}
+\begin{tabular}{llccccc}
+\toprule
+ &  & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular} \\
+$T$ & $p_0$ &  &  &  &  &  \\
+\midrule
+\multirow[t]{2}{*}{240} & 4 & 0.981 & \bfseries 0.974 & 0.994 & 1.057 & 0.981 \\
+ & 10 & 0.866 & 0.858 & \bfseries 0.840 & 0.917 & 0.866 \\
+\multirow[t]{2}{*}{600} & 4 & 1.145 & \bfseries 0.994 & 1.115 & 1.122 & 1.145 \\
+ & 10 & \bfseries 0.782 & 0.865 & 0.819 & 0.791 & 0.796 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -19,6 +19,58 @@
 
 \refsection{0}
   \datalist[entry]{nyt/global//global/global/global}
+    \entry{akaikeNewLookStatistical1974}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=71ea86082a80cba140f9ff16828ad082}{%
+           family={Akaike},
+           familyi={A\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{fullhash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{fullhashraw}{71ea86082a80cba140f9ff16828ad082}
+      \strng{bibnamehash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{authorbibnamehash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{authornamehash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{authorfullhash}{71ea86082a80cba140f9ff16828ad082}
+      \strng{authorfullhashraw}{71ea86082a80cba140f9ff16828ad082}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The history of the development of statistical hypothesis testing in time series analysis is reviewed briefly and it is pointed out that the hypothesis testing procedure is not adequately defined as the procedure for statistical model identification. The classical maximum likelihood estimation procedure is reviewed and a new estimate minimum information theoretical criterion (AIC) estimate (MAICE) which is designed for the purpose of statistical identification is introduced. When there are several competing models the MAICE is defined by the model and the maximum likelihood estimates of the parameters which give the minimum of AIC defined by AIC = (-2)log-(maximum likelihood) + 2(number of independently adjusted parameters within the model). MAICE provides a versatile procedure for statistical model identification which is free from the ambiguities inherent in the application of conventional hypothesis testing procedure. The practical utility of MAICE in time series analysis is demonstrated with some numerical examples.}
+      \field{issn}{1558-2523}
+      \field{journaltitle}{IEEE Transactions on Automatic Control}
+      \field{month}{12}
+      \field{number}{6}
+      \field{title}{A New Look at the Statistical Model Identification}
+      \field{urlday}{22}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{19}
+      \field{year}{1974}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{716\bibrangedash 723}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/TAC.1974.1100705
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\ferdi\\Zotero\\storage\\L5YAY3XS\\Akaike - 1974 - A new look at the statistical model identification.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\THDR5M89\\1100705.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/1100705
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/1100705
+      \endverb
+      \keyw{Art,Estimation theory,History,Linear systems,Maximum likelihood estimation,Roundoff errors,Sampling methods,Stochastic processes,Testing,Time series analysis}
+    \endentry
     \entry{blanchardDynamicEffectsAggregate1989}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=292c92d2a4fb8f51c7624312eda7493d}{%
@@ -74,6 +126,66 @@
       \verb{url}
       \verb https://ideas.repec.org//a/aea/aecrev/v79y1989i4p655-73.html
       \endverb
+    \endentry
+    \entry{canovaMonetaryDisturbancesMatter2002}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=fb6e9180c0547fbbd0a8cd1bd07a9521}{%
+           family={Canova},
+           familyi={C\bibinitperiod},
+           given={Fabio},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=37c31da236183d196b42c6c63a681257}{%
+           family={Nicoló},
+           familyi={N\bibinitperiod},
+           given={Gianni\bibnamedelima De},
+           giveni={G\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{fullhash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{fullhashraw}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{bibnamehash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{authorbibnamehash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{authornamehash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{authorfullhash}{08ae9c8decccb5a49658d7f0f5974866}
+      \strng{authorfullhashraw}{08ae9c8decccb5a49658d7f0f5974866}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper examines the importance of monetary disturbances for cyclical fluctuations in real activity and inflation. It employs a novel identification approach which uses the sign of the cross-correlation function in response to shocks to assign a structural interpretation to orthogonal innovations. We find that identified monetary shocks have reasonable properties; that they significantly contribute to output and inflation cycles in all G-7 countries; that they contain an important policy component, and that their impact is time varying.}
+      \field{day}{1}
+      \field{issn}{0304-3932}
+      \field{journaltitle}{Journal of Monetary Economics}
+      \field{month}{9}
+      \field{number}{6}
+      \field{shortjournal}{Journal of Monetary Economics}
+      \field{title}{Monetary Disturbances Matter for Business Fluctuations in the {{G-7}}}
+      \field{urlday}{22}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{49}
+      \field{year}{2002}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1131\bibrangedash 1159}
+      \range{pages}{29}
+      \verb{doi}
+      \verb 10.1016/S0304-3932(02)00145-9
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\ferdi\\Zotero\\storage\\GKMPDUNX\\Canova and Nicoló - 2002 - Monetary disturbances matter for business fluctuations in the G-7.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\DCV6PJKV\\S0304393202001459.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304393202001459
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304393202001459
+      \endverb
+      \keyw{Business cycles,Dynamic correlations,Monetary disturbances,Structural shocks}
     \endentry
     \entry{christianoMonetaryPolicyShocks1999}{incollection}{}{}
       \name{author}{3}{}{%
@@ -308,6 +420,63 @@
       \endverb
       \verb{url}
       \verb https://pubs.aeaweb.org/doi/10.1257/mac.20130329
+      \endverb
+    \endentry
+    \entry{hannanDeterminationOrderAutoregression1979}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f22fb44a2a635b3de088d733ce14c1a7}{%
+           family={Hannan},
+           familyi={H\bibinitperiod},
+           given={E.\bibnamedelimi J.},
+           giveni={E\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b9d9afedabfcd65ba7d8508aa747eb9a}{%
+           family={Quinn},
+           familyi={Q\bibinitperiod},
+           given={B.\bibnamedelimi G.},
+           giveni={B\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {[Royal Statistical Society, Oxford University Press]}%
+      }
+      \strng{namehash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{fullhash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{fullhashraw}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{bibnamehash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{authorbibnamehash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{authornamehash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{authorfullhash}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \strng{authorfullhashraw}{e99f6f62e7b5ab9eb347b42e4cb6e5ba}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{It is shown that a strongly consistent estimation procedure for the order of an autoregression can be based on the law of the iterated logarithm for the partial autocorrelations. As compared to other strongly consistent procedures this procedure will underestimate the order to a lesser degree.}
+      \field{eprinttype}{jstor}
+      \field{issn}{0035-9246}
+      \field{journaltitle}{Journal of the Royal Statistical Society. Series B (Methodological)}
+      \field{number}{2}
+      \field{title}{The {{Determination}} of the {{Order}} of an {{Autoregression}}}
+      \field{urlday}{22}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{41}
+      \field{year}{1979}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{190\bibrangedash 195}
+      \range{pages}{6}
+      \verb{eprint}
+      \verb 2985032
+      \endverb
+      \verb{urlraw}
+      \verb https://www.jstor.org/stable/2985032
+      \endverb
+      \verb{url}
+      \verb https://www.jstor.org/stable/2985032
       \endverb
     \endentry
     \entry{ivanovPractitionersGuideLag2005}{article}{}{}
