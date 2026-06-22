@@ -189,58 +189,6 @@
       \verb https://onlinelibrary.wiley.com/doi/10.1002/jae.2322
       \endverb
     \endentry
-    \entry{lutkepohlComparisonCriteriaEstimating1985}{article}{}{}
-      \name{author}{1}{}{%
-        {{un=0,uniquepart=base,hash=d400c31862099db9f37a97b35e10814d}{%
-           family={Lütkepohl},
-           familyi={L\bibinitperiod},
-           given={Helmut},
-           giveni={H\bibinitperiod},
-           givenun=0}}%
-      }
-      \strng{namehash}{d400c31862099db9f37a97b35e10814d}
-      \strng{fullhash}{d400c31862099db9f37a97b35e10814d}
-      \strng{fullhashraw}{d400c31862099db9f37a97b35e10814d}
-      \strng{bibnamehash}{d400c31862099db9f37a97b35e10814d}
-      \strng{authorbibnamehash}{d400c31862099db9f37a97b35e10814d}
-      \strng{authornamehash}{d400c31862099db9f37a97b35e10814d}
-      \strng{authorfullhash}{d400c31862099db9f37a97b35e10814d}
-      \strng{authorfullhashraw}{d400c31862099db9f37a97b35e10814d}
-      \field{sortinit}{L}
-      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{abstract}{Abstract. Various criteria for estimating the order of a vector autoregressive process are compared in a simulation study. For the considered processes Schwarz's BIC criterion chooses the correct autoregressive order most often and leads to the smallest mean squared forecasting error in samples of the size usually available in practice.}
-      \field{issn}{1467-9892}
-      \field{journaltitle}{Journal of Time Series Analysis}
-      \field{langid}{english}
-      \field{number}{1}
-      \field{title}{Comparison of {{Criteria}} for {{Estimating}} the {{Order}} of a {{Vector Autoregressive Process}}}
-      \field{urlday}{22}
-      \field{urlmonth}{4}
-      \field{urlyear}{2026}
-      \field{volume}{6}
-      \field{year}{1985}
-      \field{dateera}{ce}
-      \field{urldateera}{ce}
-      \field{pages}{35\bibrangedash 52}
-      \range{pages}{18}
-      \verb{doi}
-      \verb 10.1111/j.1467-9892.1985.tb00396.x
-      \endverb
-      \verb{file}
-      \verb C\:\\Users\\ferdi\\Zotero\\storage\\LXCJWMQN\\Lütkepohl - 1985 - Comparison of Criteria for Estimating the Order of a Vector Autoregressive Process.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\C8KC3H45\\j.1467-9892.1985.tb00396.html
-      \endverb
-      \verb{urlraw}
-      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9892.1985.tb00396.x
-      \endverb
-      \verb{url}
-      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9892.1985.tb00396.x
-      \endverb
-      \keyw{AR order determination,Autoregressive process,Model selection criteria,Sequential testing}
-    \endentry
     \entry{uhligWhatAreEffects2005}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=23c65b2fd3969e3b79f89556ae2384b8}{%
