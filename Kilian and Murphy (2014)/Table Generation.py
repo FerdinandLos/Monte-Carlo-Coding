@@ -9,7 +9,7 @@ import seaborn as sns
 # =====================================================================
 ITERS = 500  # Adjust back to your production run numbers
 DRAWS = 1000
-FILE_SUFFIX = f"iters{ITERS}_draws{DRAWS}.csv"
+FILE_SUFFIX = f"iters{ITERS}_draws{DRAWS}"
 
 TAU_DISCRETE = [0.20, 0.40, 0.60, 0.80]
 
@@ -36,14 +36,12 @@ def main():
     # -------------------------------------------------------------------
     # 2. LOAD ALL CSV DATAFRAMES
     # -------------------------------------------------------------------
-    main_path        = os.path.join(results_dir, f"Master_Final_SVAR_Comparison_{FILE_SUFFIX}")
-    weights_path     = os.path.join(results_dir, f"Master_BMA_Weights_{FILE_SUFFIX}")
-    raw_taus_path    = os.path.join(results_dir, f"Master_Raw_MDD_Tau_{FILE_SUFFIX}")
-    raw_taus_p0_path = os.path.join(results_dir, f"Master_Raw_MDD_Tau_p0_{FILE_SUFFIX}")
-    tradeoff_path    = os.path.join(results_dir, f"Master_Tradeoff_Curve_{FILE_SUFFIX}")
-    mdd_path         = os.path.join(results_dir, f"Master_MDD_Surface_{FILE_SUFFIX}")
-    iter_mse_path    = os.path.join(results_dir, f"Master_Iteration_MSEs_{FILE_SUFFIX}")
-    tau_path         = os.path.join(results_dir, f"Master_Expected_Tau_given_p_{FILE_SUFFIX}")
+    main_path        = os.path.join(results_dir, f"Master_Final_SVAR_Comparison_{FILE_SUFFIX}_comb.csv")
+    weights_path     = os.path.join(results_dir, f"Master_BMA_Weights_{FILE_SUFFIX}_comb.csv")
+    raw_taus_path    = os.path.join(results_dir, f"Master_Raw_MDD_Tau_{FILE_SUFFIX}_comb.csv")
+    raw_taus_p0_path = os.path.join(results_dir, f"Master_Raw_MDD_Tau_p0_{FILE_SUFFIX}_comb.csv")
+    mdd_path         = os.path.join(results_dir, f"Master_MDD_Surface_{FILE_SUFFIX}_comb.csv")
+    tau_path         = os.path.join(results_dir, f"Master_Expected_Tau_given_p_{FILE_SUFFIX}_comb.csv")
 
     if not os.path.exists(main_path):
         print(f"\n[CRITICAL ERROR] Main results CSV not found! The script aborted.")
@@ -112,6 +110,8 @@ def main():
     )
     
     latex1 = (latex1
+        .replace('\\begin{table}', '\\begin{sidewaystable}')
+        .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('SIC (BIC)', 'BIC')
         .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular}')
         .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular}')
@@ -137,6 +137,8 @@ def main():
     )
     
     latex2 = (latex2
+        .replace('\\begin{table}', '\\begin{sidewaystable}')
+        .replace('\\end{table}',   '\\end{sidewaystable}')
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
         .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
         .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -323,7 +325,7 @@ def main():
     }
     
     # Filter main dataframe for p0 = 4 and the relevant BVAR estimators
-    tradeoff_rows = df[(df['True DGP (p0)'] == 4) & (df['Estimator'].isin(bvar_estimators.keys()))]
+    tradeoff_rows = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'].isin([240,600])) & (df['Estimator'].isin(bvar_estimators.keys()))]
     
     if not tradeoff_rows.empty:
         # Rebuild the tradeoff data structure
@@ -609,30 +611,38 @@ def main():
             plt.close(fig)
             print(f"[SAVED] {save_name}")
 
-    # Figure 9 Optimal tau for integrated BMA
+    # Figure 9, tau dependent on T
+    # Assuming tau_path and figures_dir are defined earlier in your script
     target_T = 600
     target_p0 = 4  # <-- Define your target p0 here
-    
+
     if os.path.exists(tau_path):
         df = pd.read_csv(tau_path)
-        
-        # Filter for a specific Sample Size AND a specific True Lag (p0)
+    
+        # 1. Filter for a specific Sample Size AND a specific True Lag (p0)
         df_filtered = df[(df['T'] == target_T) & (df['p0'] == target_p0)]
-        
+    
+        # 2. Explicitly aggregate the Monte Carlo iterations
+        # This takes the mean of 'Expected_Tau' for each combination of 'p' and 'Estimator'
+        df_avg = df_filtered.groupby(['p', 'Estimator'])['Expected_Tau'].mean().reset_index()
+    
         fig, ax = plt.subplots(figsize=(8, 6))
-        
-        sns.lineplot(data=df_filtered, x='p', y='Expected_Tau', 
-                     hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
-                     marker='o', linewidth=2.5, ax=ax, errorbar=None)
-        
+    
+        # 3. Plot the newly averaged data
+        # We can drop errorbar=None since df_avg now has exactly one row per x/hue combination
+        sns.lineplot(data=df_avg, x='p', y='Expected_Tau', 
+                 hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
+                 marker='o', linewidth=2.5, ax=ax)
+    
         # Updated title to reflect both T and p0
         ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}, p_0={target_p0}$)')
         ax.set_xlabel('Candidate Lag Order ($p$)')
         ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\lambda_1 \mid p]$)')
-        
-        ax.set_xticks(range(1, int(df['p'].max()) + 1))
+    
+        # Set x-ticks dynamically based on the aggregated data
+        ax.set_xticks(range(1, int(df_avg['p'].max()) + 1))
         ax.grid(True, linestyle='--', alpha=0.6)
-        
+    
         fig.tight_layout()
         save_name = os.path.join(figures_dir, f"Fig9_Tau_Comparison_T{target_T}_p0{target_p0}.pdf")
         fig.savefig(save_name)

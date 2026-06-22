@@ -1,83 +1,83 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.6.18)  22 JUN 2026 20:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  23 JUN 2026 01:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex"
-(d:/Monte Carlo Coding/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex
-LaTeX2e <2026-06-01>
-L3 programming layer <2026-05-26>
-(C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+**"c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex"
+(c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
+(c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
-(C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+(c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size12.clo
 File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 )
-\c@part=\count276
-\c@section=\count277
-\c@subsection=\count278
-\c@subsubsection=\count279
-\c@paragraph=\count280
-\c@subparagraph=\count281
-\c@figure=\count282
-\c@table=\count283
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
-\bibindent=\dimen150
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+\bibindent=\dimen148
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
-Package: geometry 2026/03/07 v6.0 Page Geometry
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
-Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks19
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
-\Gm@cnth=\count284
-\Gm@cntv=\count285
-\c@Gm@tempcnt=\count286
-\Gm@bindingoffset=\dimen151
-\Gm@wd@mp=\dimen152
-\Gm@odd@mp=\dimen153
-\Gm@even@mp=\dimen154
-\Gm@layoutwidth=\dimen155
-\Gm@layoutheight=\dimen156
-\Gm@layouthoffset=\dimen157
-\Gm@layoutvoffset=\dimen158
+\Gm@cnth=\count283
+\Gm@cntv=\count284
+\c@Gm@tempcnt=\count285
+\Gm@bindingoffset=\dimen149
+\Gm@wd@mp=\dimen150
+\Gm@odd@mp=\dimen151
+\Gm@even@mp=\dimen152
+\Gm@layoutwidth=\dimen153
+\Gm@layoutheight=\dimen154
+\Gm@layouthoffset=\dimen155
+\Gm@layoutvoffset=\dimen156
 \Gm@dimlist=\toks20
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/setspace/setspace.sty
 Package: setspace 2022/12/04 v6.7b set line spacing
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
-Package: amsmath 2026/05/19 v2.18d AMS math features
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2025/07/09 v2.17z AMS math features
 \@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
-(C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks21
-\ex@=\dimen159
-)) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+\ex@=\dimen157
+)) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen160
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+\pmbraise@=\dimen158
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count287
+\inf@bad=\count286
 LaTeX Info: Redefining \frac on input line 233.
-\uproot@=\count288
-\leftroot@=\count289
+\uproot@=\count287
+\leftroot@=\count288
 LaTeX Info: Redefining \overline on input line 398.
 LaTeX Info: Redefining \colon on input line 409.
-\classnum@=\count290
-\DOTSCASE@=\count291
+\classnum@=\count289
+\DOTSCASE@=\count290
 LaTeX Info: Redefining \ldots on input line 495.
 LaTeX Info: Redefining \dots on input line 498.
 LaTeX Info: Redefining \cdots on input line 619.
@@ -87,46 +87,46 @@ LaTeX Info: Redefining \big on input line 721.
 LaTeX Info: Redefining \Big on input line 722.
 LaTeX Info: Redefining \bigg on input line 723.
 LaTeX Info: Redefining \Bigg on input line 724.
-\big@size=\dimen161
+\big@size=\dimen159
 LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
-\macc@depth=\count292
+\macc@depth=\count291
 LaTeX Info: Redefining \bmod on input line 904.
 LaTeX Info: Redefining \pmod on input line 909.
 LaTeX Info: Redefining \smash on input line 939.
 LaTeX Info: Redefining \relbar on input line 969.
 LaTeX Info: Redefining \Relbar on input line 970.
-\c@MaxMatrixCols=\count293
+\c@MaxMatrixCols=\count292
 \dotsspace@=\muskip17
-\c@parentequation=\count294
-\dspbrk@lvl=\count295
+\c@parentequation=\count293
+\dspbrk@lvl=\count294
 \tag@help=\toks22
-\row@=\count296
-\column@=\count297
-\maxfields@=\count298
+\row@=\count295
+\column@=\count296
+\maxfields@=\count297
 \andhelp@=\toks23
-\eqnshift@=\dimen162
-\alignsep@=\dimen163
-\tagshift@=\dimen164
-\tagwidth@=\dimen165
-\totwidth@=\dimen166
-\lineht@=\dimen167
+\eqnshift@=\dimen160
+\alignsep@=\dimen161
+\tagshift@=\dimen162
+\tagwidth@=\dimen163
+\totwidth@=\dimen164
+\lineht@=\dimen165
 \@envbody=\toks24
 \multlinegap=\skip52
 \multlinetaggap=\skip53
 \mathdisplay@stack=\toks25
-LaTeX Info: Redefining \[ on input line 2965.
-LaTeX Info: Redefining \] on input line 2966.
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+LaTeX Info: Redefining \[ on input line 2950.
+LaTeX Info: Redefining \] on input line 2951.
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amscls\amsthm.sty
+)) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amscls/amsthm.sty
 Package: amsthm 2020/05/29 v2.20.6
 \thm@style=\toks26
 \thm@bodyfont=\toks27
@@ -137,223 +137,223 @@ Package: amsthm 2020/05/29 v2.20.6
 \thm@postskip=\skip55
 \thm@headsep=\skip56
 \dth@everypar=\toks31
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
-Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
-Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen168
-\Gin@req@width=\dimen169
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+\Gin@req@height=\dimen166
+\Gin@req@width=\dimen167
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen170
-\lightrulewidth=\dimen171
-\cmidrulewidth=\dimen172
-\belowrulesep=\dimen173
-\belowbottomsep=\dimen174
-\aboverulesep=\dimen175
-\abovetopsep=\dimen176
-\cmidrulesep=\dimen177
-\cmidrulekern=\dimen178
-\defaultaddspace=\dimen179
-\@cmidla=\count299
-\@cmidlb=\count300
-\@aboverulesep=\dimen180
-\@belowrulesep=\dimen181
-\@thisruleclass=\count301
-\@lastruleclass=\count302
-\@thisrulewidth=\dimen182
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+\heavyrulewidth=\dimen168
+\lightrulewidth=\dimen169
+\cmidrulewidth=\dimen170
+\belowrulesep=\dimen171
+\belowbottomsep=\dimen172
+\aboverulesep=\dimen173
+\abovetopsep=\dimen174
+\cmidrulesep=\dimen175
+\cmidrulekern=\dimen176
+\defaultaddspace=\dimen177
+\@cmidla=\count298
+\@cmidlb=\count299
+\@aboverulesep=\dimen178
+\@belowrulesep=\dimen179
+\@thisruleclass=\count300
+\@lastruleclass=\count301
+\@thisrulewidth=\dimen180
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
 \multirow@colwidth=\skip57
-\multirow@cntb=\count303
+\multirow@cntb=\count302
 \multirow@dima=\skip58
-\bigstrutjot=\dimen183
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\rotating.sty
-Package: rotating 2026-05-17 v2.16e rotated objects in LaTeX
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+\bigstrutjot=\dimen181
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/rotating.sty
+Package: rotating 2025/01/14 v2.16e rotated objects in LaTeX
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ifthen.sty
 Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
-\c@r@tfl@t=\count304
+\c@r@tfl@t=\count303
 \rotFPtop=\skip59
 \rotFPbot=\skip60
 \rot@float@box=\box55
 \rot@mess@toks=\toks32
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/caption/caption3.sty
 Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
-\caption@tempdima=\dimen184
-\captionmargin=\dimen185
-\caption@leftmargin=\dimen186
-\caption@rightmargin=\dimen187
-\caption@width=\dimen188
-\caption@indent=\dimen189
-\caption@parindent=\dimen190
-\caption@hangindent=\dimen191
+\caption@tempdima=\dimen182
+\captionmargin=\dimen183
+\caption@leftmargin=\dimen184
+\caption@rightmargin=\dimen185
+\caption@width=\dimen186
+\caption@indent=\dimen187
+\caption@parindent=\dimen188
+\caption@hangindent=\dimen189
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count305
-\c@continuedfloat=\count306
+\c@caption@flags=\count304
+\c@continuedfloat=\count305
 Package caption Info: rotating package is loaded.
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-Package: hyperref 2026-04-24 v7.01q Hypertext links for LaTeX
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2026-01-29 v7.01p Hypertext links for LaTeX
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape.sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
 Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr.sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+)) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
-\c@section@level=\count307
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+\c@section@level=\count306
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count308
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.sty
+\etb@tempcnta=\count307
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
 )
-\@linkdim=\dimen192
-\Hy@linkcounter=\count309
-\Hy@pagecounter=\count310
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
-File: pd1enc.def 2026-04-24 v7.01q Hyperref: PDFDocEncoding definition (HO)
+\@linkdim=\dimen190
+\Hy@linkcounter=\count308
+\Hy@pagecounter=\count309
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2026-01-29 v7.01p Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
-\Hy@SavedSpaceFactor=\count311
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
-File: puenc.def 2026-04-24 v7.01q Hyperref: PDF Unicode definition (HO)
+\Hy@SavedSpaceFactor=\count310
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2026-01-29 v7.01p Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 4070.
-Package hyperref Info: Hyper figures OFF on input line 4199.
-Package hyperref Info: Link nesting OFF on input line 4204.
-Package hyperref Info: Hyper index ON on input line 4207.
-Package hyperref Info: Plain pages OFF on input line 4214.
-Package hyperref Info: Backreferencing OFF on input line 4219.
+Package hyperref Info: Option `colorlinks' set `true' on input line 4072.
+Package hyperref Info: Hyper figures OFF on input line 4201.
+Package hyperref Info: Link nesting OFF on input line 4206.
+Package hyperref Info: Hyper index ON on input line 4209.
+Package hyperref Info: Plain pages OFF on input line 4216.
+Package hyperref Info: Backreferencing OFF on input line 4221.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4466.
-\c@Hy@tempcnt=\count312
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+Package hyperref Info: Bookmarks ON on input line 4468.
+\c@Hy@tempcnt=\count311
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-LaTeX Info: Redefining \url on input line 4805.
-\XeTeXLinkMargin=\dimen193
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+LaTeX Info: Redefining \url on input line 4807.
+\XeTeXLinkMargin=\dimen191
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
 ))
-\Fld@menulength=\count313
-\Field@Width=\dimen194
-\Fld@charsize=\dimen195
-Package hyperref Info: Hyper figures OFF on input line 6091.
-Package hyperref Info: Link nesting OFF on input line 6096.
-Package hyperref Info: Hyper index ON on input line 6099.
-Package hyperref Info: backreferencing OFF on input line 6106.
-Package hyperref Info: Link coloring ON on input line 6109.
-Package hyperref Info: Link coloring with OCG OFF on input line 6116.
-Package hyperref Info: PDF/A mode OFF on input line 6121.
-\Hy@abspage=\count314
-\c@Item=\count315
-\c@Hfootnote=\count316
+\Fld@menulength=\count312
+\Field@Width=\dimen192
+\Fld@charsize=\dimen193
+Package hyperref Info: Hyper figures OFF on input line 6084.
+Package hyperref Info: Link nesting OFF on input line 6089.
+Package hyperref Info: Hyper index ON on input line 6092.
+Package hyperref Info: backreferencing OFF on input line 6099.
+Package hyperref Info: Link coloring ON on input line 6102.
+Package hyperref Info: Link coloring with OCG OFF on input line 6109.
+Package hyperref Info: PDF/A mode OFF on input line 6114.
+\Hy@abspage=\count313
+\c@Item=\count314
+\c@Hfootnote=\count315
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
-File: hpdftex.def 2026-04-24 v7.01q Hyperref driver for pdfTeX
-\Fld@listcount=\count317
-\c@bookmark@seq@number=\count318
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2026-01-29 v7.01p Hyperref driver for pdfTeX
+\Fld@listcount=\count316
+\c@bookmark@seq@number=\count317
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquecounter.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
 )
 \Hy@SectionHShift=\skip61
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/biblatex.sty
 Package: biblatex 2025/07/10 v3.21 programmable bibliographies (PK/MW)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/logreq/logreq.sty
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count319
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/logreq\logreq.def
+\lrq@indent=\count318
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/logreq/logreq.def
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 ))
-\c@tabx@nest=\count320
-\c@listtotal=\count321
-\c@listcount=\count322
-\c@liststart=\count323
-\c@liststop=\count324
-\c@citecount=\count325
-\c@citetotal=\count326
-\c@multicitecount=\count327
-\c@multicitetotal=\count328
-\c@instcount=\count329
-\c@maxnames=\count330
-\c@minnames=\count331
-\c@maxitems=\count332
-\c@minitems=\count333
-\c@citecounter=\count334
-\c@maxcitecounter=\count335
-\c@savedcitecounter=\count336
-\c@uniquelist=\count337
-\c@uniquename=\count338
-\c@refsection=\count339
-\c@refsegment=\count340
-\c@maxextratitle=\count341
-\c@maxextratitleyear=\count342
-\c@maxextraname=\count343
-\c@maxextradate=\count344
-\c@maxextraalpha=\count345
-\c@abbrvpenalty=\count346
-\c@highnamepenalty=\count347
-\c@lownamepenalty=\count348
-\c@maxparens=\count349
-\c@parenlevel=\count350
-\blx@tempcnta=\count351
-\blx@tempcntb=\count352
-\blx@tempcntc=\count353
-\c@blx@maxsection=\count354
-\blx@maxsegment@0=\count355
-\blx@notetype=\count356
-\blx@parenlevel@text=\count357
-\blx@parenlevel@foot=\count358
-\blx@sectionciteorder@0=\count359
-\blx@sectionciteorderinternal@0=\count360
-\blx@entrysetcounter=\count361
-\blx@biblioinstance=\count362
+\c@tabx@nest=\count319
+\c@listtotal=\count320
+\c@listcount=\count321
+\c@liststart=\count322
+\c@liststop=\count323
+\c@citecount=\count324
+\c@citetotal=\count325
+\c@multicitecount=\count326
+\c@multicitetotal=\count327
+\c@instcount=\count328
+\c@maxnames=\count329
+\c@minnames=\count330
+\c@maxitems=\count331
+\c@minitems=\count332
+\c@citecounter=\count333
+\c@maxcitecounter=\count334
+\c@savedcitecounter=\count335
+\c@uniquelist=\count336
+\c@uniquename=\count337
+\c@refsection=\count338
+\c@refsegment=\count339
+\c@maxextratitle=\count340
+\c@maxextratitleyear=\count341
+\c@maxextraname=\count342
+\c@maxextradate=\count343
+\c@maxextraalpha=\count344
+\c@abbrvpenalty=\count345
+\c@highnamepenalty=\count346
+\c@lownamepenalty=\count347
+\c@maxparens=\count348
+\c@parenlevel=\count349
+\blx@tempcnta=\count350
+\blx@tempcntb=\count351
+\blx@tempcntc=\count352
+\c@blx@maxsection=\count353
+\blx@maxsegment@0=\count354
+\blx@notetype=\count355
+\blx@parenlevel@text=\count356
+\blx@parenlevel@foot=\count357
+\blx@sectionciteorder@0=\count358
+\blx@sectionciteorderinternal@0=\count359
+\blx@entrysetcounter=\count360
+\blx@biblioinstance=\count361
 \labelnumberwidth=\skip62
 \labelalphawidth=\skip63
 \biblabelsep=\skip64
@@ -364,87 +364,87 @@ File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 \bibhang=\skip69
 \blx@bcfin=\read2
 \blx@bcfout=\write3
-\blx@langwohyphens=\language79
-\c@mincomprange=\count363
-\c@maxcomprange=\count364
-\c@mincompwidth=\count365
+\blx@langwohyphens=\language3
+\c@mincomprange=\count362
+\c@maxcomprange=\count363
+\c@mincompwidth=\count364
 Package biblatex Info: Trying to load biblatex default data model...
 Package biblatex Info: ... file 'blx-dm.def' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-dm.def
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/blx-dm.def
 File: blx-dm.def 2025/07/10 v3.21 biblatex datamodel (PK/MW)
 )
 Package biblatex Info: Trying to load biblatex style data model...
 Package biblatex Info: ... file 'authoryear.dbx' not found.
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
-\c@afterword=\count366
-\c@savedafterword=\count367
-\c@annotator=\count368
-\c@savedannotator=\count369
-\c@author=\count370
-\c@savedauthor=\count371
-\c@bookauthor=\count372
-\c@savedbookauthor=\count373
-\c@commentator=\count374
-\c@savedcommentator=\count375
-\c@editor=\count376
-\c@savededitor=\count377
-\c@editora=\count378
-\c@savededitora=\count379
-\c@editorb=\count380
-\c@savededitorb=\count381
-\c@editorc=\count382
-\c@savededitorc=\count383
-\c@foreword=\count384
-\c@savedforeword=\count385
-\c@holder=\count386
-\c@savedholder=\count387
-\c@introduction=\count388
-\c@savedintroduction=\count389
-\c@namea=\count390
-\c@savednamea=\count391
-\c@nameb=\count392
-\c@savednameb=\count393
-\c@namec=\count394
-\c@savednamec=\count395
-\c@translator=\count396
-\c@savedtranslator=\count397
-\c@shortauthor=\count398
-\c@savedshortauthor=\count399
-\c@shorteditor=\count400
-\c@savedshorteditor=\count401
-\c@labelname=\count402
-\c@savedlabelname=\count403
-\c@institution=\count404
-\c@savedinstitution=\count405
-\c@lista=\count406
-\c@savedlista=\count407
-\c@listb=\count408
-\c@savedlistb=\count409
-\c@listc=\count410
-\c@savedlistc=\count411
-\c@listd=\count412
-\c@savedlistd=\count413
-\c@liste=\count414
-\c@savedliste=\count415
-\c@listf=\count416
-\c@savedlistf=\count417
-\c@location=\count418
-\c@savedlocation=\count419
-\c@organization=\count420
-\c@savedorganization=\count421
-\c@origlocation=\count422
-\c@savedoriglocation=\count423
-\c@origpublisher=\count424
-\c@savedorigpublisher=\count425
-\c@publisher=\count426
-\c@savedpublisher=\count427
-\c@language=\count428
-\c@savedlanguage=\count429
-\c@origlanguage=\count430
-\c@savedoriglanguage=\count431
-\c@pageref=\count432
-\c@savedpageref=\count433
+\c@afterword=\count365
+\c@savedafterword=\count366
+\c@annotator=\count367
+\c@savedannotator=\count368
+\c@author=\count369
+\c@savedauthor=\count370
+\c@bookauthor=\count371
+\c@savedbookauthor=\count372
+\c@commentator=\count373
+\c@savedcommentator=\count374
+\c@editor=\count375
+\c@savededitor=\count376
+\c@editora=\count377
+\c@savededitora=\count378
+\c@editorb=\count379
+\c@savededitorb=\count380
+\c@editorc=\count381
+\c@savededitorc=\count382
+\c@foreword=\count383
+\c@savedforeword=\count384
+\c@holder=\count385
+\c@savedholder=\count386
+\c@introduction=\count387
+\c@savedintroduction=\count388
+\c@namea=\count389
+\c@savednamea=\count390
+\c@nameb=\count391
+\c@savednameb=\count392
+\c@namec=\count393
+\c@savednamec=\count394
+\c@translator=\count395
+\c@savedtranslator=\count396
+\c@shortauthor=\count397
+\c@savedshortauthor=\count398
+\c@shorteditor=\count399
+\c@savedshorteditor=\count400
+\c@labelname=\count401
+\c@savedlabelname=\count402
+\c@institution=\count403
+\c@savedinstitution=\count404
+\c@lista=\count405
+\c@savedlista=\count406
+\c@listb=\count407
+\c@savedlistb=\count408
+\c@listc=\count409
+\c@savedlistc=\count410
+\c@listd=\count411
+\c@savedlistd=\count412
+\c@liste=\count413
+\c@savedliste=\count414
+\c@listf=\count415
+\c@savedlistf=\count416
+\c@location=\count417
+\c@savedlocation=\count418
+\c@organization=\count419
+\c@savedorganization=\count420
+\c@origlocation=\count421
+\c@savedoriglocation=\count422
+\c@origpublisher=\count423
+\c@savedorigpublisher=\count424
+\c@publisher=\count425
+\c@savedpublisher=\count426
+\c@language=\count427
+\c@savedlanguage=\count428
+\c@origlanguage=\count429
+\c@savedoriglanguage=\count430
+\c@pageref=\count431
+\c@savedpageref=\count432
 \shorthandwidth=\skip70
 \shortjournalwidth=\skip71
 \shortserieswidth=\skip72
@@ -461,47 +461,47 @@ Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
 \localshorteditorwidth=\skip83
 Package biblatex Info: Trying to load compatibility code...
 Package biblatex Info: ... file 'blx-compat.def' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-compat.def
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/blx-compat.def
 File: blx-compat.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
 )
 Package biblatex Info: Trying to load generic definitions...
 Package biblatex Info: ... file 'biblatex.def' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.def
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/biblatex.def
 File: biblatex.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
-\c@textcitecount=\count434
-\c@textcitetotal=\count435
-\c@textcitemaxnames=\count436
-\c@biburlbigbreakpenalty=\count437
-\c@biburlbreakpenalty=\count438
-\c@biburlnumpenalty=\count439
-\c@biburlucpenalty=\count440
-\c@biburllcpenalty=\count441
+\c@textcitecount=\count433
+\c@textcitetotal=\count434
+\c@textcitemaxnames=\count435
+\c@biburlbigbreakpenalty=\count436
+\c@biburlbreakpenalty=\count437
+\c@biburlnumpenalty=\count438
+\c@biburlucpenalty=\count439
+\c@biburllcpenalty=\count440
 \biburlbigskip=\muskip19
 \biburlnumskip=\muskip20
 \biburlucskip=\muskip21
 \biburllcskip=\muskip22
-\c@smartand=\count442
+\c@smartand=\count441
 )
 Package biblatex Info: Trying to load natbib compatibility...
 Package biblatex Info: ... file 'blx-natbib.def' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-natbib.def
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/blx-natbib.def
 File: blx-natbib.def 2025/07/10 v3.21 biblatex compatibility (PK/MW)
 Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined, overwriting.
 )
 Package biblatex Info: Trying to load bibliography style 'authoryear'...
 Package biblatex Info: ... file 'authoryear.bbx' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\authoryear.bbx
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/bbx/authoryear.bbx
 File: authoryear.bbx 2025/07/10 v3.21 biblatex bibliography style (PK/MW)
 Package biblatex Info: Trying to load bibliography style 'standard'...
 Package biblatex Info: ... file 'standard.bbx' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/bbx\standard.bbx
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
 File: standard.bbx 2025/07/10 v3.21 biblatex bibliography style (PK/MW)
-\c@bbx:relatedcount=\count443
-\c@bbx:relatedtotal=\count444
+\c@bbx:relatedcount=\count442
+\c@bbx:relatedtotal=\count443
 ))
 Package biblatex Info: Trying to load citation style 'authoryear'...
 Package biblatex Info: ... file 'authoryear.cbx' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/cbx\authoryear.cbx
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/cbx/authoryear.cbx
 File: authoryear.cbx 2025/07/10 v3.21 biblatex citation style (PK/MW)
 Package biblatex Info: Redefining '\cite'.
 Package biblatex Info: Redefining '\parencite'.
@@ -513,29 +513,29 @@ Package biblatex Info: Redefining '\textcites'.
 )
 Package biblatex Info: Trying to load configuration file...
 Package biblatex Info: ... file 'biblatex.cfg' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\biblatex.cfg
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/biblatex.cfg
 File: biblatex.cfg 
 )
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Document encoding is UTF8 ....
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
-Package: expl3 2026-05-26 L3 programming layer (loader) 
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
-File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count445
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2026-01-19 L3 programming layer (loader) 
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count444
 ))
 Package biblatex Info: ... and expl3
-(biblatex)             2026-05-26 L3 programming layer (loader) 
+(biblatex)             2026-01-19 L3 programming layer (loader) 
 (biblatex)             is new enough (at least 2020/04/06),
 (biblatex)             setting 'casechanger=expl3'.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex\blx-case-expl3.sty (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xparse\xparse.sty
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
 Package: xparse 2025-10-09 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
 ))
-\@quotelevel=\count446
-\@quotereset=\count447
- (Paper1_BVAR.aux
+\@quotelevel=\count445
+\@quotereset=\count446
+ (./Paper1_BVAR.aux
 
 LaTeX Warning: Label `eq:IC_comp' multiply defined.
 
@@ -595,43 +595,43 @@ LaTeX Font Info:    ... okay on input line 29.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-(C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
+(c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count448
-\scratchdimen=\dimen196
+\scratchcounter=\count447
+\scratchdimen=\dimen194
 \scratchbox=\box56
-\nofMPsegments=\count449
-\nofMParguments=\count450
+\nofMPsegments=\count448
+\nofMParguments=\count449
 \everyMPshowfont=\toks33
-\MPscratchCnt=\count451
-\MPscratchDim=\dimen197
-\MPnumerator=\count452
-\makeMPintoPDFobject=\count453
+\MPscratchCnt=\count450
+\MPscratchDim=\dimen195
+\MPnumerator=\count451
+\makeMPintoPDFobject=\count452
 \everyMPtoPDFconversion=\toks34
-) (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
+) (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
-Package: color 2026-05-17 v1.3f Standard LaTeX Color (DPC)
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx))
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 Package hyperref Info: Link coloring ON on input line 29.
- (Paper1_BVAR.out) (Paper1_BVAR.out)
+ (./Paper1_BVAR.out) (./Paper1_BVAR.out)
 \@outlinefile=\write4
 \openout4 = `Paper1_BVAR.out'.
 
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\english.lbx
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/biblatex/lbx/english.lbx
 File: english.lbx 2025/07/10 v3.21 biblatex localization (PK/MW)
 )
 Package biblatex Info: Input encoding 'utf8' detected.
@@ -641,208 +641,203 @@ Package biblatex Info: Automatic encoding selection.
 
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'Paper1_BVAR.bbl' found.
- (Paper1_BVAR.bbl)
+ (./Paper1_BVAR.bbl)
 Package biblatex Info: Reference section=0 on input line 29.
 Package biblatex Info: Reference segment=0 on input line 29.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 32.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 32.
- (C:\Users\ferdi\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+ (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-{C:/Users/ferdi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2] [3] [4] [5] [6] [7] [8] (Tables/Table3_IC_Lags.tex) [9] [10] [11]
-<Figures/Fig3_MDD_Surface.pdf, id=233, 650.43pt x 433.62pt>
+{c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3] [4] [5] [6] [7] [8] (./Tables/Table3_IC_Lags.tex) [9] [10] [11]
+<Figures/Fig3_MDD_Surface.pdf, id=234, 650.43pt x 433.62pt>
 File: Figures/Fig3_MDD_Surface.pdf Graphic file (type pdf)
 <use Figures/Fig3_MDD_Surface.pdf>
 Package pdftex.def Info: Figures/Fig3_MDD_Surface.pdf  used on input line 219.
 (pdftex.def)             Requested size: 385.02547pt x 256.6871pt.
- [12 <./Figures/Fig3_MDD_Surface.pdf>] (Tables/Table1_Shrinkage.tex
-Overfull \hbox (36.2752pt too wide) in paragraph at lines 5--16
- [][] 
- []
-
-)
-<Figures/Fig1_Tradeoff_Curve.pdf, id=333, 650.43pt x 433.62pt>
+ [12] [13 <./Figures/Fig3_MDD_Surface.pdf>] (./Tables/Table1_Shrinkage.tex)
+<Figures/Fig1_Tradeoff_Curve.pdf, id=347, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve.pdf>
-Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 239.
+Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 245.
 (pdftex.def)             Requested size: 385.02547pt x 256.6871pt.
- (Tables/Table5_BVAR_vs_AIC.tex)
-<Figures/Fig2_Asymptotic_Relaxation.pdf, id=334, 722.7pt x 433.62pt>
+ (./Tables/Table5_BVAR_vs_AIC.tex)
+<Figures/Fig2_Asymptotic_Relaxation.pdf, id=348, 722.7pt x 433.62pt>
 File: Figures/Fig2_Asymptotic_Relaxation.pdf Graphic file (type pdf)
 <use Figures/Fig2_Asymptotic_Relaxation.pdf>
-Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 248.
+Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 254.
 (pdftex.def)             Requested size: 385.02547pt x 231.01509pt.
- [13 <./Figures/Fig1_Tradeoff_Curve.pdf>] [14 <./Figures/Fig2_Asymptotic_Relaxation.pdf>] [15
+ [14 <./Figures/Fig1_Tradeoff_Curve.pdf>] [15] [16 <./Figures/Fig2_Asymptotic_Relaxation.pdf>] [17
 
 ]
-Overfull \hbox (19.53719pt too wide) in paragraph at lines 265--265
+Overfull \hbox (19.53719pt too wide) in paragraph at lines 271--271
 \T1/cmr/m/n/12 0167-2231. \T1/cmr/m/sc/12 doi\T1/cmr/m/n/12 : [][]$\T1/cmtt/m/n/12 10 . 1016 / S0167 -[] 2231(99 ) 00009 -[] 3$[][]\T1/cmr/m/n/12 . \T1/cmr/m/sc/12 url\T1/cmr/m/n/12 : [][]$\T1/cmtt/m/n/12 https : / / www . sciencedirect .
  []
 
-[16]
-Overfull \hbox (90.90378pt too wide) in paragraph at lines 265--265
+[18]
+Overfull \hbox (90.90378pt too wide) in paragraph at lines 271--271
 \T1/cmtt/m/n/12 core / books / structural -[] vector -[] autoregressive -[] analysis / DAF4217439EA585D10902D58A8849E06$[][]
  []
 
 
-Overfull \hbox (7.84683pt too wide) in paragraph at lines 265--265
+Overfull \hbox (7.84683pt too wide) in paragraph at lines 271--271
 [][][]\T1/cmr/m/n/12 (2005). \T1/cmr/m/it/12 New In-tro-duc-tion to Mul-ti-ple Time Se-ries Anal-y-sis\T1/cmr/m/n/12 . Berlin, Hei-del-berg: Springer.
  []
 
-[17]
-<Figures/True_IRF_plot_Cumulative_4_lags.png, id=564, 1076.3412pt x 888.1983pt>
+[19]
+<Figures/True_IRF_plot_Cumulative_4_lags.png, id=588, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_4_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_4_lags.png>
-Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_4_lags.png  used on input line 275.
+Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_4_lags.png  used on input line 281.
 (pdftex.def)             Requested size: 385.02547pt x 317.71823pt.
-<Figures/True_IRF_plot_Cumulative_10_lags.png, id=566, 1076.3412pt x 888.1983pt>
+<Figures/True_IRF_plot_Cumulative_10_lags.png, id=590, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_10_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_10_lags.png>
-Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_10_lags.png  used on input line 280.
+Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_10_lags.png  used on input line 286.
 (pdftex.def)             Requested size: 385.02547pt x 317.71823pt.
- [18
+ [20
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.310 
+l.316 
       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.310 
+l.316 
       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.310 
-      ] [19 <./Figures/True_IRF_plot_Cumulative_4_lags.png> <./Figures/True_IRF_plot_Cumulative_10_lags.png>]
+l.316 
+      ] [21 <./Figures/True_IRF_plot_Cumulative_4_lags.png> <./Figures/True_IRF_plot_Cumulative_10_lags.png>]
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.314 \begin{equation}
+l.320 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.314 \begin{equation}
+l.320 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.314 \begin{equation}
+l.320 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.314 \begin{equation}
+l.320 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.319 \begin{equation}
+l.325 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.319 \begin{equation}
+l.325 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.319 \begin{equation}
+l.325 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.319 \begin{equation}
+l.325 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.324 \begin{equation}
+l.330 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.324 \begin{equation}
+l.330 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.324 \begin{equation}
+l.330 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.324 \begin{equation}
+l.330 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.335 \begin{equation}
+l.341 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.335 \begin{equation}
+l.341 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.335 \begin{equation}
+l.341 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.335 \begin{equation}
+l.341 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.340 \begin{equation}
+l.346 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.340 \begin{equation}
+l.346 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.340 \begin{equation}
+l.346 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.340 \begin{equation}
+l.346 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.345 \begin{equation}
+l.351 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.345 \begin{equation}
+l.351 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.345 \begin{equation}
+l.351 \begin{equation}
                       
 pdfTeX warning (ext4): destination with the same identifier (name{equation.20}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.345 \begin{equation}
-                       [20] [21] (Paper1_BVAR.aux)
+l.351 \begin{equation}
+                       [22] [23] (./Paper1_BVAR.aux)
  ***********
-LaTeX2e <2026-06-01>
-L3 programming layer <2026-05-26>
+LaTeX2e <2025-11-01>
+L3 programming layer <2026-01-19>
  ***********
 
 
@@ -855,17 +850,18 @@ Package logreq Info: Writing requests to 'Paper1_BVAR.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19877 strings out of 467509
- 351960 string characters out of 5408780
- 1186936 words of memory out of 5000000
- 48784 multiletter control sequences out of 15000+600000
+ 19851 strings out of 469513
+ 350990 string characters out of 5468178
+ 1176688 words of memory out of 5000000
+ 48176 multiletter control sequences out of 15000+600000
  648656 words of font info for 91 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 74i,13n,79p,2765b,1512s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\eccc1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0700.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1728.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0700.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1095.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1000.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk> <C:\Users\ferdi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm2074.pk><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/ferdi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper1_BVAR.pdf (21 pages, 1822201 bytes).
+ 14 hyphenation exceptions out of 8191
+ 75i,17n,79p,2791b,1514s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Paper1_BVAR.pdf (23 pages, 1752616 bytes).
 PDF statistics:
- 1259 PDF objects out of 1440 (max. 8388607)
- 100 named destinations out of 1000 (max. 500000)
+ 1286 PDF objects out of 1440 (max. 8388607)
+ 521 compressed objects within 6 object streams
+ 102 named destinations out of 1000 (max. 500000)
  98 words of extra memory for PDF output out of 10000 (max. 10000000)
 
