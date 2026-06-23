@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  23 JUN 2026 22:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  23 JUN 2026 23:25
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -725,12 +725,12 @@ Overfull \hbox (7.84683pt too wide) in paragraph at lines 435--435
  []
 
 [28]
-<Figures/True_IRF_plot_Cumulative_4_lags.png, id=1210, 1076.3412pt x 888.1983pt>
+<Figures/True_IRF_plot_Cumulative_4_lags.png, id=1212, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_4_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_4_lags.png>
 Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_4_lags.png  used on input line 447.
 (pdftex.def)             Requested size: 385.02547pt x 317.71823pt.
-<Figures/True_IRF_plot_Cumulative_10_lags.png, id=1212, 1076.3412pt x 888.1983pt>
+<Figures/True_IRF_plot_Cumulative_10_lags.png, id=1214, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_10_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_10_lags.png>
 Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_10_lags.png  used on input line 452.
@@ -753,37 +753,37 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 578.
 
-<Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf, id=1269, 578.16pt x 505.89pt>
+<Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf, id=1271, 578.16pt x 505.89pt>
 File: Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf>
 Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf  used on input line 587.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf, id=1270, 578.16pt x 505.89pt>
+<Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf, id=1272, 578.16pt x 505.89pt>
 File: Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf>
 Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf  used on input line 594.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf, id=1271, 578.16pt x 505.89pt>
+<Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf, id=1273, 578.16pt x 505.89pt>
 File: Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf>
 Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf  used on input line 603.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf, id=1272, 578.16pt x 505.89pt>
+<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf, id=1274, 578.16pt x 505.89pt>
 File: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf>
 Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf  used on input line 610.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf, id=1273, 578.16pt x 505.89pt>
+<Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf, id=1275, 578.16pt x 505.89pt>
 File: Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf>
 Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf  used on input line 624.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf, id=1274, 578.16pt x 505.89pt>
+<Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf, id=1276, 578.16pt x 505.89pt>
 File: Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf>
 Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf  used on input line 631.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig9_Tau_Comparison_T600_p010.pdf, id=1275, 578.16pt x 433.62pt>
+<Figures/Fig9_Tau_Comparison_T600_p010.pdf, id=1277, 578.16pt x 433.62pt>
 File: Figures/Fig9_Tau_Comparison_T600_p010.pdf Graphic file (type pdf)
 <use Figures/Fig9_Tau_Comparison_T600_p010.pdf>
 Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p010.pdf  used on input line 642.
@@ -812,10 +812,10 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,16n,79p,2794b,1519s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper2_BMA.pdf (36 pages, 2126076 bytes).
+Output written on Paper2_BMA.pdf (36 pages, 2128119 bytes).
 PDF statistics:
- 2599 PDF objects out of 2984 (max. 8388607)
- 958 compressed objects within 10 object streams
+ 2608 PDF objects out of 2984 (max. 8388607)
+ 960 compressed objects within 10 object streams
  163 named destinations out of 1000 (max. 500000)
  211 words of extra memory for PDF output out of 10000 (max. 10000000)
 

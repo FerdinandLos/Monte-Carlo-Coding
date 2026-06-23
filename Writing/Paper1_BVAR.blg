@@ -1,17 +1,17 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Paper1_BVAR.blg'
-[150] biber-MSWIN64:342> INFO - === 
-[200] Biber.pm:421> INFO - Reading 'Paper1_BVAR.bcf'
-[378] Biber.pm:1002> INFO - Found 31 citekeys in bib section 0
-[399] Biber.pm:4487> INFO - Processing section 0
-[414] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations.bib' for section 0
-[492] bibtex.pm:1713> INFO - LaTeX decoding ...
-[687] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations.bib'
-[978] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[978] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[978] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
-[978] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
-[1024] bbl.pm:676> INFO - Writing 'Paper1_BVAR.bbl' with encoding 'UTF-8'
-[1053] bbl.pm:779> INFO - Output to Paper1_BVAR.bbl
-[1053] Biber.pm:132> WARN - ISBN '978-3-540-40172-8 978-3-540-27752-1' in entry 'lutkepohlNewIntroductionMultiple2005' is invalid - run biber with '--validate_datamodel' for details.
-[1054] Biber.pm:134> INFO - WARNINGS: 1
+[152] biber-MSWIN64:342> INFO - === 
+[204] Biber.pm:421> INFO - Reading 'Paper1_BVAR.bcf'
+[404] Biber.pm:1002> INFO - Found 31 citekeys in bib section 0
+[428] Biber.pm:4487> INFO - Processing section 0
+[443] Biber.pm:4678> INFO - Looking for bibtex file 'Monte Carlo Simulations.bib' for section 0
+[527] bibtex.pm:1713> INFO - LaTeX decoding ...
+[734] bibtex.pm:1519> INFO - Found BibTeX data source 'Monte Carlo Simulations.bib'
+[1035] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[1035] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[1035] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'en-US'
+[1035] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
+[1085] bbl.pm:676> INFO - Writing 'Paper1_BVAR.bbl' with encoding 'UTF-8'
+[1113] bbl.pm:779> INFO - Output to Paper1_BVAR.bbl
+[1114] Biber.pm:132> WARN - ISBN '978-3-540-40172-8 978-3-540-27752-1' in entry 'lutkepohlNewIntroductionMultiple2005' is invalid - run biber with '--validate_datamodel' for details.
+[1114] Biber.pm:134> INFO - WARNINGS: 1

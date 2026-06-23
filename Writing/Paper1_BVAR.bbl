@@ -98,8 +98,18 @@
       \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations (Prof. Derya Uysal, Ludwig-Maximilian University of Munich)}
       \field{month}{6}
       \field{title}{To {{Shrink}} or to {{Select}}? {{Evaluating Finite-Sample Performance}} in {{Set-Identifed Structural VARs}}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
       \field{year}{2026}
       \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/FerdinandLos/Monte-Carlo-Coding/blob/main/Writing/Paper1_BVAR.pdf
+      \endverb
+      \verb{url}
+      \verb https://github.com/FerdinandLos/Monte-Carlo-Coding/blob/main/Writing/Paper1_BVAR.pdf
+      \endverb
     \endentry
     \entry{blakeAppliedBayesianEconometrics}{article}{}{}
       \name{author}{2}{}{%
@@ -1268,8 +1278,18 @@
       \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations (Prof. Derya Uysal, Ludwig-Maximilian University of Munich)}
       \field{month}{6}
       \field{title}{Hedging {{Against Lag Order Uncertainty}} in {{SVARs}}: {{Bayesian Model Averaging}} versus {{Information Criteria}}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
       \field{year}{2026}
       \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/FerdinandLos/Monte-Carlo-Coding/blob/main/Writing/Paper2_BMA.pdf
+      \endverb
+      \verb{url}
+      \verb https://github.com/FerdinandLos/Monte-Carlo-Coding/blob/main/Writing/Paper2_BMA.pdf
+      \endverb
     \endentry
     \entry{lutkepohlComparisonCriteriaEstimating1985}{article}{}{}
       \name{author}{1}{}{%
