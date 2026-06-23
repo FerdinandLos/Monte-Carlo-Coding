@@ -71,6 +71,49 @@
       \endverb
       \keyw{Art,Estimation theory,History,Linear systems,Maximum likelihood estimation,Roundoff errors,Sampling methods,Stochastic processes,Testing,Time series analysis}
     \endentry
+    \entry{blakeAppliedBayesianEconometrics}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=ce1ee0c7b0f0c05c900a3a8391793436}{%
+           family={Blake},
+           familyi={B\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=258f7e10b68bc1922b099eb9e3f78f64}{%
+           family={Mumtaz},
+           familyi={M\bibinitperiod},
+           given={Haroon},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Centre for Central Banking Studies, Bank of England}%
+      }
+      \strng{namehash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{fullhash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{fullhashraw}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{bibnamehash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{authorbibnamehash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{authornamehash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{authorfullhash}{77b7a59245766fd0b9b048e28a86a828}
+      \strng{authorfullhashraw}{77b7a59245766fd0b9b048e28a86a828}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Handbooks}
+      \field{langid}{english}
+      \field{month}{4}
+      \field{title}{Applied {{Bayesian Econometrics}} for {{Central Bankers}}}
+      \field{volume}{36}
+      \field{year}{2015}
+      \field{dateera}{ce}
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\ZRH54XTJ\Blake und Mumtaz - 2015 - Applied Bayesian Econometrics for Central Bankers.pdf
+      \endverb
+    \endentry
     \entry{blanchardDynamicEffectsAggregate1989}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=292c92d2a4fb8f51c7624312eda7493d}{%
@@ -187,6 +230,75 @@
       \endverb
       \keyw{Business cycles,Dynamic correlations,Monetary disturbances,Structural shocks}
     \endentry
+    \entry{castelnuovoCommodityPriceShocks2024}{online}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=5e071ec7d677560d18d4246e3c7b7924}{%
+           family={Castelnuovo},
+           familyi={C\bibinitperiod},
+           given={Efrem},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3e8dd5da6a00272963e569212a16eb83}{%
+           family={Mori},
+           familyi={M\bibinitperiod},
+           given={Lorenzo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4552810032cd7a265dd985f81c3aac86}{%
+           family={Peersman},
+           familyi={P\bibinitperiod},
+           given={Gert},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Rochester, NY}%
+      }
+      \strng{namehash}{85c5f1e7aec5d3ca4aac14f95f320c3f}
+      \strng{fullhash}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \strng{fullhashraw}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \strng{bibnamehash}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \strng{authorbibnamehash}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \strng{authornamehash}{85c5f1e7aec5d3ca4aac14f95f320c3f}
+      \strng{authorfullhash}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \strng{authorfullhashraw}{dcc1077c24ce594cd5eb7b4153e3ab59}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{We employ a structural VAR model with global and US variables to study the relevance and transmission of oil, food commodities, and industrial input price shocks. We show that commodities are not all alike. Industrial input price changes are almost entirely endogenous responses to other shocks. Exogenous oil and food price shocks are relevant drivers of global real and financial cycles, with food price shocks exerting the greatest influence. We then conduct counterfactual estimations to assess the role of systematic monetary policy in shaping these effects. The results reveal that pro-cyclical policy reactions exacerbate the real and financial effects of food price shocks, whereas counter-cyclical responses mitigate those of oil shocks. Finally, we identify distinct mechanisms through which oil and food shocks affect macroeconomic variables, which could also justify opposing policy responses. Specifically, along with a sharper decrease in nondurable consumption, food price shocks raise nominal wages and core CPI, intensifying inflationary pressures. Conversely, oil price shocks act more like adverse aggregate demand shocks absent monetary policy reactions, primarily through a decrease in durable consumption and spending on goods and services complementary to energy consumption, which are amplified by financial frictions.}
+      \field{eprinttype}{Social Science Research Network}
+      \field{langid}{english}
+      \field{number}{4868719}
+      \field{pubstate}{prepublished}
+      \field{shorttitle}{Commodity {{Price Shocks}} and {{Global Cycles}}}
+      \field{title}{Commodity {{Price Shocks}} and {{Global Cycles}}: {{Monetary Policy Matters}}}
+      \field{type}{SSRN Scholarly Paper}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.2139/ssrn.4868719
+      \endverb
+      \verb{eprint}
+      \verb 4868719
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\G4Q3HD9S\Castelnuovo et al. - 2024 - Commodity Price Shocks and Global Cycles Monetary Policy Matters.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://papers.ssrn.com/abstract=4868719
+      \endverb
+      \verb{url}
+      \verb https://papers.ssrn.com/abstract=4868719
+      \endverb
+      \keyw{commodity price shocks,monetary policy,transmission mechanisms}
+    \endentry
     \entry{christianoMonetaryPolicyShocks1999}{incollection}{}{}
       \name{author}{3}{}{%
         {{un=0,uniquepart=base,hash=501e5adc78e2f6013e900537482b2bc7}{%
@@ -301,6 +413,62 @@
       \verb https://www.sciencedirect.com/science/article/pii/S0167223199000093
       \endverb
     \endentry
+    \entry{ferreiraFirmFinancialConditions2023}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=636622f90124b342fcb4fbf5566292a1}{%
+           family={Ferreira},
+           familyi={F\bibinitperiod},
+           given={Thiago\bibnamedelimb R.\bibnamedelimi T.},
+           giveni={T\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d7d2421459e8dd0ec8b93404d958f83d}{%
+           family={Ostry},
+           familyi={O\bibinitperiod},
+           given={Daniel\bibnamedelima A.},
+           giveni={D\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9515c48c34e85cdb5580f69ef9451f2e}{%
+           family={Rogers},
+           familyi={R\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{0dee253364c415f63c7de0ddceb2d092}
+      \strng{fullhash}{21c24ee2384cf4616e4a5fc90857147d}
+      \strng{fullhashraw}{21c24ee2384cf4616e4a5fc90857147d}
+      \strng{bibnamehash}{21c24ee2384cf4616e4a5fc90857147d}
+      \strng{authorbibnamehash}{21c24ee2384cf4616e4a5fc90857147d}
+      \strng{authornamehash}{0dee253364c415f63c7de0ddceb2d092}
+      \strng{authorfullhash}{21c24ee2384cf4616e4a5fc90857147d}
+      \strng{authorfullhashraw}{21c24ee2384cf4616e4a5fc90857147d}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The Federal Reserve Board of Governors in Washington DC.}
+      \field{day}{22}
+      \field{langid}{english}
+      \field{month}{6}
+      \field{title}{Firm {{Financial Conditions}} and the {{Transmission}} of {{Monetary Policy}}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\3P2A6K73\Ferreira et al. - 2023 - Firm Financial Conditions and the Transmission of Monetary Policy.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.federalreserve.gov/econres/feds/firm-financial-conditions-and-the-transmission-of-monetary-policy.htm
+      \endverb
+      \verb{url}
+      \verb https://www.federalreserve.gov/econres/feds/firm-financial-conditions-and-the-transmission-of-monetary-policy.htm
+      \endverb
+    \endentry
     \entry{frySignRestrictionsStructural2011}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=a3eb5f4e1c2fd32bafd484cc12619fbb}{%
@@ -361,6 +529,71 @@
       \verb{url}
       \verb https://www.jstor.org/stable/23071662
       \endverb
+    \endentry
+    \entry{gazzaniOilPriceShocks2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=9c3069b390cd80fd5499dc95b18abfac}{%
+           family={Gazzani},
+           familyi={G\bibinitperiod},
+           given={Andrea},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=503ca647ca76de0a71f40823d1b56872}{%
+           family={Venditti},
+           familyi={V\bibinitperiod},
+           given={Fabrizio},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4b575e03963d41c4391b77bb99e4baed}{%
+           family={Veronese},
+           familyi={V\bibinitperiod},
+           given={Giovanni},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a188505c4896d1d39c5cf1eba667f703}
+      \strng{fullhash}{6cf1836f3588808cb2b4f9c0657a1672}
+      \strng{fullhashraw}{6cf1836f3588808cb2b4f9c0657a1672}
+      \strng{bibnamehash}{6cf1836f3588808cb2b4f9c0657a1672}
+      \strng{authorbibnamehash}{6cf1836f3588808cb2b4f9c0657a1672}
+      \strng{authornamehash}{a188505c4896d1d39c5cf1eba667f703}
+      \strng{authorfullhash}{6cf1836f3588808cb2b4f9c0657a1672}
+      \strng{authorfullhashraw}{6cf1836f3588808cb2b4f9c0657a1672}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Oil prices contain information on global shocks of key relevance for monetary policy decisions. We propose a novel approach to identify these shocks at the daily frequency in a Structural Vector Autoregression (SVAR). Our method is devised to be used in real time to interpret the developments in the oil market and their implications for the macroeconomy, circumventing the problem of publication lags that plagues monthly data used in workhorse SVAR models. It proves particularly valuable for monetary policymakers at times when macroeconomic conditions evolve rapidly, like during the COVID-19 pandemic or the invasion of Ukraine by Russia.}
+      \field{day}{1}
+      \field{issn}{0304-3932}
+      \field{journaltitle}{Journal of Monetary Economics}
+      \field{month}{5}
+      \field{shortjournal}{Journal of Monetary Economics}
+      \field{title}{Oil Price Shocks in Real Time}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{144}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{103547}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.jmoneco.2023.12.005
+      \endverb
+      \verb{file}
+      \verb C\:\\Users\\ferdi\\Zotero\\storage\\S7APFXGY\\Gazzani et al. - 2024 - Oil price shocks in real time.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\UDWFQFCA\\S0304393223001630.html
+      \endverb
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304393223001630
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0304393223001630
+      \endverb
+      \keyw{Monetary policy,Oil,Proxy-SVAR,Sign restrictions}
     \endentry
     \entry{gertlerMonetaryPolicySurprises2015}{article}{}{}
       \name{author}{2}{}{%
@@ -859,6 +1092,58 @@
       \verb http://link.springer.com/10.1007/b97478
       \endverb
       \keyw{calculus,econometrics,probability distribution,regression,statistical theory}
+    \endentry
+    \entry{miranda-pintoMonetaryPolicyTransmission2023}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1e3a9ff752dfee65735d55e10437f267}{%
+           family={Miranda-Pinto},
+           familyi={M\bibinithyphendelim P\bibinitperiod},
+           given={Jorge},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{fullhash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{fullhashraw}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{bibnamehash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{authorbibnamehash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{authornamehash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{authorfullhash}{1e3a9ff752dfee65735d55e10437f267}
+      \strng{authorfullhashraw}{1e3a9ff752dfee65735d55e10437f267}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Monetary policy influences inflation dynamics by exerting impact on a diverse array of commodity prices. At high frequencies, we show that a 10 basis points increase in US monetary policy rate reduces commodity prices between 0.5\% and 2.5\%, after 18 to 24 business days. Beyond the dollar appreciation channel, the effects are larger for highly storable and industrial commodities, consistent with the cost of carry and the expected demand channel. We then study the quantitative importance of the commodity-price channel of monetary policy on domestic and international inflation at longer horizons (6-36 months). The results indicate that the response of commodity prices—oil, base metals, and food prices—to monetary policy accounts for 47\% of the total effect of US monetary policy on US headline inflation, and 57\% of the effect of US monetary policy on other countries’ headline inflation. The commodity price channel on core inflation is smaller and mainly driven by base metal prices. Finally, the commodity-price channel of ECB monetary policy is smaller, and it mainly operates through its effect on energy prices.}
+      \field{issn}{1018-5941}
+      \field{journaltitle}{IMF Working Papers}
+      \field{langid}{english}
+      \field{month}{10}
+      \field{number}{215}
+      \field{title}{Monetary {{Policy Transmission}} through {{Commodity Prices}}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{2023}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.5089/9798400256691.001
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\8TPZ9K2L\Miranda-Pinto - 2023 - Monetary Policy Transmission through Commodity Prices.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://elibrary.imf.org/openurl?genre=journal&issn=1018-5941&volume=2023&issue=215&cid=540373-com-dsp-crossref
+      \endverb
+      \verb{url}
+      \verb https://elibrary.imf.org/openurl?genre=journal&issn=1018-5941&volume=2023&issue=215&cid=540373-com-dsp-crossref
+      \endverb
     \endentry
     \entry{rubio-ramirezStructuralVectorAutoregressions2010}{article}{}{}
       \name{author}{3}{}{%

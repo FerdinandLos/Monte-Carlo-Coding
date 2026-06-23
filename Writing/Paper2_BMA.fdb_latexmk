@@ -1,12 +1,12 @@
 # Fdb version 4
-["biber Paper2_BMA"] 1782172688.42992 "Paper2_BMA.bcf" "Paper2_BMA.bbl" "Paper2_BMA" 1782172698.54927 0
+["biber Paper2_BMA"] 1782172688.42992 "Paper2_BMA.bcf" "Paper2_BMA.bbl" "Paper2_BMA" 1782201535.923 0
   "Monte Carlo Simulations.bib" 1782036879 61814 c3921b86ecc3fcecd518a6bdb3d0b32f ""
-  "Paper2_BMA.bcf" 1782172698 109737 69d62871e03f598a28797acf0069c220 "pdflatex"
+  "Paper2_BMA.bcf" 1782201535 109737 69d62871e03f598a28797acf0069c220 "pdflatex"
   (generated)
   "Paper2_BMA.bbl"
   "Paper2_BMA.blg"
   (rewritten before read)
-["pdflatex"] 1782172696.03269 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" "Paper2_BMA.pdf" "Paper2_BMA" 1782172698.55038 0
+["pdflatex"] 1782201533.90453 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" "Paper2_BMA.pdf" "Paper2_BMA" 1782201535.92404 0
   "Figures/Fig1b_Asymptotic_Convergence_p4.pdf" 1782168383 22729 631e8923594ffea455f83973ad0bd4f2 ""
   "Figures/Fig1c_Asymptotic_Convergence_p10.pdf" 1782168383 22720 172f84f7c76bc957b109bd4d3e7b2342 ""
   "Figures/Fig3_MDD_Surface.pdf" 1782168384 30370 95184b097bec263e543d44d7e86b91ad ""
@@ -17,11 +17,11 @@
   "Figures/Fig5e_BMA_Heatmap_Joint.pdf" 1782168388 29985 22ecd79cb3f9d51511a391a28271c4c7 ""
   "Figures/Fig5f_BMA_Heatmap_Geom.pdf" 1782168389 30192 eb2093a0f8cb6fa4993eedbb70ed7b6f ""
   "Figures/Fig9_Tau_Comparison_T600_p04.pdf" 1782168389 29193 01fba4ed75d9304a44d724617bdc3a0b ""
-  "Paper2_BMA.aux" 1782172698 7660 8b268fb8bb582bc4179c6caa7a670e71 "pdflatex"
+  "Paper2_BMA.aux" 1782201535 7504 3656dbe0edae818a7c5ff60459e41e14 "pdflatex"
   "Paper2_BMA.bbl" 1782172691 11953 16457130c3360199149f8721dd7df6e5 "biber Paper2_BMA"
-  "Paper2_BMA.out" 1782172698 944 a0acd298b0436271e44b7ad3d094e66c "pdflatex"
-  "Paper2_BMA.run.xml" 1782172698 2400 104da2feaf4191725187a22ee909d03d "pdflatex"
-  "Paper2_BMA.tex" 1782172685 27261 436b4300d299567e4b0da5bcc42e7ed0 ""
+  "Paper2_BMA.out" 1782201535 627 e080f3b5b61f3a9b8e400a1359bf82dd "pdflatex"
+  "Paper2_BMA.run.xml" 1782201535 2400 104da2feaf4191725187a22ee909d03d "pdflatex"
+  "Paper2_BMA.tex" 1782201533 27071 73f5092e0b8f2adc0a319427341b4967 ""
   "Tables/Table2_Uncertainty.tex" 1782168382 1448 d56a8a5c752c7e484a15e096e282a387 ""
   "Tables/Table6_BMA_vs_AIC.tex" 1782168382 1189 0cda02cdddaf35d50aec078e46454060 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1095.tfm" 1747240602 3584 21b378cca2e40816b0e6d74a4dc98f04 ""
@@ -170,7 +170,7 @@
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk" 1779723493 11524 9f3e48b550994109e3d7fad15f683495 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1771352530 2236262 dae90ef3062d3e0bc38ec1de445c41ec ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf.cnf" 1747240626 955 6591b7e09ece6af4143024019d5a863d ""
-  "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" 1782172685 27261 436b4300d299567e4b0da5bcc42e7ed0 ""
+  "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper2_BMA.tex" 1782201533 27071 73f5092e0b8f2adc0a319427341b4967 ""
   (generated)
   "Paper2_BMA.aux"
   "Paper2_BMA.bcf"
