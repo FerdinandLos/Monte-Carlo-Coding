@@ -80,9 +80,6 @@
            giveni={A\bibinitperiod},
            givenun=0}}%
       }
-      \list{publisher}{1}{%
-        {Prof. Derya Uysal, Ludwig-Maximilian University of Munich}%
-      }
       \strng{namehash}{41e32ffd8a1417cb580abddaef100ebf}
       \strng{fullhash}{41e32ffd8a1417cb580abddaef100ebf}
       \strng{fullhashraw}{41e32ffd8a1417cb580abddaef100ebf}
@@ -98,7 +95,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{23}
-      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations}
+      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations (Prof. Derya Uysal, Ludwig-Maximilian University of Munich)}
       \field{month}{6}
       \field{title}{To {{Shrink}} or to {{Select}}? {{Evaluating Finite-Sample Performance}} in {{Set-Identifed Structural VARs}}}
       \field{year}{2026}
@@ -1253,9 +1250,6 @@
            giveni={F\bibinitperiod},
            givenun=0}}%
       }
-      \list{publisher}{1}{%
-        {Prof. Derya Uysal, Ludwig-Maximilian University of Munich}%
-      }
       \strng{namehash}{a95a1ca5964da5bc4da81d6e7988fbb3}
       \strng{fullhash}{a95a1ca5964da5bc4da81d6e7988fbb3}
       \strng{fullhashraw}{a95a1ca5964da5bc4da81d6e7988fbb3}
@@ -1271,7 +1265,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{day}{23}
-      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations}
+      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations (Prof. Derya Uysal, Ludwig-Maximilian University of Munich)}
       \field{month}{6}
       \field{title}{Hedging {{Against Lag Order Uncertainty}} in {{SVARs}}: {{Bayesian Model Averaging}} versus {{Information Criteria}}}
       \field{year}{2026}

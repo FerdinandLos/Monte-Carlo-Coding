@@ -1,22 +1,22 @@
 # Fdb version 4
-["biber Paper1_BVAR"] 1782247583.14955 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782247599.24728 0
-  "Monte Carlo Simulations.bib" 1782245380 94139 4ebeb9a094295ea5ff2443ad749f711e ""
-  "Paper1_BVAR.bcf" 1782247598 115716 5cb3e279936c1c30a4c50dfee60e06aa "pdflatex"
+["biber Paper1_BVAR"] 1782247885.69341 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782247901.3492 0
+  "Monte Carlo Simulations.bib" 1782247863 94109 e359e1eab98e6834ce33131af9c7e14b ""
+  "Paper1_BVAR.bcf" 1782247900 115716 5cb3e279936c1c30a4c50dfee60e06aa "pdflatex"
   (generated)
   "Paper1_BVAR.bbl"
   "Paper1_BVAR.blg"
   (rewritten before read)
-["pdflatex"] 1782247592.86425 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782247599.24854 0
+["pdflatex"] 1782247894.90949 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782247901.35063 0
   "Figures/Fig1_Tradeoff_Curve.pdf" 1782243256 25582 0237827cabb80737d88780d1b28319df ""
   "Figures/Fig1_Tradeoff_Curve_p10.pdf" 1782243256 25514 25274d2abfe7f5dd9d246b2c880f46a5 ""
   "Figures/Fig2_Asymptotic_Relaxation.pdf" 1782243257 58257 08737ae56895d94eaa8e5554f781a4a8 ""
   "Figures/Fig3_MDD_Surface.pdf" 1782243258 29755 1f16892f89fd13a93418b0d5811d0ed7 ""
   "Figures/True_IRF_plot_Cumulative_10_lags.png" 1782157781 706312 583e30a6b90071d4b1a6b613f57fc378 ""
   "Figures/True_IRF_plot_Cumulative_4_lags.png" 1782157781 646718 e1ac04c1a96dd673935b41a9d61c97d3 ""
-  "Paper1_BVAR.aux" 1782247598 21987 f6bce97b8aae945597894f746b67e89f "pdflatex"
-  "Paper1_BVAR.bbl" 1782247586 85626 86e8d0f45ab9e841e9f933e4a6282f59 "biber Paper1_BVAR"
-  "Paper1_BVAR.out" 1782247598 2433 ce50e5d18e833d530277e763969febc3 "pdflatex"
-  "Paper1_BVAR.run.xml" 1782247598 2407 a813a7fabcba9c3d82aa07c2bd80e7b4 "pdflatex"
+  "Paper1_BVAR.aux" 1782247900 21987 aa52068cc4a94cbc8d459405ec948615 "pdflatex"
+  "Paper1_BVAR.bbl" 1782247888 85530 fec59092168df3254e6d5f69bee55105 "biber Paper1_BVAR"
+  "Paper1_BVAR.out" 1782247900 2433 ce50e5d18e833d530277e763969febc3 "pdflatex"
+  "Paper1_BVAR.run.xml" 1782247900 2407 a813a7fabcba9c3d82aa07c2bd80e7b4 "pdflatex"
   "Paper1_BVAR.tex" 1782247575 75108 59207a9751da25a05b059d03dcaf2742 ""
   "Tables/Table1_Shrinkage.tex" 1782243255 1568 5862a9287bfd4b44460e12bc21037739 ""
   "Tables/Table3_IC_Lags.tex" 1782243255 589 95075be94207d96d25dec846ad7ffb96 ""
