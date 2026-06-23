@@ -361,6 +361,145 @@
       \endverb
       \keyw{E0}
     \endentry
+    \entry{dieppeBEARToolbox2016}{online}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=9fe7e416f2c95d824c39ce4a99ae1615}{%
+           family={Dieppe},
+           familyi={D\bibinitperiod},
+           given={Alistair},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=507af21a667d7557cfad19da2205a2a3}{%
+           family={Legrand},
+           familyi={L\bibinitperiod},
+           given={Romain},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,useprefix=true,hash=ee459e609c10a0387852eadb04bd7864}{%
+           family={Roye},
+           familyi={R\bibinitperiod},
+           given={Björn},
+           giveni={B\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Rochester, NY}%
+      }
+      \strng{namehash}{575cab37e46004e5ba21a2fbc92c14ba}
+      \strng{fullhash}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \strng{fullhashraw}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \strng{bibnamehash}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \strng{authorbibnamehash}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \strng{authornamehash}{575cab37e46004e5ba21a2fbc92c14ba}
+      \strng{authorfullhash}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \strng{authorfullhashraw}{3c789c2b9a781c0a7c2e4609ee86c718}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The Bayesian Estimation, Analysis and Regression toolbox (BEAR) is a comprehensive (Bayesian) (Panel) VAR toolbox for forecasting and policy analysis. BEAR is a MATLAB based toolbox which is easy for non-technical users to understand, augment and adapt. In particular, BEAR includes a user-friendly graphical interface which allows the tool to be used by country desk economists. Furthermore, BEAR is well documented, both within the code as well as including a detailed theoretical and user's guide. BEAR includes state-of-the art applications such as sign and magnitude restrictions, conditional forecasts, Bayesian forecast evaluation measures, Bayesian Panel VAR using different prior distributions (for example hierarchical priors), etc. BEAR is specifically developed for transparently supplying a tool for state-of-the-art research and is planned to be further developed to always be at the frontier of economic research.}
+      \field{day}{24}
+      \field{eprinttype}{Social Science Research Network}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{number}{2811020}
+      \field{pubstate}{prepublished}
+      \field{title}{The {{BEAR Toolbox}}}
+      \field{type}{SSRN Scholarly Paper}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.2139/ssrn.2811020
+      \endverb
+      \verb{eprint}
+      \verb 2811020
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\64JUB8K2\Dieppe et al. - 2016 - The BEAR Toolbox.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://papers.ssrn.com/abstract=2811020
+      \endverb
+      \verb{url}
+      \verb https://papers.ssrn.com/abstract=2811020
+      \endverb
+      \keyw{Bayesian VAR,econometric software,forecasting,panel Bayesian VAR,structural}
+    \endentry
+    \entry{doanForecastingConditionalProjection1984}{article}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=1bddec218cad28026381d805fb15aed3}{%
+           family={Doan},
+           familyi={D\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1e586a737efa1c13d3954fa00ed47187}{%
+           family={Litterman},
+           familyi={L\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3ef1dfc56e1c5bb43fd1cdcd0cbac9f4}{%
+           family={Sims},
+           familyi={S\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Taylor \& Francis}%
+      }
+      \strng{namehash}{92dbe99a6c80d188a97499c0c4592cb9}
+      \strng{fullhash}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \strng{fullhashraw}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \strng{bibnamehash}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \strng{authorbibnamehash}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \strng{authornamehash}{92dbe99a6c80d188a97499c0c4592cb9}
+      \strng{authorfullhash}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \strng{authorfullhashraw}{00dc4cf09d70d6fc9c27db983e0b38a3}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper develops a forecasting procedure based on a Bayesian method for estimating vector autoregressions. The procedure is applied t o 10 macroeconomic variables and is shown to improve out-of-sample forecasts relative to univariate equations. Although cross-variable responses are damped by the prior, considerable interaction among the variables is shown to be captured by the estimates We provide unconditional forecasts as of 1982:12 and 1983:3. We also describe how a model such as this can be used to make conditional projections and to analyze policy alternatives. As an example, we analyze a Congressional Budget Office forecast made in 1982: 12 Although no automatic causal interpretations arise from models like ours, they provide a detailed characterization of the dynamic statistical interdependence of a set of economic variables, information that may help in evaluating causal hypotheses without containing any such hypotheses.}
+      \field{day}{1}
+      \field{issn}{0747-4938}
+      \field{journaltitle}{Econometric Reviews}
+      \field{month}{1}
+      \field{number}{1}
+      \field{title}{Forecasting and Conditional Projection Using Realistic Prior Distributions}
+      \field{urlday}{17}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{3}
+      \field{year}{1984}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 100}
+      \range{pages}{100}
+      \verb{doi}
+      \verb 10.1080/07474938408800053
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\TIAI2GSM\Doan vd. - 1984 - Forecasting and conditional projection using realistic prior distributions.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1080/07474938408800053
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1080/07474938408800053
+      \endverb
+    \endentry
     \entry{faustRobustnessIdentifiedVAR1998}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=fefe84f12b622581d43328248ed11a6e}{%
@@ -769,6 +908,56 @@
       \verb https://www.degruyter.com/document/doi/10.2202/1558-3708.1219/html
       \endverb
     \endentry
+    \entry{karlssonForecastingBayesianVector2012}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=51dd82fbdfcb9a779d1de657fec3c5d2}{%
+           family={Karlsson},
+           familyi={K\bibinitperiod},
+           given={Sune},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Örebro University, School of Business}%
+      }
+      \strng{namehash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{fullhash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{fullhashraw}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{bibnamehash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{authorbibnamehash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{authornamehash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{authorfullhash}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \strng{authorfullhashraw}{51dd82fbdfcb9a779d1de657fec3c5d2}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Prepared for the Handbook of Economic Forecasting, vol 2 This chapter reviews Bayesian methods for inference and forecasting with VAR models. Bayesian inference and, by extension, forecasting depends on numerical methods for simulating from the posterior distribution of the parameters and spe- cial attention is given to the implementation of the simulation algorithm.}
+      \field{day}{4}
+      \field{journaltitle}{Working Papers}
+      \field{langid}{english}
+      \field{month}{8}
+      \field{number}{2012:12}
+      \field{title}{Forecasting with {{Bayesian Vector Autoregressions}}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2012}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{file}
+      \verb C\:\\Users\\ferdi\\Zotero\\storage\\PTW92G5E\\Karlsson - 2012 - Forecasting with Bayesian Vector Autoregressions.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\CUJISCV4\\2012_012.html
+      \endverb
+      \verb{urlraw}
+      \verb https://ideas.repec.org//p/hhs/oruesi/2012_012.html
+      \endverb
+      \verb{url}
+      \verb https://ideas.repec.org//p/hhs/oruesi/2012_012.html
+      \endverb
+      \keyw{Cointegration,Condi- tional forecasts,Large VAR,Markov chain Monte Carlo,Model selection,Stochastic volatility,Structural VAR,Time-varying parameters}
+    \endentry
     \entry{kilianNotAllOil2009}{article}{}{}
       \name{author}{1}{}{%
         {{un=0,uniquepart=base,hash=9170e9b9292218b3597d8f9f52d2a454}{%
@@ -859,23 +1048,13 @@
       \field{isbn}{978-1-107-19657-5}
       \field{series}{Themes in {{Modern Econometrics}}}
       \field{title}{Structural {{Vector Autoregressive Analysis}}}
-      \field{urlday}{14}
-      \field{urlmonth}{6}
-      \field{urlyear}{2026}
       \field{year}{2017}
       \field{dateera}{ce}
-      \field{urldateera}{ce}
       \verb{doi}
       \verb 10.1017/9781108164818
       \endverb
       \verb{file}
       \verb C\:\\Users\\ferdi\\Zotero\\storage\\FLRKHW8G\\Kilian und Lütkepohl - 2017 - Structural Vector Autoregressive Analysis.pdf;C\:\\Users\\ferdi\\Zotero\\storage\\YKAM9SUQ\\DAF4217439EA585D10902D58A8849E06.html
-      \endverb
-      \verb{urlraw}
-      \verb https://www.cambridge.org/core/books/structural-vector-autoregressive-analysis/DAF4217439EA585D10902D58A8849E06
-      \endverb
-      \verb{url}
-      \verb https://www.cambridge.org/core/books/structural-vector-autoregressive-analysis/DAF4217439EA585D10902D58A8849E06
       \endverb
     \endentry
     \entry{kilianRoleInventoriesSpeculative2014}{article}{}{}
@@ -938,6 +1117,98 @@
       \endverb
       \verb{url}
       \verb https://onlinelibrary.wiley.com/doi/10.1002/jae.2322
+      \endverb
+    \endentry
+    \entry{alexandria}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=507af21a667d7557cfad19da2205a2a3}{%
+           family={Legrand},
+           familyi={L\bibinitperiod},
+           given={Romain},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{fullhash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{fullhashraw}{507af21a667d7557cfad19da2205a2a3}
+      \strng{bibnamehash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{authorbibnamehash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{authornamehash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{authorfullhash}{507af21a667d7557cfad19da2205a2a3}
+      \strng{authorfullhashraw}{507af21a667d7557cfad19da2205a2a3}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Alexandria - {{User Guide}} for {{Python}} and {{Matlab}} Editions}
+      \field{volume}{4.0}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://alexandria-toolbox.github.io/
+      \endverb
+      \verb{url}
+      \verb https://alexandria-toolbox.github.io/
+      \endverb
+    \endentry
+    \entry{littermanForecastingBayesianVector1986}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9754c550f95d9cd5578e74d0a9834000}{%
+           family={Litterman},
+           familyi={L\bibinitperiod},
+           given={Robert\bibnamedelima B.},
+           giveni={R\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {[American Statistical Association, Taylor \& Francis, Ltd.]}%
+      }
+      \strng{namehash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{fullhash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{fullhashraw}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{bibnamehash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{authorbibnamehash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{authornamehash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{authorfullhash}{9754c550f95d9cd5578e74d0a9834000}
+      \strng{authorfullhashraw}{9754c550f95d9cd5578e74d0a9834000}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{The results obtained in five years of forecasting with Bayesian vector autoregressions (BVAR's) demonstrate that this inexpensive, reproducible statistical technique is as accurate, on average, as those used by the best known commercial forecasting services. This article considers the problem of economic forecasting, the justification for the Bayesian approach, its implementation, and the performance of one small BVAR model over the past five years.}
+      \field{eprinttype}{jstor}
+      \field{issn}{0735-0015}
+      \field{journaltitle}{Journal of Business \& Economic Statistics}
+      \field{number}{1}
+      \field{shorttitle}{Forecasting with {{Bayesian Vector Autoregressions}}}
+      \field{title}{Forecasting with {{Bayesian Vector Autoregressions}}: {{Five Years}} of {{Experience}}}
+      \field{urlday}{17}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{volume}{4}
+      \field{year}{1986}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \field{pages}{25\bibrangedash 38}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.2307/1391384
+      \endverb
+      \verb{eprint}
+      \verb 1391384
+      \endverb
+      \verb{file}
+      \verb C:\Users\ferdi\Zotero\storage\TBQEH29J\Litterman - 1986 - Forecasting with Bayesian Vector Autoregressions Five Years of Experience.pdf
+      \endverb
+      \verb{urlraw}
+      \verb https://www.jstor.org/stable/1391384
+      \endverb
+      \verb{url}
+      \verb https://www.jstor.org/stable/1391384
       \endverb
     \endentry
     \entry{lutkepohlComparisonCriteriaEstimating1985}{article}{}{}

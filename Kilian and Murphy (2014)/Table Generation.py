@@ -76,7 +76,7 @@ def main():
     df_renamed['Estimator_Mapped'] = df_renamed['Estimator'].replace(estimator_mapping)
 
     pivot_mse = (df_renamed
-                 .pivot(index=['$T$', '$p_0$'], columns='Estimator_Mapped', values='Geom Mean MSE Ratio')
+                 .pivot(index=['$p_0$', '$T$'], columns='Estimator_Mapped', values='Geom Mean MSE Ratio')
                  .sort_index()
                  .rename_axis(columns=None))
 
@@ -313,6 +313,7 @@ def main():
     print("\n--- Generating Figures ---")
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
 
+    
     # Figure 1: Bias-Variance Tradeoff Curve
     # Rebuilt from main df to bypass corrupted tradeoff CSV
     
@@ -365,7 +366,6 @@ def main():
 
         ax.set_xlabel(r'Shrinkage Parameter ($\lambda_1$)')
         ax.set_ylabel('Relative Mean Squared Error')
-        ax.set_title(r'Bias-Variance Tradeoff Curve ($p_0 = 4$)')
         ax.legend(title='Sample Size')
         
         fig.tight_layout()
@@ -374,6 +374,60 @@ def main():
         print("[SAVED] Fig1_Tradeoff_Curve.pdf (Rebuilt from main data)")
     else:
         print("[SKIPPED] Fig1_Tradeoff_Curve (No BVAR-WN data found in main df)")
+
+    # Figure 1: Bias-Variance Tradeoff Curve
+    # Rebuilt from main df to bypass corrupted tradeoff CSV
+    
+    
+    # Filter main dataframe for p0 = 4 and the relevant BVAR estimators
+    tradeoff_rows = df[(df['True DGP (p0)'] == 10) & (df['Sample Size (T)'].isin([240,600])) & (df['Estimator'].isin(bvar_estimators.keys()))]
+    
+    if not tradeoff_rows.empty:
+        # Rebuild the tradeoff data structure
+        rebuilt_data = []
+        for _, row in tradeoff_rows.iterrows():
+            tau_val = bvar_estimators[row['Estimator']]
+            t_val = row['Sample Size (T)']
+            rel_mse = row['Geom Mean MSE Ratio']
+            rebuilt_data.append({'Tau': tau_val, 'T': t_val, 'Rel_MSE': rel_mse})
+            
+        tradeoff_df_rebuilt = pd.DataFrame(rebuilt_data)
+        
+        fig, ax = plt.subplots(figsize=(9, 6))
+        
+        # Plot the main tradeoff curve using the rebuilt data
+        sns.lineplot(data=tradeoff_df_rebuilt, x='Tau', y='Rel_MSE', hue='T', marker='o',
+                     palette="Set1", linewidth=2.5, ax=ax, errorbar=None)
+
+        # Define baselines: (T_val, linestyle, label, estimator_name)
+        baselines = [
+            (240, '--', 'AIC Baseline ($T=240$)', 'AIC'),
+            (600, '--', 'AIC Baseline ($T=600$)', 'AIC') 
+        ]
+
+        for T_val, ls, lbl, estimator in baselines:
+            row = df[(df['True DGP (p0)'] == 4) & (df['Sample Size (T)'] == T_val) & (df['Estimator'] == estimator)]
+            if len(row):
+                color = '#E41A1C' if T_val == 240 else '#377EB8'
+                ax.axhline(row['Geom Mean MSE Ratio'].values[0], color=color, linestyle=ls,
+                           alpha=0.7, label=lbl)
+
+        for tau in TAU_DISCRETE:
+            ax.axvline(tau, color='gray', linestyle=':', linewidth=0.9, alpha=0.5)
+            
+        ax.axvline(TAU_DISCRETE[0], color='gray', linestyle=':', linewidth=0.9, alpha=0.5,
+                   label=r'Estimated $\lambda_1$ grid')
+
+        ax.set_xlabel(r'Shrinkage Parameter ($\lambda_1$)')
+        ax.set_ylabel('Relative Mean Squared Error')
+        ax.legend(title='Sample Size')
+        
+        fig.tight_layout()
+        fig.savefig(os.path.join(figures_dir, "Fig1_Tradeoff_Curve_p10.pdf"))
+        plt.close(fig)
+        print("[SAVED] Fig1_Tradeoff_Curve_p10.pdf (Rebuilt from main data)")
+    else:
+        print("[SKIPPED] Fig1_Tradeoff_Curve_p10 (No BVAR-WN data found in main df)")
     
     # Figure 1b: Asymptotic Convergence Plot (Performance over T)
     # Isolating the performance of hard selection vs BMA architectures
@@ -532,39 +586,58 @@ def main():
             plt.close(fig)
             print("[SAVED] Fig2b_Asymptotic_Relaxation_p0.pdf")
 
-    # Figure 3: MDD Surface (Multiple Samples & Iterations)
+    # Figure 3: MDD Surface (Two Random Iterations)
     mdd_df = pd.read_csv(mdd_path)
+
     if mdd_df is not None and not mdd_df.empty:
-        fig, ax = plt.subplots(figsize=(9, 6))
-        
-        # Seaborn automatically calculates the mean and 95% confidence interval 
-        # because there are multiple iterations per Tau and T combination.
-        sns.lineplot(data=mdd_df, x='Tau', y='MDD', hue='T', 
-                     palette=['#E41A1C', '#377EB8'], linewidth=2.5, 
-                     marker='o', markersize=8, errorbar='sd', ax=ax)
-        
-        # Optionally: Find the peak of the average curve for T=600 to annotate
-        mean_mdd_600 = mdd_df[mdd_df['T'] == 600].groupby('Tau')['MDD'].mean()
-        if not mean_mdd_600.empty:
-            max_tau = mean_mdd_600.idxmax()
-            ax.axvline(max_tau, color='black', linestyle='--', alpha=0.6,
-                       label=fr'Optimal $\lambda_1 \simeq {max_tau:.2f}$ ($T=600$)')
+        # 2. Filter the dataframe for p0 = 10, T = 600, and the two random iterations.
+        filtered_df = mdd_df[
+            (mdd_df['T'] == 600) & 
+            (mdd_df['p0'] == 10) & 
+            (mdd_df['Iter'].isin([27,400]))
+        ]
 
-        ax.set_xlabel(r'Candidate Shrinkage Parameter ($\lambda_1$)')
-        ax.set_ylabel('Marginal Data Density (Log Likelihood)')
-        ax.set_title(r'Objective Function Surface by Sample Size ($p_0 = 4$)')
+        if not filtered_df.empty:
+            fig, ax = plt.subplots(figsize=(9, 6))
         
-        # Clean up legend
-        handles, labels = ax.get_legend_handles_labels()
-        ax.legend(title='Sample Size ($T$)', loc='best')
+            # 3. Plot the two iterations as separate lines (hue='iter')
+            # We drop the 'errorbar' argument since we are plotting distinct individual paths now.
+            sns.lineplot(data=filtered_df, x='Tau', y='MDD', hue='Iter', 
+                        palette=['#E41A1C', '#377EB8'], linewidth=2.5, 
+                        marker='o', markersize=8, ax=ax)
         
-        fig.tight_layout()
-        fig.savefig(os.path.join(figures_dir, "Fig3_MDD_Surface.pdf"))
-        plt.close(fig)
-        print("[SAVED] Fig3_MDD_Surface.pdf")
+            # 4. Find the peak for each of the two individual iterations to annotate
+            colors = ['#E41A1C', '#377EB8']
+            # Seaborn assigns palette colors based on sorted hue values
+            sorted_iters = sorted(filtered_df['Iter'].unique())
+
+            for iteration, color in zip(sorted_iters, colors):
+                iter_df = filtered_df[filtered_df['Iter'] == iteration]
+                if not iter_df.empty:
+                    # Find the index of the maximum MDD, then extract the corresponding Tau
+                    max_tau = iter_df.loc[iter_df['MDD'].idxmax(), 'Tau']
+                
+                    ax.axvline(max_tau, color=color, linestyle='--', alpha=0.6,
+                               label=fr'Optimal $\lambda_1 \simeq {max_tau:.2f}$ (Iter {iteration})')
+
+            ax.set_xlabel(r'Candidate Shrinkage Parameter ($\lambda_1$)')
+            ax.set_ylabel('Marginal Data Density (Log Likelihood)')
+        
+            # Update title to reflect the fixed T and p0 parameters
+            ax.set_title(r'Objective Function Surface ($T=600$, $p_0=10$)')
+        
+            # Clean up legend to reflect iterations instead of T
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(title='Iteration', loc='best')
+        
+            fig.tight_layout()
+            fig.savefig(os.path.join(figures_dir, "Fig3_MDD_Surface.pdf"))
+            plt.close(fig)
+            print("[SAVED] Fig3_MDD_Surface.pdf")
+        else:
+            print("[SKIPPED] Fig3_MDD_Surface (Filtered data is empty. Check column names 'p0' and 'iter')")
     else:
-        print("[SKIPPED] Fig3_MDD_Surface (No data found)")
-
+        print("[SKIPPED] Fig3_MDD_Surface (No data found)") 
 
 
     # Figure 5: BMA Posterior Weight Heatmaps (All 6 Included)
@@ -615,6 +688,50 @@ def main():
     # Assuming tau_path and figures_dir are defined earlier in your script
     target_T = 600
     target_p0 = 4  # <-- Define your target p0 here
+
+    if os.path.exists(tau_path):
+        df = pd.read_csv(tau_path)
+    
+        # 1. Filter for a specific Sample Size AND a specific True Lag (p0)
+        df_filtered = df[(df['T'] == target_T) & (df['p0'] == target_p0)]
+    
+        # 2. Explicitly aggregate the Monte Carlo iterations
+        # This takes the mean of 'Expected_Tau' for each combination of 'p' and 'Estimator'
+        df_avg = df_filtered.groupby(['p', 'Estimator'])['Expected_Tau'].mean().reset_index()
+    
+        fig, ax = plt.subplots(figsize=(8, 6))
+    
+        # 3. Plot the newly averaged data
+        # We can drop errorbar=None since df_avg now has exactly one row per x/hue combination
+        sns.lineplot(data=df_avg, x='p', y='Expected_Tau', 
+                 hue='Estimator', palette=['#1f77b4', '#ff7f0e'], 
+                 marker='o', linewidth=2.5, ax=ax)
+    
+        # Updated title to reflect both T and p0
+        ax.set_title(fr'Optimal Shrinkage vs. Lag Order ($T={target_T}, p_0={target_p0}$)')
+        ax.set_xlabel('Candidate Lag Order ($p$)')
+        ax.set_ylabel(r'Expected Shrinkage ($\mathbb{E}[\lambda_1 \mid p]$)')
+    
+        # Set x-ticks dynamically based on the aggregated data
+        ax.set_xticks(range(1, int(df_avg['p'].max()) + 1))
+        ax.grid(True, linestyle='--', alpha=0.6)
+    
+        fig.tight_layout()
+        save_name = os.path.join(figures_dir, f"Fig9_Tau_Comparison_T{target_T}_p0{target_p0}.pdf")
+        fig.savefig(save_name)
+        plt.close(fig)
+        print(f"[SAVED] {save_name}")
+
+    print("\n" + "="*80)
+    print(" VISUALIZATION PROCESS COMPLETE!")
+    print(f" Tables verified at:  {tables_dir}")
+    print(f" Figures verified at: {figures_dir}")
+    print("="*80)
+
+    # Figure 9b, tau dependent on T
+    # Assuming tau_path and figures_dir are defined earlier in your script
+    target_T = 600
+    target_p0 = 10  # <-- Define your target p0 here
 
     if os.path.exists(tau_path):
         df = pd.read_csv(tau_path)
