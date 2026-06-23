@@ -2446,15 +2446,17 @@
     <bcf:citekey order="55" intorder="1">schwarzEstimatingDimensionModel1978</bcf:citekey>
     <bcf:citekey order="55" intorder="2">rafteryBayesianModelSelection1995</bcf:citekey>
     <bcf:citekey order="56" intorder="1">hoetingBayesianModelAveraging1999</bcf:citekey>
-    <bcf:citekey order="57" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="58" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="59" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="60" intorder="1">kilianNotAllOil2009</bcf:citekey>
-    <bcf:citekey order="61" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="62" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="57" intorder="1">madiganModelSelectionAccounting1994</bcf:citekey>
+    <bcf:citekey order="58" intorder="1">hoetingBayesianModelAveraging1999</bcf:citekey>
+    <bcf:citekey order="59" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="60" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="61" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="62" intorder="1">kilianNotAllOil2009</bcf:citekey>
     <bcf:citekey order="63" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
-    <bcf:citekey order="64" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
-    <bcf:citekey order="65" intorder="1">lutkepohlNewIntroductionMultiple2005</bcf:citekey>
+    <bcf:citekey order="64" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="65" intorder="1">ivanovPractitionersGuideLag2005</bcf:citekey>
+    <bcf:citekey order="66" intorder="1">kilianRoleInventoriesSpeculative2014</bcf:citekey>
+    <bcf:citekey order="67" intorder="1">lutkepohlNewIntroductionMultiple2005</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">

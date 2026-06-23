@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  23 JUN 2026 21:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  23 JUN 2026 22:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -548,24 +548,24 @@ LaTeX Warning: Label `eq:IC_comp' multiply defined.
 )
 \openout1 = `Paper2_BMA.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 31.
-LaTeX Font Info:    ... okay on input line 31.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -630,7 +630,7 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/mathcolor.ltx))
-Package hyperref Info: Link coloring ON on input line 31.
+Package hyperref Info: Link coloring ON on input line 30.
  (./Paper2_BMA.out) (./Paper2_BMA.out)
 \@outlinefile=\write4
 \openout4 = `Paper2_BMA.out'.
@@ -648,149 +648,153 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'Paper2_BMA.bbl' found.
  (./Paper2_BMA.bbl)
-Package biblatex Info: Reference section=0 on input line 31.
-Package biblatex Info: Reference segment=0 on input line 31.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 34.
+Package biblatex Info: Reference section=0 on input line 30.
+Package biblatex Info: Reference segment=0 on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 33.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 33.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
 
-LaTeX Warning: Reference `sec:BMA' on page 3 undefined on input line 53.
+LaTeX Warning: Reference `sec:BMA' on page 3 undefined on input line 52.
 
 [3] [4] [5] [6] [7] [8] [9] [10] (./Tables/Table3_IC_Lags.tex) [11] [12] [13]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [14] [15] [16] [17] (./Tables/Table2_Uncertainty.tex) (./Tables/Table6_BMA_vs_AIC.tex) [18] [19] [20]
-<Figures/Fig5a_BMA_Heatmap_OLS.pdf, id=393, 578.16pt x 505.89pt>
+<Figures/Fig5a_BMA_Heatmap_OLS.pdf, id=401, 578.16pt x 505.89pt>
 File: Figures/Fig5a_BMA_Heatmap_OLS.pdf Graphic file (type pdf)
 <use Figures/Fig5a_BMA_Heatmap_OLS.pdf>
-Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS.pdf  used on input line 334.
+Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS.pdf  used on input line 333.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf, id=394, 578.16pt x 505.89pt>
+<Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf, id=402, 578.16pt x 505.89pt>
 File: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf Graphic file (type pdf)
 <use Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf>
-Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf  used on input line 341.
+Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf  used on input line 340.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf, id=395, 578.16pt x 505.89pt>
+<Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf, id=403, 578.16pt x 505.89pt>
 File: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf Graphic file (type pdf)
 <use Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf>
-Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf  used on input line 350.
+Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf  used on input line 349.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf, id=396, 578.16pt x 505.89pt>
+<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf, id=404, 578.16pt x 505.89pt>
 File: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf Graphic file (type pdf)
 <use Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>
-Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf  used on input line 357.
+Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf  used on input line 356.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5e_BMA_Heatmap_Joint.pdf, id=400, 578.16pt x 505.89pt>
+<Figures/Fig5e_BMA_Heatmap_Joint.pdf, id=408, 578.16pt x 505.89pt>
 File: Figures/Fig5e_BMA_Heatmap_Joint.pdf Graphic file (type pdf)
 <use Figures/Fig5e_BMA_Heatmap_Joint.pdf>
-Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint.pdf  used on input line 376.
+Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint.pdf  used on input line 375.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5f_BMA_Heatmap_Geom.pdf, id=401, 578.16pt x 505.89pt>
+<Figures/Fig5f_BMA_Heatmap_Geom.pdf, id=409, 578.16pt x 505.89pt>
 File: Figures/Fig5f_BMA_Heatmap_Geom.pdf Graphic file (type pdf)
 <use Figures/Fig5f_BMA_Heatmap_Geom.pdf>
-Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom.pdf  used on input line 383.
+Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom.pdf  used on input line 382.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
  [21] [22 <./Figures/Fig5a_BMA_Heatmap_OLS.pdf> <./Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf> <./Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>]
-<Figures/Fig9_Tau_Comparison_T600_p04.pdf, id=719, 578.16pt x 433.62pt>
+<Figures/Fig9_Tau_Comparison_T600_p04.pdf, id=727, 578.16pt x 433.62pt>
 File: Figures/Fig9_Tau_Comparison_T600_p04.pdf Graphic file (type pdf)
 <use Figures/Fig9_Tau_Comparison_T600_p04.pdf>
-Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p04.pdf  used on input line 396.
+Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p04.pdf  used on input line 395.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
-<Figures/Fig1b_Asymptotic_Convergence_p4.pdf, id=721, 650.43pt x 433.62pt>
+<Figures/Fig1b_Asymptotic_Convergence_p4.pdf, id=729, 650.43pt x 433.62pt>
 File: Figures/Fig1b_Asymptotic_Convergence_p4.pdf Graphic file (type pdf)
 <use Figures/Fig1b_Asymptotic_Convergence_p4.pdf>
-Package pdftex.def Info: Figures/Fig1b_Asymptotic_Convergence_p4.pdf  used on input line 407.
+Package pdftex.def Info: Figures/Fig1b_Asymptotic_Convergence_p4.pdf  used on input line 406.
 (pdftex.def)             Requested size: 217.42265pt x 144.94766pt.
-<Figures/Fig1c_Asymptotic_Convergence_p10.pdf, id=722, 650.43pt x 433.62pt>
+<Figures/Fig1c_Asymptotic_Convergence_p10.pdf, id=730, 650.43pt x 433.62pt>
 File: Figures/Fig1c_Asymptotic_Convergence_p10.pdf Graphic file (type pdf)
 <use Figures/Fig1c_Asymptotic_Convergence_p10.pdf>
-Package pdftex.def Info: Figures/Fig1c_Asymptotic_Convergence_p10.pdf  used on input line 413.
+Package pdftex.def Info: Figures/Fig1c_Asymptotic_Convergence_p10.pdf  used on input line 412.
 (pdftex.def)             Requested size: 217.42265pt x 144.94766pt.
  [23 <./Figures/Fig5e_BMA_Heatmap_Joint.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom.pdf>] [24 <./Figures/Fig9_Tau_Comparison_T600_p04.pdf> <./Figures/Fig1b_Asymptotic_Convergence_p4.pdf> <./Figures/Fig1c_Asymptotic_Convergence_p10.pdf>] [25
 
 ] [26]
-Overfull \hbox (0.23706pt too wide) in paragraph at lines 439--439
+Overfull \hbox (0.23706pt too wide) in paragraph at lines 438--438
 \T1/cmtt/m/n/12 b97636$[][]\T1/cmr/m/n/12 . \T1/cmr/m/sc/12 url\T1/cmr/m/n/12 : [][]$\T1/cmtt/m/n/12 http : / / link . springer . com / 10 . 1007 / b97636$[][] \T1/cmr/m/n/12 (vis-ited on 06/21/2026). 
  []
 
 
-Overfull \hbox (19.53719pt too wide) in paragraph at lines 439--439
+Overfull \hbox (19.53719pt too wide) in paragraph at lines 438--438
 \T1/cmr/m/n/12 0167-2231. \T1/cmr/m/sc/12 doi\T1/cmr/m/n/12 : [][]$\T1/cmtt/m/n/12 10 . 1016 / S0167 -[] 2231(99 ) 00009 -[] 3$[][]\T1/cmr/m/n/12 . \T1/cmr/m/sc/12 url\T1/cmr/m/n/12 : [][]$\T1/cmtt/m/n/12 https : / / www . sciencedirect .
  []
 
 [27] [28] [29]
-<Figures/True_IRF_plot_Cumulative_4_lags.png, id=1212, 1076.3412pt x 888.1983pt>
+<Figures/True_IRF_plot_Cumulative_4_lags.png, id=1220, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_4_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_4_lags.png>
-Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_4_lags.png  used on input line 451.
+Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_4_lags.png  used on input line 450.
 (pdftex.def)             Requested size: 385.02547pt x 317.71823pt.
-<Figures/True_IRF_plot_Cumulative_10_lags.png, id=1214, 1076.3412pt x 888.1983pt>
+<Figures/True_IRF_plot_Cumulative_10_lags.png, id=1222, 1076.3412pt x 888.1983pt>
 File: Figures/True_IRF_plot_Cumulative_10_lags.png Graphic file (type png)
 <use Figures/True_IRF_plot_Cumulative_10_lags.png>
-Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_10_lags.png  used on input line 456.
+Package pdftex.def Info: Figures/True_IRF_plot_Cumulative_10_lags.png  used on input line 455.
 (pdftex.def)             Requested size: 385.02547pt x 317.71823pt.
  [30] [31 <./Figures/True_IRF_plot_Cumulative_4_lags.png> <./Figures/True_IRF_plot_Cumulative_10_lags.png>]
-Overfull \hbox (9.1876pt too wide) in paragraph at lines 487--487
+Overfull \hbox (9.1876pt too wide) in paragraph at lines 486--486
 []\T1/cmr/bx/n/17.28 Derivation of the Re-cur-sive Co-ef-fi-cients and the Mean 
  []
 
 [32] [33]
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 544.
+LaTeX Warning: Reference `eq:25' on page 34 undefined on input line 548.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 544.
-
+[34]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 544.
+(hyperref)                removing `math shift' on input line 581.
 
-<Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf, id=1256, 578.16pt x 505.89pt>
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 581.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 581.
+
+<Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf, id=1277, 578.16pt x 505.89pt>
 File: Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf>
-Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf  used on input line 553.
+Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf  used on input line 590.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf, id=1257, 578.16pt x 505.89pt>
+<Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf, id=1278, 578.16pt x 505.89pt>
 File: Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf>
-Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf  used on input line 560.
+Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf  used on input line 597.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf, id=1258, 578.16pt x 505.89pt>
+<Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf, id=1279, 578.16pt x 505.89pt>
 File: Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf>
-Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf  used on input line 569.
+Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf  used on input line 606.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf, id=1259, 578.16pt x 505.89pt>
+<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf, id=1280, 578.16pt x 505.89pt>
 File: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf>
-Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf  used on input line 576.
+Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf  used on input line 613.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf, id=1260, 578.16pt x 505.89pt>
+<Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf, id=1281, 578.16pt x 505.89pt>
 File: Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf>
-Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf  used on input line 590.
+Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf  used on input line 627.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf, id=1261, 578.16pt x 505.89pt>
+<Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf, id=1282, 578.16pt x 505.89pt>
 File: Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf Graphic file (type pdf)
 <use Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf>
-Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf  used on input line 597.
+Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf  used on input line 634.
 (pdftex.def)             Requested size: 217.42265pt x 190.2409pt.
-<Figures/Fig9_Tau_Comparison_T600_p010.pdf, id=1262, 578.16pt x 433.62pt>
+<Figures/Fig9_Tau_Comparison_T600_p010.pdf, id=1283, 578.16pt x 433.62pt>
 File: Figures/Fig9_Tau_Comparison_T600_p010.pdf Graphic file (type pdf)
 <use Figures/Fig9_Tau_Comparison_T600_p010.pdf>
-Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p010.pdf  used on input line 608.
+Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p010.pdf  used on input line 645.
 (pdftex.def)             Requested size: 385.02547pt x 288.7639pt.
-[34] [35 <./Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf> <./Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf> <./Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf>] [36 <./Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf> <./Figures/Fig9_Tau_Comparison_T600_p010.pdf>] (./Paper2_BMA.aux)
+[35] [36 <./Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf> <./Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf> <./Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf>] [37 <./Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf> <./Figures/Fig9_Tau_Comparison_T600_p010.pdf>] (./Paper2_BMA.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -803,24 +807,24 @@ LaTeX Warning: There were undefined references.
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `Paper2_BMA.out' has not changed.
-(rerunfilecheck)             Checksum: 094B296C34942627E4C68DF6D9DD4591;2700.
+(rerunfilecheck)             Checksum: 1FAAE0F7AF93CE7FE7EF1D7A857131F0;2992.
 Package logreq Info: Writing requests to 'Paper2_BMA.run.xml'.
 \openout1 = `Paper2_BMA.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 20284 strings out of 469513
- 363131 string characters out of 5468178
- 1185508 words of memory out of 5000000
- 48546 multiletter control sequences out of 15000+600000
+ 20307 strings out of 469513
+ 363360 string characters out of 5468178
+ 1188083 words of memory out of 5000000
+ 48558 multiletter control sequences out of 15000+600000
  655205 words of font info for 113 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,16n,79p,3166b,1518s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1440.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm2074.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Paper2_BMA.pdf (36 pages, 2127936 bytes).
+Output written on Paper2_BMA.pdf (37 pages, 2130761 bytes).
 PDF statistics:
- 2588 PDF objects out of 2984 (max. 8388607)
- 941 compressed objects within 10 object streams
- 153 named destinations out of 1000 (max. 500000)
- 203 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2612 PDF objects out of 2984 (max. 8388607)
+ 968 compressed objects within 10 object streams
+ 164 named destinations out of 1000 (max. 500000)
+ 211 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -2,7 +2,7 @@
 \centering
 \caption{Relative Mean Squared Error of Bayesian Shrinkage Specifications vs.~AIC Baseline.}
 \label{tab:bvar_vs_aic}
-\begin{tabular}{llccccc}
+\sbox0{\begin{tabular}{llccccc}
 \toprule
  &  & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.80$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular} \\
 $p_0$ & $T$ &  &  &  &  &  \\
@@ -16,6 +16,10 @@ $p_0$ & $T$ &  &  &  &  &  \\
  & 480 & \bfseries 0.863 & 0.931 & 0.886 & 0.955 & 0.876 \\
  & 600 & \bfseries 0.782 & 0.865 & 0.819 & 0.791 & 0.796 \\
 \bottomrule
-\end{tabular}
-\vspace{1ex}\par\noindent\parbox{\linewidth}{\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.}
+\end{tabular}}
+\usebox0\par
+\vspace{1ex}
+\begin{minipage}{\wd0}
+\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+\end{minipage}
 \end{table}

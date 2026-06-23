@@ -21,10 +21,9 @@
 \addbibresource{Monte Carlo Simulations.bib}
 
 % Title and Author Information
-\title{To Shrink or to Select? Evaluating Finite-Sample Performance in Set-Identified Structural VARs}
+\title{To Shrink or to Select? Evaluating Finite-Sample Performance in Set-Identifed Structural VARs}
 \author{
-    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BVAR, whereas (CITATION) implements BMA. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
-    Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
+    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BVAR, whereas (CITATION) implements BMA. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} 
 }
 \date{\today \\ \vspace{0.5cm} Seminar: \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
 \begin{document}
@@ -489,6 +488,62 @@ which gives:
 \begin{equation}
 \mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v  
 \end{equation}
+
+\section{Detailed Review of Normal-Wishart Prior}
+\label{sec:normal_wishart}
+
+The VAR model can be expressed in terms of the Kronecker product:
+\begin{equation} \label{eq:D.1}
+y = (X' \otimes I_K){\alpha} + e
+\end{equation}
+Where $\alpha = \text{vec}(A)$ that contains all the coefficients and $e \sim N(0, I_N \otimes \Sigma)$. The same Gaussian likelihood can be written using the Kronecker product as:
+\begin{equation} \label{eq:D.2}
+\ell(\alpha, \Sigma \mid y) \propto |\Sigma|^{-N/2} \exp \left[ -\frac{1}{2}(\alpha - \hat{\alpha})'(X'X \otimes \Sigma^{-1})(\alpha - \hat{\alpha}) \right] \exp \left[ -\frac{1}{2}\text{tr}(\Sigma^{-1}\hat{S}) \right]
+\end{equation}
+Where $\hat \alpha$ is the OLS estimate and $\hat S = (Y - X\hat{A})'(Y-X\hat{A})$. The key point is that $\Sigma ^{-1}$ and $X'X$ enter jointly. If we set a Minnesota prior as in \eqref{eq:22}:
+\begin{equation} \label{eq:D.3}
+\pi(\alpha) \propto \exp \left[ -\frac{1}{2}(\alpha - \alpha^*)' V_\alpha^{-1} (\alpha - \alpha^*) \right]
+\end{equation}
+and multiply \eqref{eq:D.2} by \eqref{eq:D.3} to obtain the posterior, the exponent becomes:
+\begin{equation} \label{eq:D.4}
+(X'X \otimes \Sigma^{-1}) + V_\alpha^{-1}
+\end{equation}
+The first term carries $\Sigma^{-1}$ in a Kronecker structure; the second does not contain $\Sigma$ at all. This is problematic because $\Sigma^{-1}$ cannot be factored out. Conjugacy is lost because the coefficient and covariance components are no longer separable: the $\alpha$ terms and $\Sigma$ terms remain intermingled. If instead we specify $V_{\alpha} = \Sigma \otimes \Phi_0$, exponent becomes:
+\begin{equation} \label{eq:D.5}
+(X'X \otimes \Sigma^{-1}) + (\Phi_0^{-1} \otimes \Sigma^{-1})
+\end{equation}
+so that $\Sigma^{-1}$ can be factored out:
+\begin{equation} \label{eq:D.6}
+(X'X + \Phi_0^{-1}) \otimes \Sigma^{-1}
+\end{equation}
+The $\alpha$ and $\Sigma$ components are now separate, and the posterior has a closed-form solution. 
+
+It is also important to discuss why is $\lambda_2$ inoperative. Consider the prior variance structure of Minnesota Prior:
+\begin{equation} \label{eq:D.7}
+v_{ij,l} = 
+\begin{cases} 
+\left( \frac{\lambda_1}{l^{\lambda_3}} \right)^2 & i = j \text{ (own lag)} \\ 
+\left( \frac{\sigma_i}{\sigma_j} \right)^2 \left( \frac{\lambda_1 \lambda_2}{l^{\lambda_3}} \right)^2 & i \neq j \text{ (cross-variable)}. 
+\end{cases}
+\end{equation}
+Because the full prior covariance $V_\alpha^{Minn}$ is diagonal with one entry per coefficient, the own and cross-variable cases can be assigned different values: the factor $0< \lambda_2 < 1$ appears only in the $i \neq j$ entries, shrinking cross-variable coefficients more strongly.
+
+Under $\Sigma \otimes \Phi_0$, the prior variance of a coefficient is no longer assigned per coefficient. Consider the two-variable, one-lag case for concreteness:
+\begin{equation} \label{eq:D.8}
+\begin{aligned} 
+y_{1t} &= \alpha_{11}y_{1t-1} + \alpha_{12}y_{2t-1} + e_{1t} \\ 
+y_{2t} &= \alpha_{21}y_{1t-1} + \alpha_{22}y_{2t-1}+e_{2t} 
+\end{aligned}
+\end{equation}
+The single-equation template $\Phi_0$ is diagonal with one entry per regressor position:
+\begin{equation} \label{eq:D.9}
+\Phi_0 = \text{diag}(\phi_1, \phi_2)
+\end{equation}
+Where, $\phi_m$ is the prior variance attached to position m within any equation. The full coefficient covariance is then:
+\begin{equation} \label{eq:D.10}
+\Sigma \otimes \Phi_0 = \begin{pmatrix} \sigma_{11}\Phi_0 & \sigma_{12}\Phi_0 \\ \sigma_{21}\Phi_0 & \sigma_{22}\Phi_0 \end{pmatrix}
+\end{equation}
+Using \eqref{eq:D.10}, we can calculate the prior variances of coefficients. $\text{var}(\alpha_{11}) = \sigma_{11}\phi_1$, $\text{var}(\alpha_{12}) = \sigma_{11}\phi_2$, $\text{var}(\alpha_{21}) = \sigma_{22}\phi_1$ and $\text{var}(\alpha_{22}) = \sigma_{22}\phi_2$. Each of $\phi_1$ and $\phi_2$ is shared between an own (autoregressive) lag in one equation and a cross-variable lag in the other: $\phi_1$ applies to the own lag $\alpha_{11}$ and the cross lag $\alpha_{21}$, while $\phi_2$ applies to the cross lag $\alpha_{12}$ and the own lag $\alpha_{22}$. Because a single template entry cannot shrink own and cross lags differently, $\lambda_2 = 1$ is forced.
 
 \section*{Declaration of AI Usage}
 

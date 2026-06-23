@@ -2,7 +2,7 @@
 \centering
 \caption{Relative Mean Squared Error: Hard Selection vs.~Bayesian Model Averaging.}
 \label{tab:uncertainty_mse}
-\begin{tabular}{llccccccccc}
+\sbox0{\begin{tabular}{llccccccccc}
 \toprule
  &  & AIC & BIC & HQC & \begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular} & Joint Grid BMA & Geom. Grid BMA \\
 $p_0$ & $T$ &  &  &  &  &  &  &  &  &  \\
@@ -16,6 +16,10 @@ $p_0$ & $T$ &  &  &  &  &  &  &  &  &  \\
  & 480 & 0.989 & 1.190 & 1.185 & 1.052 & 1.283 & \bfseries 0.883 & 1.210 & 1.019 & 0.898 \\
  & 600 & 1.036 & 1.260 & 1.259 & 1.293 & 1.100 & 0.883 & \bfseries 0.875 & 0.878 & 0.964 \\
 \bottomrule
-\end{tabular}
-\vspace{1ex}\par\noindent\parbox{\linewidth}{\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.}
+\end{tabular}}
+\usebox0\par
+\vspace{1ex}
+\begin{minipage}{\wd0}
+\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+\end{minipage}
 \end{sidewaystable}

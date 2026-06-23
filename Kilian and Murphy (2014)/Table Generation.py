@@ -96,9 +96,12 @@ def main():
                 .apply(bold_row_min, axis=1)
                 .to_latex(caption=caption, label=label, **to_latex_kwargs))
 
-    # A safe, base-LaTeX string injection using \parbox to ensure the text wraps cleanly 
-    # without bleeding off the page, and requires NO external packages.
-    note_text = r"\vspace{1ex}\par\noindent\parbox{\linewidth}{\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.}"
+    # Define the note block using native LaTeX sbox and minipage for perfect alignment
+    note_text = r"""\usebox0\par
+\vspace{1ex}
+\begin{minipage}{\wd0}
+\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+\end{minipage}"""
 
     # TABLE 1: Shrinkage strategy
     cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-40', 
@@ -116,7 +119,8 @@ def main():
     latex1 = (latex1
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
-        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
+        .replace('\\begin{tabular}', '\\sbox0{\\begin{tabular}')
+        .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)
         .replace('SIC (BIC)', 'BIC')
         .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular}')
         .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular}')
@@ -145,7 +149,8 @@ def main():
     latex2 = (latex2
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
-        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
+        .replace('\\begin{tabular}', '\\sbox0{\\begin{tabular}')
+        .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
         .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
         .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -255,7 +260,8 @@ def main():
             
             # Apply your established LaTeX string replacements (Sideways table formatting removed)
             latex5 = (latex5
-                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
+                .replace('\\begin{tabular}', '\\sbox0{\\begin{tabular}')
+                .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)
                 .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
                 .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
                 .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
@@ -303,7 +309,8 @@ def main():
             latex6 = (latex6
                 .replace('\\begin{table}', '\\begin{sidewaystable}')
                 .replace('\\end{table}',   '\\end{sidewaystable}')
-                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)   
+                .replace('\\begin{tabular}', '\\sbox0{\\begin{tabular}')
+                .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)   
                 .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
                 .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
                 .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')

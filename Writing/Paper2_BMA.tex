@@ -21,10 +21,9 @@
 \addbibresource{Monte Carlo Simulations.bib}
 
 % Title and Author Information
-\title{Embracing Lag Uncertainty: Bayesian Model Averaging in Set-Identifed Structural VARs}
+\title{Hedging Against Lag Order Uncertainty in SVARs: Bayesian Model Averaging versus Information Criteria}
 \author{
-    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BMA, whereas (CITATION) implements BVAR. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
-    Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
+    Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BMA, whereas (CITATION) implements BVAR. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.}
 }
 \date{\today \\ \vspace{0.5cm} Seminar: \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
 
@@ -268,7 +267,7 @@ w_{\text{BVAR}}(p, \lambda_1) = \frac{m(y \mid p, \lambda_1) \pi(p)}{\sum_{p'=1}
 \end{equation}
 where $m(y \mid p, \lambda_1)$ is the calculated marginal data density \eqref{eq:x3} with joint prior and $\pi(p)$ is the same priors that are described above. 
 
-The BVAR models are indexed by pairs ($p, \lambda_1$), with the lag order ranging over $p = 1, \dots, \bar p=12$ and the tightness over the discrete grid $\lambda_1 \in \{0.20, 0.40, 0.60, 0.80\}$.\footnote{This set is relatively small but captures both tighter and looser hyperparameters. We have to limit it due to computational concerns.} For every pair in this grid, we estimate the Normal-Wishart BVAR and compute its marginal data density. The pairs are then weighted by their posterior model probability \eqref{eq:x7}; pairs whose normalized weight falls below a threshold of 0.01 are discarded, and the weights of the retained pairs are renormalized to sum to one. From each retained pair, we draw impulse responses in proportion to its weight, pool the draws, and select the median target.
+The BVAR models are indexed by pairs ($p, \lambda_1$), with the lag order ranging over $p = 1, \dots, \bar p=12$ and the tightness over the discrete grid $\lambda_1 \in \{0.20, 0.40, 0.60, 0.80\}$.\footnote{This set is relatively small but captures both tighter and looser hyperparameters. We have to limit it due to computational limitations.} For every pair in this grid, we estimate the Normal-Wishart BVAR and compute its marginal data density. The pairs are then weighted by their posterior model probability \eqref{eq:x7}; pairs whose normalized weight falls below a threshold of 0.01 are discarded, and the weights of the retained pairs are renormalized to sum to one. From each retained pair, we draw impulse responses in proportion to its weight, pool the draws, and select the median target.
 
 \subsection*{Advantages of the Bayesian Model Averaging}
 
@@ -276,13 +275,13 @@ First of all, Bayesian Model Averaging explicitly addresses model uncertainty di
 \begin{equation} \label{eq:x8}
 \mathrm{Var}[\Delta \mid y] = \sum_{k} \left( \mathrm{Var}[\Delta \mid y, M_k] + \hat{\Delta}_k^2 \right) p(M_k \mid y) - E[\Delta \mid y]^2
 \end{equation}
-Here, $\hat \Delta_k = E[\Delta\mid y, M_k]$. After decomposing $\mathrm{Var}[\Delta \mid y]$, it is possible to see that BMA framework accounts for the model uncertainty:
+Here, $\hat \Delta_k = E[\Delta\mid y, M_k]$. After decomposing $\mathrm{Var}[\Delta \mid y]$, it is possible to see that BMA framework accounts for the model uncertainty:\footnote{For the derivation of this decomposition refer to Section~\ref{sec:BMA_var_decomp} in the Appendix.}
 \begin{equation} \label{eq:x9}
 \mathrm{Var}[\Delta \mid y] = \underbrace{\sum_{k} \mathrm{Var}[\Delta \mid y, M_k] p(M_k \mid y)}_{\text{within-model}} + \underbrace{\sum_{k} \left( \hat{\Delta}_k - E[\Delta \mid y] \right)^2 p(M_k \mid y)}_{\text{across-model}}
 \end{equation}
 From \eqref{eq:x9} we see that if a single model dominated the posterior---such that $\hat \Delta_k = E[\Delta\mid y]$ for that model---the across-model term would vanish and $\mathrm{Var}[\Delta \mid y]$ would reduce to the within-model variance alone. That is clearly an advantage of Bayesian Model Averaging since it allows the practitioner to estimate the posterior variance in a more accurate way. 
 
-Second, model averaging has a formal optimality property: Madigan and Raftery (1994) show that, under a logarithmic scoring rule, the model-averaged predictive distribution outperforms any single model. While our study concerns estimation rather than forecasting, this result underpins the broader case for averaging. Hoeting et al. (1999) provide a concrete illustration in which even the highest-probability model carries only 17\% of the posterior model probability, underscoring that model uncertainty is often substantial. Therefore, it makes sense to use Bayesian Model Averaging in order to account for model uncertainty. Our central motivation for using this approach is to assess whether accounting for model uncertainty leads to better MSE results or not. 
+Second, model averaging has a formal optimality property: \citet{madiganModelSelectionAccounting1994} show that, under a logarithmic scoring rule, the model-averaged predictive distribution outperforms any single model. While our study concerns estimation rather than forecasting, this result underpins the broader case for averaging. \citet{hoetingBayesianModelAveraging1999} provide a concrete illustration in which even the highest-probability model carries only 17\% of the posterior model probability, underscoring that model uncertainty is often substantial. Therefore, it makes sense to use Bayesian Model Averaging in order to account for model uncertainty. Our central motivation for using this approach is to assess whether accounting for model uncertainty can also ensure more accurate IRF estimation. 
 
 Having established the theoretical framework and estimation methodology, we now turn to the simulation design to evaluate the empirical performance of the competing approaches.
 
@@ -540,6 +539,44 @@ However, the standard Minnesota prior treats the residual covariance matrix $\Si
 Here, $\Sigma$ is assigned an Inverse-Wishart prior, and the coefficients $\boldsymbol{\alpha}$, conditional on $\Sigma$, retain a normal prior. The matrix $\Phi_0$ dictates the variance structure based on our hyperparameters ($\lambda_1, \lambda_3, \lambda_4$). 
 
 This conjugate structure—an Inverse-Wishart prior on $\Sigma$ combined with a conditionally normal prior on $\boldsymbol{\alpha}$—keeps the posterior in the Normal-Inverse-Wishart family. Crucially for our methodology, this ensures the marginal data density $m(y \mid p, \lambda_1)$ is available in closed form, allowing us to compute exact posterior model probabilities. The cost of this analytical tractability is that the prior covariance must take a specific Kronecker structure ($\Sigma \otimes \Phi_0$). Because $\Phi_0$ is shared across all equations, it forces the cross-variable tightness hyperparameter to $\lambda_2 = 1$, meaning imposing looser or tighter shrinkage on cross-variable coefficients compared to own-lag coefficients is not possible. By iterating over different combinations of $(p, \lambda_1)$ in our grid, we rely on this closed-form density to calculate the exact weights used for Bayesian Model Averaging.
+
+\section{Bayesian Model Averaging Variance Decomposition}
+\label{sec:BMA_var_decomp}
+
+In Bayesian Model Averaging (BMA), the total variance of a quantity of interest $\Delta$ given the data $y$ can be decomposed into two components: the within-model variance and the across-model variance. 
+
+Equation \eqref{eq:25} gives us:
+\begin{equation} \label{eq:E.1}
+\mathrm{Var}[\Delta \mid y] = \sum_{k} \left( \mathrm{Var}[\Delta \mid y, M_k] + \hat{\Delta}_k^2 \right) p(M_k \mid y) - E[\Delta \mid y]^2
+\end{equation}
+where, $\hat \Delta_k = E[\Delta\mid y, M_k]$. Defining $V_k := \mathrm{Var}[\Delta \mid y, M_k]$, $w_k := p(M_k \mid y)$ and $m := E[\Delta \mid y] = \sum_{k=1}^{K} \hat{\Delta}_k w_k$, equation \eqref{eq:E.1} becomes:
+\begin{equation} \label{eq:E.2}
+\mathrm{Var}[\Delta \mid y] = \sum_{k=1}^{K} (V_k + \hat{\Delta}_k^2) w_k - m^2
+\end{equation}
+After splitting the sum:
+\begin{equation} \label{eq:E.3}
+\mathrm{Var}[\Delta \mid y] = \underbrace{\sum_{k=1}^{K} V_k w_k}_{(I)} + \underbrace{\sum_{k=1}^{K} \hat{\Delta}_k^2 w_k - m^2}_{(II)}
+\end{equation}
+Consider the quantity we claim term $(II)$ equals, namely the weighted dispersion of the model means around the averaged mean:
+\begin{equation} \label{eq:E.4}
+\sum_{k} (\hat{\Delta}_k - m)^2 w_k
+\end{equation}
+After expanding the square:
+\begin{equation} \label{eq:E.5}
+\sum_{k} (\hat{\Delta}_k - m)^2 w_k = \sum_{k} \hat{\Delta}_k^2 w_k - 2m \sum_{k} \hat{\Delta}_k w_k + m^2 \sum_{k} w_k
+\end{equation}
+We know that:
+\begin{equation} \label{eq:x}
+\sum_{k=1}^{K} \hat{\Delta}_k\, w_k = m
+\end{equation}
+(definition of the averaged mean) and $\sum_{k=1}^{K}w_k = 1$. Substituting these two identities:
+\begin{equation} \label{eq:E.6}
+\sum_{k} (\hat{\Delta}_k - m)^2 w_k = \sum_{k} \hat{\Delta}_k^2 w_k - 2m^2 + m^2 = \hat{\Delta}_k^2 w_k - m^2
+\end{equation}
+The right-hand side equals term $(II)$. Therefore the second component of the posterior variance equals \eqref{eq:E.4}, the across-model variance. Finally, we can express \eqref{eq:E.3} in closed form:
+\begin{equation} \label{eq:E.7}
+\operatorname{Var}[\Delta \mid y] = \underbrace{\sum_{k=1}^{K} \operatorname{Var}[\Delta \mid y, M_k] p(M_k \mid y)}_{\text{within-model variance}} + \underbrace{\sum_{k=1}^{K} \left( \hat{\Delta}_k - E[\Delta \mid y] \right)^2 p(M_k \mid y)}_{\text{across-model variance}}
+\end{equation}
 
 \section{Posterior Weight Evolution for the BMAs ($p_0=10$).}
 

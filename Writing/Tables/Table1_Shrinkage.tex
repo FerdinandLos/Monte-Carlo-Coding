@@ -2,7 +2,7 @@
 \centering
 \caption{Relative Mean Squared Error: Hard Selection vs.~Bayesian Shrinkage.}
 \label{tab:shrinkage_mse}
-\begin{tabular}{llcccccccc}
+\sbox0{\begin{tabular}{llcccccccc}
 \toprule
  &  & AIC & BIC & HQC & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.6$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.8$)\end{tabular} & \begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular} \\
 $p_0$ & $T$ &  &  &  &  &  &  &  &  \\
@@ -16,6 +16,10 @@ $p_0$ & $T$ &  &  &  &  &  &  &  &  \\
  & 480 & 0.989 & 1.190 & 1.185 & \bfseries 0.853 & 0.920 & 0.876 & 0.944 & 0.866 \\
  & 600 & 1.036 & 1.260 & 1.259 & \bfseries 0.810 & 0.895 & 0.848 & 0.819 & 0.825 \\
 \bottomrule
-\end{tabular}
-\vspace{1ex}\par\noindent\parbox{\linewidth}{\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.}
+\end{tabular}}
+\usebox0\par
+\vspace{1ex}
+\begin{minipage}{\wd0}
+\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+\end{minipage}
 \end{sidewaystable}
