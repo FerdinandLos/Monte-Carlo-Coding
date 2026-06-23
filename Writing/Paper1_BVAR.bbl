@@ -71,6 +71,39 @@
       \endverb
       \keyw{Art,Estimation theory,History,Linear systems,Maximum likelihood estimation,Roundoff errors,Sampling methods,Stochastic processes,Testing,Time series analysis}
     \endentry
+    \entry{AydinBVAR2026}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=41e32ffd8a1417cb580abddaef100ebf}{%
+           family={Aydın},
+           familyi={A\bibinitperiod},
+           given={Akın},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Prof. Derya Uysal, Ludwig-Maximilian University of Munich}%
+      }
+      \strng{namehash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{fullhash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{fullhashraw}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{bibnamehash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{authorbibnamehash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{authornamehash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{authorfullhash}{41e32ffd8a1417cb580abddaef100ebf}
+      \strng{authorfullhashraw}{41e32ffd8a1417cb580abddaef100ebf}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{23}
+      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations}
+      \field{month}{6}
+      \field{title}{To {{Shrink}} or to {{Select}}? {{Evaluating Finite-Sample Performance}} in {{Set-Identifed Structural VARs}}}
+      \field{year}{2026}
+      \field{dateera}{ce}
+    \endentry
     \entry{blakeAppliedBayesianEconometrics}{article}{}{}
       \name{author}{2}{}{%
         {{un=0,uniquepart=base,hash=ce1ee0c7b0f0c05c900a3a8391793436}{%
@@ -1210,6 +1243,39 @@
       \verb{url}
       \verb https://www.jstor.org/stable/1391384
       \endverb
+    \endentry
+    \entry{LoserBMA2026}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a95a1ca5964da5bc4da81d6e7988fbb3}{%
+           family={Loser},
+           familyi={L\bibinitperiod},
+           given={Ferdinand},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Prof. Derya Uysal, Ludwig-Maximilian University of Munich}%
+      }
+      \strng{namehash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{fullhash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{fullhashraw}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{bibnamehash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{authorbibnamehash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{authornamehash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{authorfullhash}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \strng{authorfullhashraw}{a95a1ca5964da5bc4da81d6e7988fbb3}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{23}
+      \field{journaltitle}{Seminar: Evaluating Econometric Methods with Simulations}
+      \field{month}{6}
+      \field{title}{Hedging {{Against Lag Order Uncertainty}} in {{SVARs}}: {{Bayesian Model Averaging}} versus {{Information Criteria}}}
+      \field{year}{2026}
+      \field{dateera}{ce}
     \endentry
     \entry{lutkepohlComparisonCriteriaEstimating1985}{article}{}{}
       \name{author}{1}{}{%
