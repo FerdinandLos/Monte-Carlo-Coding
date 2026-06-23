@@ -96,6 +96,10 @@ def main():
                 .apply(bold_row_min, axis=1)
                 .to_latex(caption=caption, label=label, **to_latex_kwargs))
 
+    # A safe, base-LaTeX string injection using \parbox to ensure the text wraps cleanly 
+    # without bleeding off the page, and requires NO external packages.
+    note_text = r"\vspace{1ex}\par\noindent\parbox{\linewidth}{\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.}"
+
     # TABLE 1: Shrinkage strategy
     cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-40', 
              'BVAR-WN-60', 'BVAR-WN-80', 'BVAR-MDD']
@@ -109,13 +113,10 @@ def main():
         multirow_align="t", convert_css=True
     )
     
-    note_text = r"\\\vspace{1ex}\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario."
-
     latex1 = (latex1
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
-        # Inject the note right after the tabular environment ends
-        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
+        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
         .replace('SIC (BIC)', 'BIC')
         .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular}')
         .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular}')
@@ -144,8 +145,7 @@ def main():
     latex2 = (latex2
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
-        # Inject the note right after the tabular environment ends
-        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
+        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
         .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
         .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -255,8 +255,7 @@ def main():
             
             # Apply your established LaTeX string replacements (Sideways table formatting removed)
             latex5 = (latex5
-                # Inject the note right after the tabular environment ends
-                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
+                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)
                 .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
                 .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
                 .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
@@ -304,7 +303,6 @@ def main():
             latex6 = (latex6
                 .replace('\\begin{table}', '\\begin{sidewaystable}')
                 .replace('\\end{table}',   '\\end{sidewaystable}')
-                # Inject the note right after the tabular environment ends
                 .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)   
                 .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
                 .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
@@ -616,8 +614,8 @@ def main():
             # 3. Plot the two iterations as separate lines (hue='iter')
             # We drop the 'errorbar' argument since we are plotting distinct individual paths now.
             sns.lineplot(data=filtered_df, x='Tau', y='MDD', hue='Iter', 
-                        palette=['#E41A1C', '#377EB8'], linewidth=2.5, 
-                        marker='o', markersize=8, ax=ax)
+                         palette=['#E41A1C', '#377EB8'], linewidth=2.5, 
+                         marker='o', markersize=8, ax=ax)
         
             # 4. Find the peak for each of the two individual iterations to annotate
             colors = ['#E41A1C', '#377EB8']

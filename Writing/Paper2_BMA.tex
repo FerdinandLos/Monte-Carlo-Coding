@@ -26,7 +26,7 @@
     Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BMA, whereas (CITATION) implements BVAR. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
 }
-\date{\today \\ \vspace{0.5cm} \textit{Seminar Evaluating Econometric Methods using Monte Carlo Simulations }(Prof. Derya Uysal)}
+\date{\today \\ \vspace{0.5cm} Seminar: \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
 
 \begin{document}
 
@@ -34,7 +34,7 @@
 
 \begin{abstract}
 \noindent
-Structural Vector Autoregressions (VARs) identified via set restrictions are highly sensitive to lag order specification. Updating Ivanov and Kilian (2005), we evaluate traditional Information Criteria against Bayesian Model Averaging (BMA) in recovering the true median target impulse response function (IRF). Using Monte Carlo simulations calibrated to the global oil market, we analyze the relative Mean Squared Error of competing strategies across finite samples. For single-model selection, the Akaike Information Criterion (AIC) consistently dominates stricter criteria by avoiding severe underfitting bias. Crucially, a joint-grid BMA approach—averaging across lag orders and BVAR shrinkage hyperparameters—yields the most accurate IRF recovery. By dynamically shrinking overparameterized models, this method mitigates lag uncertainty while preserving lower-order precision, offering a robust alternative to traditional single-model selection.
+Structural Vector Autoregressions (VARs) identified via set restrictions are highly sensitive to lag order specification. Updating Ivanov and Kilian (2005), we evaluate traditional Information Criteria against Bayesian Model Averaging (BMA) in recovering the true median target impulse response function (IRF). Using Monte Carlo simulations calibrated to global oil market data, we analyze the relative Mean Squared Error of competing strategies across finite samples. For single-model selection, the Akaike Information Criterion (AIC) consistently dominates stricter criteria by avoiding severe underfitting bias. Crucially, a joint-grid BMA approach—averaging across lag orders and BVAR shrinkage hyperparameters—yields the most accurate IRF recovery, outperforming simple AIC in almost all scenarios. By dynamically shrinking overparameterized models, this method mitigates lag uncertainty while preserving lower-order precision, offering a robust alternative to traditional single-model selection.
 \vspace{1em}\\
 \noindent\textbf{Keywords:} Structural Vector Autoregression (SVAR), Set Identification, Bayesian Model Averaging (BMA), Model Uncertainty, Lag Order Selection, Monte Carlo Simulation \\
 \noindent\textbf{JEL Codes:} C11, C15, C32, C52 % Update with relevant JEL classification codes
@@ -50,7 +50,7 @@ This study draws inspiration from \citet{ivanovPractitionersGuideLag2005}, the f
 
 We then compare the information criteria AIC, BIC, and HQC with estimation using Bayesian Model Averaging (BMA) which doesn't fix one lag order but weights a set of probable lag orders and can be combined with Bayesian Vector Autoregression (BVAR) to shrink down parameters of higher lag orders. Our results demonstrate that hedging lag selection risk through Bayesian Model Averaging (BMA) significantly improves the accurate recovery of median target Impulse Response Functions (IRFs). Particularily the joint-grid BMA approach dominates traditional AIC-selected models in most scenarios and is shown to diversify estimation weights across the most broad spectrum of lag orders. By dynamically applying tighter hyperparameter shrinkage ($\lambda_1$) to overparameterized specifications ($p>p_0$), this approach successfully mitigates the risk of lag order uncertainty while preserving precise parameter estimation for the crucial lower lags. Furthermore, our results confirm the results presented by \citet{ivanovPractitionersGuideLag2005} when relying on single-model selection. In this case, the Akaike Information Criterion (AIC) consistently outperforms stricter criteria like BIC and HQC, as its milder penalization avoids the severe underfitting bias that heavily distorts IRF inference. As $T$ grows, AIC also improves in comparison to BMA for a sufficiently low $p_0$ as this enables parameters to be estimated with less variance also in simple OLS.
 
-The rest of the paper is structured as follows: Section~\ref{sec:theory} introduces the reader to the theoretical foundations needed to understand the methodology of this simulation study. It first introduces the VAR framework, Section~\ref{sec:VAR_IRF}, then explains the sign restriction approach for IRF decomposition, Section~\ref{sec:sign_restrictions}, and explains information criteria as well as the BVAR method, Section~\ref{sec:IC}~and~\ref{sec:BVAR}. We aim to both convey the intuition behind these methods as well as derive key properties. Section~\ref{sec:simulation} explains the simulation design and Section~\ref{sec:results} presents our results. Finally, the conclusion, Section~\ref{sec:conclusion}, summarizes and discusses our key findings.
+The rest of the paper is structured as follows: Section~\ref{sec:theory} introduces the reader to the theoretical foundations needed to understand the methodology of this simulation study. It first introduces the VAR framework, Section~\ref{sec:VAR_IRF}, then explains the sign restriction approach for IRF decomposition, Section~\ref{sec:sign_restrictions}, and explains information criteria as well as the BMA method, Section~\ref{sec:IC}~and~\ref{sec:BMA}. We aim to both convey the intuition behind these methods as well as derive key properties. Section~\ref{sec:simulation} explains the simulation design and Section~\ref{sec:results} presents our results. Finally, the conclusion, Section~\ref{sec:conclusion}, summarizes and discusses our key findings.
 
 
 \section{Theoretical Background}
@@ -175,7 +175,7 @@ where the first inequality holds for $N \ge 16$ and the second for all $N$.\foot
 \hat{p}^{\mathrm{BIC}} ;\leq; \hat{p}^{\mathrm{HQC}} ;\leq; \hat{p}^{\mathrm{AIC}}
 \end{equation}
 
-so that the BIC is the most parsimonious criterion and the AIC the least, with the HQC in between \citep{ivanovPractitionersGuideLag2005}. Since $N \ge 16$ holds across all sample sizes in our study, this ordering applies throughout. As seen in Table~\ref {tab:ic_lag_orders}, our Monte Carlo Simulation confirms this ordering. The penalization of BIC is evidenced to be so strong that the lag order selected, $\hat{p}^{\mathrm{BIC}}$, always stays close to 2, regardless of the sample size $T$ and the true lag order $p_0$. $\hat{p}^{\mathrm{HQC}}$ lies above $\hat{p}^{\mathrm{BIC}}$ and increases more apparently with $T$; it also does not come close to converging to the true lag order. On the other hand, $\hat{p}^{\mathrm{AIC}}$ is consistently much closer to the true lag order and has already nearly reached $p_0$ at $T=600$. Therefore, although AIC is not asymptotically consistent, it is the only IC that can come close to the true lag order for realistic sample sizes.
+so that the BIC is the most parsimonious criterion and the AIC the least, with the HQC in between \citep{ivanovPractitionersGuideLag2005}. Since $N \ge 16$ holds across all sample sizes in our study, this ordering applies throughout. As shown in Table~\ref {tab:ic_lag_orders}, our Monte Carlo Simulation confirms this ordering. The penalization of BIC is evidenced to be so strong that the lag order selected, $\hat{p}^{\mathrm{BIC}}$, always stays close to 2, regardless of the sample size $T$ and the true lag order $p_0$. $\hat{p}^{\mathrm{HQC}}$ lies above $\hat{p}^{\mathrm{BIC}}$ and increases more apparently with $T$; yetit also does not come close to converging to the true lag order. On the other hand, $\hat{p}^{\mathrm{AIC}}$ is consistently much closer to the true lag order and has already nearly reached $p_0$ at $T=600$. Therefore, although AIC is not asymptotically consistent, it is the only IC that can come close to the true lag order for realistic sample sizes.
 
 \input{Tables/Table3_IC_Lags.tex}
 
@@ -225,7 +225,7 @@ p(y \mid M_k) = \int p(y \mid \theta_k, M_k) p(\theta_k \mid M_k) \, d\theta_k.
 \end{equation}
 The marginal data density (MDD or marginal likelihood) in \eqref{eq:x3} is central to our procedure, as it is the primary input to the model weights in \eqref{eq:x2}.
 
-These 3 equations defined above are the backbones of the Bayesian Model Averaging methodology. In practice, these three equations map directly onto the steps of our procedure. Equation \eqref{eq:x3}---the marginal data density---is evaluated first: for each candidate model, we obtain a measure of how well it explains the data once its parameters are integrated out. For the BVAR models, indexed by a lag order and tightness pair ($p$, $\lambda_1$), this quantity is the marginal data density returned in closed form by the conjugate Normal-Wishart estimator; for the OLS models, indexed by lag order alone ($p$), it is approximated by the Bayesian Information Criterion and Akaike Information Criterion\footnote{\citet[chapt. 3.7]{steelModelAveragingIts2020} mentions that marginal data density is approximated by the Bayesian Information Criterion when the closed form of equation \eqref{eq:x3} does not exist, as BIC asymptotically converges to marginal data density. Also, \citet{burnhamModelSelectionMultimodel2002} justifies the usage of AIC as an approximation of the marginal data density. Therefore, we use both criteria.} Equation~\eqref{eq:x2} then converts these marginal data densities into model weights: each is multiplied by its model prior ($p(M_k)$)---uniform or geometric---and normalized so that the weights across all candidate models sum to one (denominator). These weights are the posterior model probabilities. Finally, \eqref{eq:x1} is realized not by analytical combination but by Monte Carlo: from each model we draw admissible impulse responses in a number proportional to its weight, so that models the data favor contribute more draws, and we collect all draws into a single pool. This pool is the Monte Carlo representation of the model-averaged distribution in \eqref{eq:x1}. From it, we select the median target as our single, coherent estimate of the impulse response, completing the averaging.
+These 3 equations defined above are the backbones of the Bayesian Model Averaging methodology. In practice, these three equations map directly onto the steps of our procedure. Equation \eqref{eq:x3}---the marginal data density---is evaluated first: for each candidate model, we obtain a measure of how well it explains the data once its parameters are integrated out. For the BVAR models, indexed by a lag order and tightness pair ($p$, $\lambda_1$), this quantity is the marginal data density returned in closed form by the conjugate Normal-Wishart estimator; for the OLS models, indexed by lag order alone ($p$), it is approximated by BIC and AIC-\footnote{\citet[chapt. 3.7]{steelModelAveragingIts2020} mentions that marginal data density is approximated by the Bayesian Information Criterion when the closed form of equation \eqref{eq:x3} does not exist, as BIC asymptotically converges to marginal data density. Also, \citet{burnhamModelSelectionMultimodel2002} justifies the usage of AIC as an approximation of the marginal data density. Therefore, we use both criteria.} Equation~\eqref{eq:x2} then converts these marginal data densities into model weights: each is multiplied by its model prior ($p(M_k)$)---uniform or geometric---and normalized so that the weights across all candidate models sum to one (denominator). These weights are the posterior model probabilities. Finally, \eqref{eq:x1} is realized not by analytical combination but by Monte Carlo: from each model we draw admissible impulse responses in a number proportional to its weight, so that models the data favor contribute more draws, and we collect all draws into a single pool. This pool is the Monte Carlo representation of the model-averaged distribution in \eqref{eq:x1}. From it, we select the median target as our single, coherent estimate of the impulse response, completing the averaging.
 
 So far, we have described the common structure they share. However, we use four different BMA methods, and each has its own priors or estimation methods. We discuss the differences below.
 
@@ -256,7 +256,7 @@ p(M_k) \propto \theta^p \quad \text{where} \quad \theta=0.5
 \end{equation}
 We set $\theta = 0.5$, under which each additional lag halves the prior weight---equivalently, the prior demands that the marginal data density favor a longer model by at least a factor of two before the additional lag is preferred. This value is a deliberate, interpretable benchmark rather than an optimized choice: it imposes a moderate preference for parsimony, neither so weak as to coincide with the uniform prior nor so strong as to dominate the evidence from the marginal data density.
 
-For models estimated via OLS, \eqref{eq:x3} is undefined because there are no priors $p(\theta_k \mid M_k)$; under the frequentist approach, each estimated parameter consumes one full degree of freedom with no shrinkage. We therefore approximate the marginal data density by $\exp\left(-\frac{1}{2}\mathrm{IC}(p)\right)$, where $\mathrm{IC}$ is either BIC or AIC. As derived by \citet{schwarzEstimatingDimensionModel1978,rafteryBayesianModelSelection1995}, this serves as an asymptotic approximation to the log marginal data density that, in large samples, does not depend on a prior. For the BVAR models, by contrast, the Normal-Wishart prior—a normal prior on $\boldsymbol{\alpha}$ and an Inverse-Wishart prior on $\Sigma$, as introduced below—supplies the joint density $p(\theta_k \mid M_k)$ that \eqref{eq:x3} integrates over. Because this conjugate structure makes the integral available in closed form, the marginal data density $m(y \mid p,\lambda_1)$ is computed directly.
+For models estimated via OLS, \eqref{eq:x3} is undefined because there are no priors $p(\theta_k \mid M_k)$; under the frequentist approach, each estimated parameter consumes one full degree of freedom with no shrinkage. We therefore approximate the marginal data density by $\exp\left(-\frac{1}{2}\mathrm{IC}(p)\right)$, where $\mathrm{IC}$ is either BIC or AIC. As derived by \citet{schwarzEstimatingDimensionModel1978,rafteryBayesianModelSelection1995}, this serves as an asymptotic approximation to the log marginal data density that, in large samples, does not depend on a prior. For the BVAR models, by contrast, the Normal-Wishart prior—a normal prior on $\boldsymbol{\alpha}$ and an Inverse-Wishart prior on $\Sigma$, as introduced below—supplies the joint density $p(\theta_k \mid M_k)$ that \eqref{eq:x3} integrates over.\footnote{"For an introduction to the BVAR methodology, see Section~\ref{sec:BVAR} of the Appendix; for a thorough treatment, see Paper A.} Because this conjugate structure makes the integral available in closed form, the marginal data density $m(y \mid p,\lambda_1)$ is computed directly.
 
 By using \eqref{eq:x2} we calculate the weights for the models estimated via OLS:
 \begin{equation} \label{eq:x6}
@@ -269,25 +269,6 @@ w_{\text{BVAR}}(p, \lambda_1) = \frac{m(y \mid p, \lambda_1) \pi(p)}{\sum_{p'=1}
 where $m(y \mid p, \lambda_1)$ is the calculated marginal data density \eqref{eq:x3} with joint prior and $\pi(p)$ is the same priors that are described above. 
 
 The BVAR models are indexed by pairs ($p, \lambda_1$), with the lag order ranging over $p = 1, \dots, \bar p=12$ and the tightness over the discrete grid $\lambda_1 \in \{0.20, 0.40, 0.60, 0.80\}$.\footnote{This set is relatively small but captures both tighter and looser hyperparameters. We have to limit it due to computational concerns.} For every pair in this grid, we estimate the Normal-Wishart BVAR and compute its marginal data density. The pairs are then weighted by their posterior model probability \eqref{eq:x7}; pairs whose normalized weight falls below a threshold of 0.01 are discarded, and the weights of the retained pairs are renormalized to sum to one. From each retained pair, we draw impulse responses in proportion to its weight, pool the draws, and select the median target.
-
-\subsection{Bayesian VAR (BVAR) Specification}
-\label{sec:BVAR}
-
-The frequentist lag-order selection problem and Bayesian shrinkage differ fundamentally. The frequentist approach suffers from the curse of dimensionality: each additional lag adds a full block of coefficients to the system, and every estimated parameter consumes one degree of freedom. The Bayesian approach reframes this problem. The estimated value of each parameter is determined jointly by the prior and the data, through the posterior. The posterior mean can be understood as a weighted average:
-\begin{equation} \label{eq:posterior_weight}
-\text{posterior} \approx w(\text{data estimate}) + (1 - w)(\text{prior mean})
-\end{equation}
-where the weight $w$ reflects the tightness of the prior. Because part of each coefficient is supplied by the prior rather than estimated freely from the data, no parameter consumes a full degree of freedom. The curse of dimensionality is thus addressed not by discarding lags, as selection does, but by disciplining their coefficients \citep[chapt. 5]{lutkepohlNewIntroductionMultiple2005}.
-
-To evaluate the BVAR models in our averaging grid, we must specify the likelihood and prior. Assuming a Gaussian VAR, the likelihood function is normally distributed. To shrink the coefficients $\boldsymbol{\alpha}$ toward our prior belief (a white noise process, setting the prior mean $\boldsymbol{\alpha}^{*} = 0$), we utilize the Minnesota prior framework to govern the prior variance. The central hyperparameter is $\lambda_1$, the overall tightness, which dictates the strength of the shrinkage. High $\lambda_1$ lets the data dominate, while small $\lambda_1$ prioritzes the prior belief. The variance of distant lags is shrunk further by a decay factor governed by $\lambda_3$, and exogenous/deterministic terms are controlled by $\lambda_4$.
-
-However, the standard Minnesota prior treats the residual covariance matrix $\Sigma$ as fixed. Because our BMA approach requires estimating $\Sigma$ alongside the coefficients while maintaining an analytically tractable marginal data density—the integral in \eqref{eq:x3}—we employ the conjugate Normal-Wishart prior:
-\begin{equation} \label{eq:normal_wishart}
-\Sigma \sim \mathcal{IW}(S_0, \alpha_0), \quad \boldsymbol{\alpha} \mid \Sigma \sim \mathcal{N}(\boldsymbol{\alpha}^*, \Sigma \otimes \Phi_0)
-\end{equation}
-Here, $\Sigma$ is assigned an Inverse-Wishart prior, and the coefficients $\boldsymbol{\alpha}$, conditional on $\Sigma$, retain a normal prior. The matrix $\Phi_0$ dictates the variance structure based on our hyperparameters ($\lambda_1, \lambda_3, \lambda_4$). 
-
-This conjugate structure—an Inverse-Wishart prior on $\Sigma$ combined with a conditionally normal prior on $\boldsymbol{\alpha}$—keeps the posterior in the Normal-Inverse-Wishart family. Crucially for our methodology, this ensures the marginal data density $m(y \mid p, \lambda_1)$ is available in closed form, allowing us to compute exact posterior model probabilities. The cost of this analytical tractability is that the prior covariance must take a specific Kronecker structure ($\Sigma \otimes \Phi_0$). Because $\Phi_0$ is shared across all equations, it forces the cross-variable tightness hyperparameter to $\lambda_2 = 1$, meaning imposing looser or tighter shrinkage on cross-variable coefficients compared to own-lag coefficients is not possible. By iterating over different combinations of $(p, \lambda_1)$ in our grid, we rely on this closed-form density to calculate the exact weights used for Bayesian Model Averaging.\footnote{For a deep-dive into BVAR, please refer to Paper A}
 
 \subsection*{Advantages of the Bayesian Model Averaging}
 
@@ -305,10 +286,6 @@ Second, model averaging has a formal optimality property: Madigan and Raftery (1
 
 Having established the theoretical framework and estimation methodology, we now turn to the simulation design to evaluate the empirical performance of the competing approaches.
 
-
-\section{Simulation Design}
-\label{sec:methodology}
-
 \section{Simulation Design}
 \label{sec:simulation}
 
@@ -322,7 +299,7 @@ The DGP is formed by structural VAR model using the structural impact matrix $\t
 
 We estimate these parameters using the original data for two different lag orders, $p_0 \in \{4,10\}$ and create DGPs with different sample sizes, $T \in \{240, 360, 480, 600\}$, where $T=N-\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. We restrict the lag order selection $p_0$ to only include one high and one low lag order and drop $T=300$ in comparison to the setup of \citet{ivanovPractitionersGuideLag2005} in order to save computational power for the sign restriction decomposition. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
 
-On each of these samples, VARs fitted by lag orders selected by both the three ICs as well as different specifications of BVAR are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We estimate all BVARs using $p=\bar{p}=12$ as the lag order, thereby solely relying on shrinkage for reducing the variance and bias of the estimation. 
+On each of these samples, VARs fitted by lag orders selected by both the three ICs as well as the six different BMA methods are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. 
 
 Finally, we estimate the key performance parameter, the relative MSE, by calculating the geometric mean over the ratio of the squared errors of the median target IRFs $\hat \theta_j$ computed by method j in relation to the squared errors of the median target IRF by a model fit with the true lag order $\hat \theta_{p_0i}$ over all Monte Carlo iterations from $1, ..., R$:
 
@@ -460,10 +437,11 @@ Ultimately, this study advocates for a shift in standard empirical practice. Rat
 \section*{References}
 \printbibliography
 
+
+\appendix
 \section*{Appendix}
 
-
-\subsection*{A. DGP IRFs}
+\section{DGP IRFs}
 
 Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_0=10$. You can see that they exhibit the same general pattern but that a higher lag order captures more complex movements.
 
@@ -483,7 +461,7 @@ Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_
 \end{figure}
 
 
-\subsection*{B. Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
+\section{Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
 
 For clarity, several intermediate steps were omitted in the main text. We collect them here. To derive the relationship in equation \eqref{eq:VAR_error}, we begin from the structural form:
 \begin{equation}
@@ -506,7 +484,7 @@ e_t = B \varepsilon_t
 
 Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporaneous coefficient matrix, which governs the simultaneous interactions among the endogenous variables in the structural form, whereas $B = (I-B_0)^{-1}$ is the impact matrix that maps the unit-variance structural shocks $\varepsilon_t$ into the reduced-form innovations $e_t$. The former is a primitive of the structural model; the latter is the object recovered through the identification procedure in the main text.
 
-\subsection*{C. Derivation of the Recursive Coefficients and the Mean}
+\section{Derivation of the Recursive Coefficients and the Mean}
 
 We now derive the recursion in (4). It is convenient to define the autoregressive lag polynomial: 
 \begin{equation}
@@ -544,9 +522,28 @@ which gives:
 \mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v  
 \end{equation}
 
-\subsection*{D. Posterior Weight Evolution for the BMAs ($p_0=10$).}
+\section{Bayesian VAR (BVAR)}
+\label{sec:BVAR}
 
-Figures~\ref{fig:bma_heatmaps_grid_p10}~and~\ref{fig:bma_heatmaps_grid_bvar_p10} depict the weighting scheme across sample sizes $T$ for all six different BMA methods. Figure~\ref{fig:fig:tau_to_p_p10} depicts how the expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=10$)
+The frequentist lag-order selection problem and Bayesian shrinkage differ fundamentally. The frequentist approach suffers from the curse of dimensionality: each additional lag adds a full block of coefficients to the system, and every estimated parameter consumes one degree of freedom. The Bayesian approach reframes this problem. The estimated value of each parameter is determined jointly by the prior and the data, through the posterior. The posterior mean can be understood as a weighted average:
+\begin{equation} \label{eq:posterior_weight}
+\text{posterior} \approx w(\text{data estimate}) + (1 - w)(\text{prior mean})
+\end{equation}
+where the weight $w$ reflects the tightness of the prior. Because part of each coefficient is supplied by the prior rather than estimated freely from the data, no parameter consumes a full degree of freedom. The curse of dimensionality is thus addressed not by discarding lags, as selection does, but by disciplining their coefficients \citep[chapt. 5]{lutkepohlNewIntroductionMultiple2005}.
+
+To evaluate the BVAR models in our averaging grid, we must specify the likelihood and prior. Assuming a Gaussian VAR, the likelihood function is normally distributed. To shrink the coefficients $\boldsymbol{\alpha}$ toward our prior belief (a white noise process, setting the prior mean $\boldsymbol{\alpha}^{*} = 0$), we utilize the Minnesota prior framework to govern the prior variance. The central hyperparameter is $\lambda_1$, the overall tightness, which dictates the strength of the shrinkage. High $\lambda_1$ lets the data dominate, while small $\lambda_1$ prioritzes the prior belief. The variance of distant lags is shrunk further by a decay factor governed by $\lambda_3$, and exogenous/deterministic terms are controlled by $\lambda_4$.
+
+However, the standard Minnesota prior treats the residual covariance matrix $\Sigma$ as fixed. Because our BMA approach requires estimating $\Sigma$ alongside the coefficients while maintaining an analytically tractable marginal data density—the integral in \eqref{eq:x3}—we employ the conjugate Normal-Wishart prior:
+\begin{equation} \label{eq:normal_wishart}
+\Sigma \sim \mathcal{IW}(S_0, \alpha_0), \quad \boldsymbol{\alpha} \mid \Sigma \sim \mathcal{N}(\boldsymbol{\alpha}^*, \Sigma \otimes \Phi_0)
+\end{equation}
+Here, $\Sigma$ is assigned an Inverse-Wishart prior, and the coefficients $\boldsymbol{\alpha}$, conditional on $\Sigma$, retain a normal prior. The matrix $\Phi_0$ dictates the variance structure based on our hyperparameters ($\lambda_1, \lambda_3, \lambda_4$). 
+
+This conjugate structure—an Inverse-Wishart prior on $\Sigma$ combined with a conditionally normal prior on $\boldsymbol{\alpha}$—keeps the posterior in the Normal-Inverse-Wishart family. Crucially for our methodology, this ensures the marginal data density $m(y \mid p, \lambda_1)$ is available in closed form, allowing us to compute exact posterior model probabilities. The cost of this analytical tractability is that the prior covariance must take a specific Kronecker structure ($\Sigma \otimes \Phi_0$). Because $\Phi_0$ is shared across all equations, it forces the cross-variable tightness hyperparameter to $\lambda_2 = 1$, meaning imposing looser or tighter shrinkage on cross-variable coefficients compared to own-lag coefficients is not possible. By iterating over different combinations of $(p, \lambda_1)$ in our grid, we rely on this closed-form density to calculate the exact weights used for Bayesian Model Averaging.
+
+\section{Posterior Weight Evolution for the BMAs ($p_0=10$).}
+
+Figures~\ref{fig:bma_heatmaps_grid_p10}~and~\ref{fig:bma_heatmaps_grid_bvar_p10} depict the weighting scheme across sample sizes $T$ for all six different BMA methods. Figure~\ref{fig:tau_to_p_p10} depicts how the expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=10$)
 
 \begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
     \centering

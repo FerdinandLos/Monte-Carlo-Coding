@@ -26,7 +26,7 @@
     Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BVAR, whereas (CITATION) implements BMA. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
 }
-\date{\today \\ \vspace{0.5cm} \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
+\date{\today \\ \vspace{0.5cm} Seminar: \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
 \begin{document}
 
 \maketitle
@@ -173,7 +173,7 @@ where the first inequality holds for $N \ge 16$ and the second for all $N$.\foot
 \hat{p}^{\mathrm{BIC}} ;\leq; \hat{p}^{\mathrm{HQC}} ;\leq; \hat{p}^{\mathrm{AIC}}
 \end{equation}
 
-so that the BIC is the most parsimonious criterion and the AIC the least, with the HQC in between \citep{ivanovPractitionersGuideLag2005}. Since $N \ge 16$ holds across all sample sizes in our study, this ordering applies throughout. As seen in Table~\ref {tab:ic_lag_orders}, our Monte Carlo Simulation confirms this ordering. The penalization of BIC is evidenced to be so strong that the lag order selected, $\hat{p}^{\mathrm{BIC}}$, always stays close to 2, regardless of the sample size $T$ and the true lag order $p_0$. $\hat{p}^{\mathrm{HQC}}$ lies above $\hat{p}^{\mathrm{BIC}}$ and increases more apparently with $T$; it also does not come close to converging to the true lag order. On the other hand, $\hat{p}^{\mathrm{AIC}}$ is consistently much closer to the true lag order and has already nearly reached $p_0$ at $T=600$. Therefore, although AIC is not asymptotically consistent, it is the only IC that can come close to the true lag order for realistic sample sizes.
+so that the BIC is the most parsimonious criterion and the AIC the least, with the HQC in between \citep{ivanovPractitionersGuideLag2005}. Since $N \ge 16$ holds across all sample sizes in our study, this ordering applies throughout. As shown in Table~\ref {tab:ic_lag_orders}, our Monte Carlo Simulation confirms this ordering. The penalization of BIC is evidenced to be so strong that the lag order selected, $\hat{p}^{\mathrm{BIC}}$, always stays close to 2, regardless of the sample size $T$ and the true lag order $p_0$. $\hat{p}^{\mathrm{HQC}}$ lies above $\hat{p}^{\mathrm{BIC}}$ and increases more apparently with $T$; yet it also does not come close to converging to the true lag order. On the other hand, $\hat{p}^{\mathrm{AIC}}$ is consistently much closer to the true lag order and has already nearly reached $p_0$ at $T=600$. Therefore, although AIC is not asymptotically consistent, it is the only IC that can come close to the true lag order for realistic sample sizes.
 
 \input{Tables/Table3_IC_Lags.tex}
 
@@ -406,9 +406,10 @@ Finally, we highlight a critical divergence between forecasting and structural a
 \section*{References}
 \printbibliography
 
+\appendix
 \section*{Appendix}
 
-\subsection*{A. DGP IRFs}
+\section{DGP IRFs}
 
 Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_0=10$. You can see that they exhibit the same general pattern but that a higher lag order captures more complex movements.
 
@@ -428,7 +429,7 @@ Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_
 \end{figure}
 
 
-\subsection*{B. Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
+\section{Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
 
 For clarity, several intermediate steps were omitted in the main text. We collect them here. To derive the relationship in equation \eqref{eq:VAR_error}, we begin from the structural form:
 \begin{equation}
@@ -451,7 +452,7 @@ e_t = B \varepsilon_t
 
 Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporaneous coefficient matrix, which governs the simultaneous interactions among the endogenous variables in the structural form, whereas $B = (I-B_0)^{-1}$ is the impact matrix that maps the unit-variance structural shocks $\varepsilon_t$ into the reduced-form innovations $e_t$. The former is a primitive of the structural model; the latter is the object recovered through the identification procedure in the main text.
 
-\subsection*{C. Derivation of the Recursive Coefficients and the Mean}
+\section{Derivation of the Recursive Coefficients and the Mean}
 
 We now derive the recursion in (4). It is convenient to define the autoregressive lag polynomial: 
 \begin{equation}

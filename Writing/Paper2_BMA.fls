@@ -241,6 +241,7 @@ INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfont
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1440.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecrm0800.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecrm0600.tfm
@@ -248,7 +249,6 @@ INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ec
 INPUT ./Tables/Table3_IC_Lags.tex
 INPUT ./Tables/Table3_IC_Lags.tex
 INPUT Tables/Table3_IC_Lags.tex
-INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx8.tfm
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx6.tfm
@@ -328,6 +328,12 @@ INPUT ./Figures/True_IRF_plot_Cumulative_10_lags.png
 INPUT ./Figures/True_IRF_plot_Cumulative_10_lags.png
 INPUT ./Figures/True_IRF_plot_Cumulative_10_lags.png
 INPUT ./Figures/True_IRF_plot_Cumulative_10_lags.png
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT ./Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf
 INPUT ./Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf
 INPUT ./Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf
@@ -371,11 +377,11 @@ OUTPUT Paper2_BMA.run.xml
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk
-INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1728.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600pk
@@ -395,6 +401,7 @@ INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfo
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
