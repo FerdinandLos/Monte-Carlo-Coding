@@ -23,7 +23,7 @@
 % Title and Author Information
 \title{To Shrink or to Select? Evaluating Finite-Sample Performance in Set-Identified Structural VARs}
 \author{
-    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BVAR whereas (CITATION) implements BMA. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ.} \and
+    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BVAR, whereas (CITATION) implements BMA. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
 }
 \date{\today \\ \vspace{0.5cm} \textit{Evaluating Econometric Methods with Simulations} \\ Supervisor: Prof. Derya Uysal \\ \vspace{0.5cm} Ludwig-Maximilian University of Munich, M. Sc. Economics Program}
@@ -33,7 +33,7 @@
 
 \begin{abstract}
 \noindent
-This paper evaluates specification strategies for estimating structural Impulse Response Functions (IRFs) in Vector Autoregressions (VARs), updating traditional lag-selection evaluations to reflect modern Bayesian methods and set identification. Using a Monte Carlo simulation based on a realistic data-generating process of the global oil market, we compare the performance of information criteria (AIC, BIC, HQC) against Bayesian VARs (BVAR) across various sample sizes and true lag orders. Structural shocks are identified via sign restrictions, with accuracy measured by the mean squared error of the median target IRF. Our results confirm that the AIC outperforms stricter criteria (BIC, HQC) in finite samples by minimizing bias. However, BVAR models generally dominate frequentist lag selection, particularly for high-order true models, by leveraging prior shrinkage to discipline the parameter space rather than strictly truncating lags. Furthermore, we demonstrate that optimizing the shrinkage hyperparameter via Marginal Data Density (MDD)—a forecasting-oriented metric—tends to impose excessive shrinkage, yielding suboptimal structural estimates. This highlights a critical divergence between model specification for forecasting versus structural macroeconomic inference, concluding that a moderately loose BVAR prior offers a highly robust approach for accurate IRF recovery.
+This paper evaluates specification strategies for estimating structural Impulse Response Functions (IRFs) in Vector Autoregressions (VARs), updating traditional lag-selection evaluations with modern Bayesian methods and set identification. Using Monte Carlo simulations calibrated to the global oil market, we compare information criteria (AIC, BIC, HQC) against Bayesian VARs (BVAR) in recovering structural shocks identified via sign restrictions. Results confirm that AIC outperforms stricter criteria (BIC, HQC) in finite samples by minimizing bias. However, BVAR models generally dominate frequentist lag selection, especially for high-order models, by leveraging prior shrinkage rather than strictly truncating lags. Furthermore, optimizing the shrinkage hyperparameter via Marginal Data Density (MDD) imposes excessive shrinkage, yielding suboptimal structural estimates. This highlights a critical divergence between forecasting and structural inference, concluding that a moderately loose BVAR prior offers a robust approach for accurate IRF recovery.
 
 \vspace{1em}
 \noindent\textbf{Keywords:} Structural Vector Autoregression (SVAR), Set Identification, Bayesian VAR (BVAR), Lag Order Selection, Monte Carlo Simulation \\
@@ -197,7 +197,7 @@ we have derived an equation for the bias-variance tradeoff. In small samples, if
 \subsection{Bayesian VAR (BVAR)}
 \label{sec:BVAR}
 
-So far, we have discussed the theoretical elements necessary to replicate \citet{ivanovPractitionersGuideLag2005}. We now extend this framework by introducing Bayesian Vector Autoregression. The frequentist lag-order selection problem and Bayesian shrinkage differ even philosophically. The frequentist approach suffers from the curse of dimensionality: each additional lag adds a full $(K \times K)$ block of coefficients to the system, and because estimation must fit these to the data, every estimated parameter consumes one degree of freedom. Frequentist methods therefore demand large samples—a requirement that becomes acute in our smallest design, where a twelve-lag system requires estimating $K^2p = 192$ autoregressive coefficients against only 84 (96-12) effective observations per equation.
+So far, we have discussed the theoretical elements necessary to replicate \citet{ivanovPractitionersGuideLag2005}. We now extend this framework by introducing Bayesian Vector Autoregression. The frequentist lag-order selection problem and Bayesian shrinkage differ fundamentally. The frequentist approach suffers from the curse of dimensionality: each additional lag adds a full $(K \times K)$ block of coefficients to the system, and because estimation must fit these to the data, every estimated parameter consumes one degree of freedom. Frequentist methods therefore demand large samples—a requirement that becomes acute in our smallest design, where a twelve-lag system requires estimating $K^2p = 192$ autoregressive coefficients against only 240 effective observations per equation.
 
 The Bayesian approach reframes this problem. The estimated value of each parameter is determined jointly by the prior and the data, through the posterior. The posterior mean can be understood as a weighted average of the data and the prior,
 \begin{equation} \label{eq:posterior_weight}
@@ -205,7 +205,7 @@ The Bayesian approach reframes this problem. The estimated value of each paramet
 \end{equation}
 where the weight $w$ reflects the tightness of the prior. Because part of each coefficient is supplied by the prior rather than estimated freely from the data, no parameter consumes a full degree of freedom. The prior does not remove parameters; it constrains them, reducing the effective number of parameters the data must support while leaving the nominal dimension unchanged. The curse of dimensionality is thus addressed not by discarding lags, as selection does, but by disciplining their coefficients—at the cost of bias introduced by pulling each coefficient toward the prior mean.
 
-We follow \citet[chapt. 5]{lutkepohlNewIntroductionMultiple2005} in introducing the Bayesian VAR methodology. By Bayes’ theorem:
+We follow \citet[chapt. 5]{lutkepohlNewIntroductionMultiple2005} in introducing the Bayesian VAR methodology. By Bayes' theorem:
 \begin{equation} \label{eq:18}
 g(\boldsymbol{\alpha}|\mathbf{y}) = \frac{f(\mathbf{y}|\boldsymbol{\alpha})g(\boldsymbol{\alpha})}{f(\mathbf{y})}
 \end{equation}
@@ -227,8 +227,9 @@ The only remaining element that determines the posterior is the prior $g(\boldsy
 Since the remaining derivation involves several steps that are not essential to the intuition behind the method, we proceed directly to the result. Product of \eqref{eq:21} and \eqref{eq:22} yields a normally distributed posterior $\boldsymbol{\alpha} \mid \mathbf{y} \sim \mathcal{N}(\bar{\boldsymbol{\alpha}}, \bar{\Sigma}{\boldsymbol{\alpha}})$ where the explicit forms of the moments are given by \citet[chapt. 5]{lutkepohlNewIntroductionMultiple2005}:
 \begin{equation} \label{eq:23}
 \begin{aligned}
-w &:= \begin{bmatrix} V{\boldsymbol{\alpha}}^{-1/2} \boldsymbol{\alpha}^* \ (I_N \otimes \Sigma^{-1/2})\mathbf{y} \end{bmatrix} \quad \text{,} \quad W := \begin{bmatrix} V_{\boldsymbol{\alpha}}^{-1/2} \ X’ \otimes \Sigma^{-1/2} \end{bmatrix}
-\bar{\Sigma}{\boldsymbol{\alpha}} &:= (W'W)^{-1} = \left[ V{\boldsymbol{\alpha}}^{-1} + (XX' \otimes \Sigma^{-1}) \right]^{-1}
+w &:= \begin{bmatrix} V_{\boldsymbol{\alpha}}^{-1/2} \boldsymbol{\alpha}^* \\ (I_N \otimes \Sigma^{-1/2})\mathbf{y} \end{bmatrix}, \\
+W &:= \begin{bmatrix} V_{\boldsymbol{\alpha}}^{-1/2} \\ X' \otimes \Sigma^{-1/2} \end{bmatrix}, \\
+\bar{\Sigma}_{\boldsymbol{\alpha}} &:= (W'W)^{-1} = \left[ V_{\boldsymbol{\alpha}}^{-1} + (XX' \otimes \Sigma^{-1}) \right]^{-1}, \\
 \bar{\boldsymbol{\alpha}} &:= (W'W)^{-1} W'w = \left[ V_{\boldsymbol{\alpha}}^{-1} + (XX' \otimes \Sigma^{-1}) \right]^{-1} \left[ V_{\boldsymbol{\alpha}}^{-1} \boldsymbol{\alpha}^* + (X \otimes \Sigma^{-1})\mathbf{y} \right]
 \end{aligned}
 \end{equation}
@@ -257,7 +258,7 @@ We also have deterministic variables (i.e., seasonal dummies and constants) in o
 \end{equation}
 In specification \eqref{eq:25}, the hyperparameter $\lambda_4$ sets the prior tightness on the exogenous and deterministic terms—in our specification, the intercept and the eleven monthly seasonal dummies. These are typically left loosely restricted, reflecting the absence of strong prior beliefs about their values.
 
-The package that we use,\texttt{Alexandria}, sets $\lambda_3 = 1$ and $\lambda_4 = 100$ based on the typical values that are highly used in literature (see \citet{dieppeBEARToolbox2016,alexandria}). Minnesota prior leaves two parameters, $\lambda_1$ and $\lambda_2$, to be chosen by the practitioner. We try different $\lambda_1$ values: we try fixed parameter values $\lambda_1 \in {0.2, 0.4, 0.6, 0.8}$ as well as selecting the $\ lambda_1$ value from this set that maximizes the Out-of-Sample performance by MDD calculation. The prior that we use (Normal-Wishart Prior, which is discussed below) forces us to set $\lambda_2 = 1$ (therefore, no additional tightness for cross variables).
+The package that we use, \texttt{Alexandria}, sets $\lambda_3 = 1$ and $\lambda_4 = 100$, typical values that are used in literature (see \citet{dieppeBEARToolbox2016,alexandria}). Minnesota prior then still leaves two parameters, $\lambda_1$ and $\lambda_2$, to be chosen by the practitioner. We try different $\lambda_1$ values: we try fixed parameter values $\lambda_1 \in \{0.2, 0.4, 0.6, 0.8\}$ as well as selecting the $\ lambda_1$ value from this set that maximizes the Out-of-Sample performance by MDD calculation. The prior that we use (Normal-Wishart Prior, which is discussed below) forces $\lambda_2 = 1$, implying no additional tightness for cross variables.
 
 To sum up, the prior variance structure specified by the Minnesota prior looks like:
 \begin{equation} \label{eq:27}
@@ -308,17 +309,17 @@ The DGP is formed by structural VAR model using the structural impact matrix $\t
     y_t = V d_t + A y_{t-p} + \tilde{B} e_t
 \end{equation}
 
-We estimate these parameters using the original data for two different lag orders, $p_0 \in \{4,10\}$ and create DGPs with different sample sizes, $T \in \{240, 360, 480, 600\}$, where $T=N+\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. We restrict the lag order selection $p_0$ to only include one high and one low lag order and drop $T=300$ in comparison to the setup of \citet{ivanovPractitionersGuideLag2005} in order to save computational power for the sign restriction decomposition. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
+We estimate these parameters using the original data for two different lag orders, $p_0 \in \{4,10\}$ and create DGPs with different sample sizes, $T \in \{240, 360, 480, 600\}$, where $T=N-\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. We restrict the lag order selection $p_0$ to only include one high and one low lag order and drop $T=300$ in comparison to the setup of \citet{ivanovPractitionersGuideLag2005} in order to save computational power for the sign restriction decomposition. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
 
-On each of these samples, VARs fitted by lag orders selected by both the three ICs as well as different specifications of BVAR are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We estimate all BVARs using $p=\bar{p}=12$ as the lag order, thereby solely relying on shrinkage for reducing the variance and bias of the estimation. The selection of the overall shrinkage parameter $lambda_1$ is the key criterion to determine how loose or how tight the prior is applied and to what extent further lag orders are shrunk towards 0. We apply $\lambda_1 \in \{0.2, 0.4, 0.6, 0.8\}$ to determine how optimal shrinkage depends on sample size $T$ and true lag order $p_0$. Additionally, we use the marginal data density (MDD) method to determine a $lambda_1$ optimized on Out-of-Sample MSE for which we also provide the same set of admissible $\lambda_1$-values. The limitation of the value-field is established for computational reasons; it captures a good range of typically used $lambda_1$-values, both tighter and looser specifications. 
+On each of these samples, VARs fitted by lag orders selected by both the three ICs as well as different specifications of BVAR are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We estimate all BVARs using $p=\bar{p}=12$ as the lag order, thereby solely relying on shrinkage for reducing the variance and bias of the estimation. 
 
-Finally, we estimate the MSE by calculating the geometric mean over the ratio of the squared errors of the median target IRFs $\hat \theta_j$ computed by method j in relation to the squared errors of the median target IRF by a model fit with the true lag order $\hat \theta_{p_0i}$ over all Monte Carlo iterations from $1, ..., R$:
+Finally, we estimate the key performance parameter, the relative MSE, by calculating the geometric mean over the ratio of the squared errors of the median target IRFs $\hat \theta_j$ computed by method j in relation to the squared errors of the median target IRF by a model fit with the true lag order $\hat \theta_{p_0i}$ over all Monte Carlo iterations from $1, ..., R$:
 
 \begin{equation}
     MSE^{relative}_j = \exp\left( \frac{1}{n} \sum_{i=1}^{R} \ln(\frac{SE_{ji}}{SE_{p_0i}}) \right)
 \end{equation}
 
-The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. Normalization by the model fit with $p_0$ ensures that performance in each iteration is weighed by how well a correctly identified model performs.
+The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. Normalization by the OLS VAR estimation with $p_0$ ensures that the performance in each iteration is weighed by how well a correctly identified model performs.
 
 For the computation of the DGP parameters, we set the number of selected admissible IRFs to 1 million in order to get a highly accurate representation of the real world movements. However, during the Monte Carlo simulation we have to reduce that number to 1,000, which is seen as the minimum requirement for accurate set identification, albeit still with a larger variance. We set the number of Monte Carlo iterations to $R=500$. We understand the concern that this may be too little for eliminating all Monte Carlo biases. Yet we have to rely on such a small number as it is the absolute maximum that our hardware allows for, even though we have optimized the code by employing parallel processing and delegation to C-based processes using the \texttt{numba} and \texttt{joblib} packages in \texttt{python}. All in all, this simulation still took 18 hours to complete with 6.5 million admissible IRFs drawn.
 
@@ -333,25 +334,16 @@ For the computation of the DGP parameters, we set the number of selected admissi
 \section{Results}
 \label{sec:results}
 
-First, we will look at the main comparison of performance between the different ICs and BVAR specifications in terms of recovering an accurate median target IRF. Table~\ref{tab:shrinkage_mse} displays the full set of relative MSEs. It reveals two main findings:
-
-1. We confirm the results from \citet{ivanovPractitionersGuideLag2005} about the performance of the different information criteria. AIC consistently outperforms both BIC and HQC, revealing that the strict penalization of the latter two towards low lag orders is biasing the IRF too much. On the other hand, AIC's milder lag penalization ensures a closer fit to the true lag order $p_0$ for finite samples, thereby reducing bias. The reduction of the variance by selecting a $p$ much lower than the true lag order selected by BIC and HQC, see Table~\ref{tab:ic_lag_orders}, is not evidenced to reduce the coefficient variance enough to compensate for the additional bias.
-
-2. BVAR dominates the three classical lag selection criteria across most scenarios; only in two cases, AIC remains the leader amongst the methods, as you can see in Table~\ref{tab:shrinkage_mse}. For a better comparison amongst the different BVAR specifications, Table~\ref{tab:bvar_vs_aic} and Figure~\ref{fig:tradeoff} present the results in terms of relative MSE compared to the overall best performing information criterion, AIC. It reveals that BVARs have a stronger advantage over AIC if the true lag order $p_0$ is large. Except for an outlier for $T=360$, BVAR can reduce the MSE strongly across all different specifications for $\lambda_1$ in the case of $p_0=10$. A better $\lambda_1$ selection can still improve the estimation; it is not crucial to defend the usage of BVAR over AIC. On the other hand, for the low lag order of $p_0$, the benefit of BVAR is not as clear. Here, whether it is recommended to choose BVAR over classical OLS estimation with AIC depends on the hyperparameter selection $\lambda_1$. For example, while the selection of $\lambda_1=0.4$ leads to a slight improvement of 0.6\% at $T=600$, other selections lead to a loss of accuracy of more than 10\%. These findings show that an OLS model with AIC-selected lag order can still work fairly well for a low lag order $p_0$ in finite samples, while the disadvantage of this estimation is strong for high $p_0$. This conclusion is consistent with the bias-variance tradeoff presented before. $\hat p^{AIC}$ only slightly underfits the model in finite samples of this magnitude. For a low lag order, OLS can still estimate all parameters with relatively small variance. However, for a high lag order such as $p_0=10$, estimating all parameters produces unstable estimates. Here, the shrinkage of further lag orders introduced in BVAR is a clear advantage. It enables the model to capture the signal from higher lag orders without adding too much noise. Additionally, as we follow the general approach to fit a general high lag order of $\bar p$ to both cases of $p_0$, the BVAR for $p_0=4$ includes more lags that are beyond the true underlying limit. Although they are shrunk towards 0 based on the prior and the computed posterior probabilities, they still introduce a bias.
-
-Over both $p_0$s, we find that the BVAR estimation using $\lambda_1 \in \{0.2,0.4,0.6\}$ has more instances of outperforming than underperforming AIC, while $\lambda_1=0.8$ loses the comparison to the AIC benchmark in the majority of cases. 
-
-Overall, the medium-loose prior $\lambda_1=0.6$ is the best hyperparameter in four cases. Both $\lambda_1=0.2$ and $\lambda_1=0.4$ are dominant in two scenarios. The very loose prior of $\lambda_1=0.8$ is shown to be optimal in no case. There is no absolutely clear pattern in terms of sample size or true lag order for why certain $\lambda_1$-values perform better in certain scenarios than in others, neither when you consider all scenarios nor when you separate the analysis by $p_0$. 
-
-This may be explained by two reasons. First, the inherent bias-variance trade-off in shrinkage implies that both strong shrinkage, through reduction of variance, as well as weak shrinkage, through reduction of bias, can make the estimation more precise. This may explain results in certain scenarios, such as the combination of $p_0$ and $T=10$, where the relative MSE of the tightest hyperparameter, $\lambda_1=0.2$, is very close to that of the loosest, $\lambda_1=0.8$. $\lambda_1=0.8$ ensures that higher lag orders are still more relevant for the estimation, making it fit better to the true model of lag order $p_0=10$. Meanwhile, $\lambda_1=0.2$ can reduce the variance of low lag orders, making a few coefficients more accurate while neglecting others. Second, the hardware-forced limitations on the number of iterations and the number of required admissible IRFs per model may make the results too unstable. It can therefore not be refuted that some of the variation amongst our results is driven by random sampling variations.
-
-Interestingly, the MDD-optimized $\lambda_1$ also never takes first place among the BVAR models. Figure~\ref{fig:mdd_surface} reveals the reason. For low sample sizes $T$ as well as the lower true $p_0=4$, MDD purely selects the lowest option $\lambda_1=0.2$, which has been shown not to perform the best in these cases. Only for $p_0=10$ does it select a higher $\lambda_1=0.4$ in some iterations. However, both $\lambda_1=0.2$ and $\lambda_1=0.4$ do not dominate for these scenarios. Again, the weak performance of these specific $\lambda$-values might be partially attributed to sampling error. Nevertheless, it shows that MDD might not necessarily select the optimal hyperparameter for the purpose of the inference of structural relationships by VAR, as its optimization on out-of-sample performance generally leads to a preference towards stronger shrinkage, which might not be optimal for constructing IRFs, as it eliminates the signal from higher lag orders.
-
 \input{Tables/Table1_Shrinkage.tex}
 
-Figure~\ref{fig:tradeoff} illustrates how BVAR's MSE depends on the $\lambda_1$ in comparison to AIC for $T=240$ and $T=600$. While all shrinkage values ensure that BVAR outperforms AIC, the magnitude changes a lot. Table~\ref{tab:bvar_vs_aic} shows the MSE of the different BVAR models relative to AIC's MSE. It 
+
+First, we will look at the main comparison of performance between the different ICs and BVAR specifications in terms of recovering an accurate median target IRF. Table~\ref{tab:shrinkage_mse} displays the full set of relative MSEs. It reveals two main findings:
+
+1. We confirm the results from \citet{ivanovPractitionersGuideLag2005} about the performance of the different information criteria. AIC consistently outperforms both BIC and HQC, revealing that the strict penalization of the latter two towards low lag orders is biasing the IRF too much. On the other hand, AIC's milder lag penalization ensures a closer fit to the true lag order $p_0$ for finite samples, thereby reducing bias. The reduction of the variance by selecting a $p$ much lower than the true lag order as done by BIC and HQC, see Table~\ref{tab:ic_lag_orders}, is not evidenced to reduce the coefficient variance enough to compensate for the additional bias.
 
 \input{Tables/Table5_BVAR_vs_AIC.tex}
+
+2. BVAR dominates the three classical lag selection criteria across most scenarios; only in two cases, AIC remains the leader (see Table~\ref{tab:shrinkage_mse}). For a better comparison among the different BVAR specifications, Table~\ref{tab:bvar_vs_aic} and Figure~\ref{fig:tradeoff} present the results in terms of relative MSE compared to the overall best performing information criterion, AIC. It reveals that BVARs have a stronger advantage over AIC if the true lag order $p_0$ is large. Except for an outlier for $T=360$, BVAR can reduce the MSE strongly across all different specifications for $\lambda_1$ in the case of $p_0=10$. A better $\lambda_1$ selection can still improve the estimation; yet it is not crucial to defend the usage of BVAR over AIC. On the other hand, for the low lag order of $p_0$, the benefit of BVAR is not as clear. Here, whether it is recommended to choose BVAR over classical OLS estimation with AIC depends on the hyperparameter selection $\lambda_1$. For example, while the selection of $\lambda_1=0.4$ leads to a slight improvement of 0.6\% at $T=600$, other selections lead to a loss of accuracy of more than 10\%. These findings show that an OLS model with AIC-selected lag order can still work fairly well for a low lag order $p_0$ in finite samples, while the disadvantage of this estimation is strong for high $p_0$. This conclusion is consistent with the bias-variance tradeoff presented before. $\hat p^{AIC}$ only slightly underfits the model in finite samples of this magnitude. For a low lag order, OLS can still estimate all parameters with relatively small variance. However, for a high lag order such as $p_0=10$, estimating all parameters produces unstable estimates. Here, the shrinkage of further lag orders introduced in BVAR is a clear advantage. It enables the model to capture the signal from higher lag orders without adding too much noise. Additionally, as we follow the common approach to fit a general high lag order of $\bar p =12$ to both cases of $p_0$, the BVAR for $p_0=4$ includes more lags that are beyond the true underlying limit. Although they are shrunk towards 0 based on the prior and the computed posterior probabilities, they still introduce a bias.
 
 \begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
     \centering
@@ -374,6 +366,14 @@ Figure~\ref{fig:tradeoff} illustrates how BVAR's MSE depends on the $\lambda_1$ 
     \label{fig:tradeoff}
 \end{figure}
 
+Over both $p_0$s, we find that the BVAR estimation using $\lambda_1 \in \{0.2,0.4,0.6\}$ has more instances of outperforming than underperforming AIC, while $\lambda_1=0.8$ loses the comparison to the AIC benchmark in the majority of cases. 
+
+Overall, the medium-loose prior $\lambda_1=0.6$ is the best hyperparameter in four cases. Both $\lambda_1=0.2$ and $\lambda_1=0.4$ are dominant in two scenarios. The very loose prior of $\lambda_1=0.8$ is shown to be optimal in no case. There is no absolutely clear pattern in terms of sample size or true lag order for why certain $\lambda_1$-values perform better in certain scenarios than in others, neither when you consider all scenarios nor when you separate the analysis by $p_0$. 
+
+This may be explained by two reasons. First, the inherent bias-variance trade-off in shrinkage implies that both strong shrinkage, through reduction of variance, as well as weak shrinkage, through reduction of bias, can make the estimation more precise. This may explain results in certain scenarios, such as the combination of $p_0$ and $T=10$, where the relative MSE of the tightest hyperparameter, $\lambda_1=0.2$, is very close to that of the loosest, $\lambda_1=0.8$. $\lambda_1=0.8$ ensures that higher lag orders are still more relevant for the estimation, making it fit better to the true model of lag order $p_0=10$. Meanwhile, $\lambda_1=0.2$ can reduce the variance of low lag orders, making a few coefficients more accurate while neglecting others. Second, the hardware-forced limitations on the number of iterations and the number of required admissible IRFs per model may make the results too unstable. It can therefore not be refuted that some of the variation among our results is driven by random sampling variations.
+
+Interestingly, the MDD-optimized $\lambda_1$ also never takes first place among the BVAR models. Figure~\ref{fig:mdd_surface} reveals the reason. For low sample sizes $T$ as well as the lower true $p_0=4$, MDD purely selects the lowest option $\lambda_1=0.2$, which has been shown not to perform the best in these cases. Only for $p_0=10$ does it select a higher $\lambda_1=0.4$ in some iterations. However, both $\lambda_1=0.2$ and $\lambda_1=0.4$ do not dominate for these scenarios. Again, the weak performance of these specific $\lambda$-values might be partially attributed to sampling error. Nevertheless, it shows that MDD might not necessarily select the optimal hyperparameter for the purpose of the inference of structural relationships by VAR, as its optimization on out-of-sample performance generally leads to a preference towards stronger shrinkage, which might not be optimal for constructing IRFs, as it eliminates the signal from higher lag orders.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{Figures/Fig2_Asymptotic_Relaxation.pdf}
@@ -395,11 +395,11 @@ This study evaluates the specification of Structural Vector Autoregressions (VAR
 
 Our Monte Carlo simulation results confirm that among traditional information criteria, the Akaike Information Criterion (AIC) consistently outperforms the Bayesian (BIC) and Hannan-Quinn (HQC) criteria in finite samples. The stricter penalization of the BIC and HQC leads to severe underfitting, introducing a bias that outweighs the benefits of reduced variance. In contrast, the AIC's milder penalty allows for a closer approximation of the true lag order $p_0$, making it the most robust frequentist choice for structural inference. 
 
-More importantly, our findings demonstrate that BVAR models generally dominate ordinary least squares estimations reliant on IC-selected lag orders. This advantage becomes particularly pronounced when the true underlying lag order is large (e.g., $p_0 = 10$). Rather than strictly truncating the lag length and risking omitted variable bias, the BVAR approach retains higher-order lags while applying prior shrinkage to discipline the parameter space. This continuous bias-variance trade-off consistently yields more accurate structural IRFs than the binary selection mechanism of information criteria.
+More importantly, our findings demonstrate that BVAR models mostly dominate ordinary least squares estimations reliant on IC-selected lag orders. This advantage becomes particularly pronounced when the true underlying lag order is large (e.g., $p_0 = 10$). Rather than strictly truncating the lag length and risking omitted variable bias, the BVAR approach retains higher-order lags while applying prior shrinkage to discipline the parameter space. This continuous bias-variance trade-off consistently yields more accurate structural IRFs than the binary selection mechanism of information criteria.
 
 However, the optimal degree of shrinkage remains ambiguous. We find no strictly dominant hyperparameter $\lambda_1$ across all sample sizes and true lag orders, as both tighter and looser priors can successfully minimize the mean squared error through different channels—variance reduction and bias reduction, respectively. While a medium-loose prior ($\lambda_1 = 0.6$) most frequently achieved the lowest relative MSE in our simulations, the performance differentials were sometimes marginal. We suspect that residual sampling variance, driven by computational constraints that limited our Monte Carlo study to 500 iterations, contributes to this ambiguity. Future research leveraging greater computational resources could further clarify these parameter boundaries by enabling a higher volume of iterations and admissible IRF draws.
 
-Finally, we highlight a critical divergence between forecasting and structural analysis objectives. Optimizing the shrinkage parameter $\lambda_1$ via Marginal Data Density (MDD)—a metric geared toward out-of-sample forecasting—tends to favor excessively tight priors. While this heavy shrinkage successfully minimizes out-of-sample prediction error, it overly dampens the signal from higher-order lags, yielding suboptimal estimations of the structural IRFs. Ultimately, we show that specification strategies designed to maximize forecasting accuracy do not necessarily align with the goal of accurately identifying macroeconomic structural relationships. For practitioners prioritizing structural inference over pure forecasting, BVAR estimation leveraging a moderately loose prior provides a highly effective methodological approach.
+Finally, we highlight a critical divergence between forecasting and structural analysis objectives. Optimizing the shrinkage parameter $\lambda_1$ via Marginal Data Density (MDD)—a metric geared toward out-of-sample forecasting—tends to favor excessively tight priors. While this heavy shrinkage successfully minimizes out-of-sample prediction error, it overly dampens the signal from higher-order lags, yielding suboptimal estimations of the structural IRFs. Ultimately, we show that specification strategies designed to maximize forecasting accuracy do not necessarily align with the goal of accurately identifying macroeconomic structural relationships. For practitioners prioritizing structural inference over pure forecasting, BVAR estimation leveraging a moderately loose prior provides an effective methodological approach.
 \newpage
 % Print the bibliography
 
@@ -432,21 +432,21 @@ Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_
 
 For clarity, several intermediate steps were omitted in the main text. We collect them here. To derive the relationship in equation \eqref{eq:VAR_error}, we begin from the structural form:
 \begin{equation}
-Y_t = B_0Y_t + B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t \tag{x}
+Y_t = B_0Y_t + B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t  
 \end{equation}
 
 Moving the contemporaneous term $B_0Y_t$ to the left-hand side gives:
 \begin{equation}
-\underbrace{(I-B_0)}_{B^*}Y_t = B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t \tag{x}
+\underbrace{(I-B_0)}_{B^*}Y_t = B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t  
 \end{equation}
 
 Premultiplying by the inverse of $B^*$ yields the reduced form:
 \begin{equation}
-Y_t = \underbrace{(B^*)^{-1} B_1}_{A_1} Y_{t-1} + \underbrace{(B^*)^{-1} B_2}_{A_2} Y_{t-2} + \cdots + \underbrace{(B^*)^{-1} B_{p_0}}_{A_{p_0}} Y_{t-p_0} + \underbrace{(B^*)^{-1} \varepsilon_t}_{e_t} \tag{x}
+Y_t = \underbrace{(B^*)^{-1} B_1}_{A_1} Y_{t-1} + \underbrace{(B^*)^{-1} B_2}_{A_2} Y_{t-2} + \cdots + \underbrace{(B^*)^{-1} B_{p_0}}_{A_{p_0}} Y_{t-p_0} + \underbrace{(B^*)^{-1} \varepsilon_t}_{e_t}  
 \end{equation}
 which is the explicit reduced-form representation. The relationship defined in \eqref{eq:VAR_error} is now apparent: writing $(B^*)^{-1} = B$, we have:
 \begin{equation}
-e_t = B \varepsilon_t \tag{x}
+e_t = B \varepsilon_t  
 \end{equation}
 
 Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporaneous coefficient matrix, which governs the simultaneous interactions among the endogenous variables in the structural form, whereas $B = (I-B_0)^{-1}$ is the impact matrix that maps the unit-variance structural shocks $\varepsilon_t$ into the reduced-form innovations $e_t$. The former is a primitive of the structural model; the latter is the object recovered through the identification procedure in the main text.
@@ -455,17 +455,17 @@ Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporan
 
 We now derive the recursion in (4). It is convenient to define the autoregressive lag polynomial: 
 \begin{equation}
-A(L) = I - A_1L - A_2L^2 - \cdots - A_{p_0}L^{p_0} \tag{x}
+A(L) = I - A_1L - A_2L^2 - \cdots - A_{p_0}L^{p_0}  
 \end{equation}
 
 Its inverse admits a power-series representation in the lag operator:
 \begin{equation}
-A(L)^{-1} = \Phi(L) = \sum_{i=0}^{\infty} \Phi_i L^{i} = \Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots \tag{x}
+A(L)^{-1} = \Phi(L) = \sum_{i=0}^{\infty} \Phi_i L^{i} = \Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots  
 \end{equation}
 
 Which leads to: 
 \begin{equation}
-A(L)A(L)^{-1} = A(L)\Phi(L) = (I - A_1L - A_2L^2 - \cdots)(\Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots) = I \tag{x}
+A(L)A(L)^{-1} = A(L)\Phi(L) = (I - A_1L - A_2L^2 - \cdots)(\Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots) = I  
 \end{equation}
 
 Matching coefficients on equal powers of $L$ gives: 
@@ -476,17 +476,17 @@ I\Phi_0 &= I_K \implies \Phi_0 = I_K \\
 \end{align*}
 and, in general, the recursion: 
 \begin{equation}
-\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j} \tag{x}
+\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j}  
 \end{equation}
 
 The unconditional mean is $\mu = (I-A_1-A_2-\cdots-A_{p_0})^{-1}v$ provided the process is weakly stationary. To derive it, take expectations of (1) under weak stationarity, so that $\mathbb{E}[Y_t] = \mu$ for all $t$:
 \begin{equation}
-\mathbb{E}[Y_t] = v + A_1\mathbb{E}[Y_{t-1}] + A_2\mathbb{E}[Y_{t-2}] + \cdots + A_{p_0}\mathbb{E}[Y_{t-p_0}] \iff [I-A_1-A_2-\cdots-A_{p_0}]\mu = v \tag{x}
+\mathbb{E}[Y_t] = v + A_1\mathbb{E}[Y_{t-1}] + A_2\mathbb{E}[Y_{t-2}] + \cdots + A_{p_0}\mathbb{E}[Y_{t-p_0}] \iff [I-A_1-A_2-\cdots-A_{p_0}]\mu = v  
 \end{equation}
 
 which gives: 
 \begin{equation}
-\mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v \tag{x}
+\mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v  
 \end{equation}
 
 \section*{Declaration of AI Usage}

@@ -23,7 +23,7 @@
 % Title and Author Information
 \title{Embracing Lag Uncertainty: Bayesian Model Averaging in Set-Identifed Structural VARs}
 \author{
-    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de}} \and
+    Ak\i n Ayd\i n\thanks{Ludwig-Maximilian University of Munich, \href{mailto:akin.aydin@campus.lmu.de}{akin.aydin@campus.lmu.de} \\ This paper has been completed in conjunction with (CITATION). The main difference is that this paper extends the method space by introducing BMA, whereas (CITATION) implements BVAR. Therefore, both the last subsection of the theoretical introduction, Subsection~\ref{sec:BVAR}, as well as Section~\ref{sec:results} and Section~\ref{sec:conclusion} differ. Replication files are available in the \href{https://github.com/FerdinandLos/Monte-Carlo-Coding}{GitHub repository} for both papers.} \and
     Ferdinand Loser\thanks{Ludwig-Maximilian University of Munich, \href{mailto:ferdinand.loser@campus.lmu.de}{ferdinand.loser@campus.lmu.de}}
 }
 \date{\today \\ \vspace{0.5cm} \textit{Seminar Evaluating Econometric Methods using Monte Carlo Simulations }(Prof. Derya Uysal)}
@@ -34,7 +34,7 @@
 
 \begin{abstract}
 \noindent
-Structural Vector Autoregressions (VARs) identified via set restrictions are a cornerstone of modern empirical macroeconomics, yet the structural impulse response functions (IRFs) they produce remain highly sensitive to reduced-form lag order specification. Updating the foundational Monte Carlo analysis of Ivanov and Kilian (2005), this paper evaluates the efficacy of traditional Information Criteria (AIC, BIC, HQC) against modern Bayesian Model Averaging (BMA) techniques in recovering the true median target IRF. Utilizing a realistic data-generating process calibrated to a structural model of the global oil market, we analyze the relative Mean Squared Error (MSE) of competing specification strategies across varying finite sample sizes. Our simulations confirm that for single-model selection, the Akaike Information Criterion (AIC) consistently dominates stricter criteria by avoiding the severe underfitting bias that heavily distorts IRF inference. More crucially, we demonstrate that hedging lag specification risk through a joint-grid BMA approach---averaging across both lag orders and Bayesian VAR shrinkage hyperparameters---yields the most accurate IRF recovery in the majority of finite-sample scenarios. By dynamically applying tighter shrinkage to overparameterized specifications, this methodology mitigates lag uncertainty without compromising the precision of critical lower-order dynamics, offering a highly robust alternative to traditional single-model selection.
+Structural Vector Autoregressions (VARs) identified via set restrictions are highly sensitive to lag order specification. Updating Ivanov and Kilian (2005), we evaluate traditional Information Criteria against Bayesian Model Averaging (BMA) in recovering the true median target impulse response function (IRF). Using Monte Carlo simulations calibrated to the global oil market, we analyze the relative Mean Squared Error of competing strategies across finite samples. For single-model selection, the Akaike Information Criterion (AIC) consistently dominates stricter criteria by avoiding severe underfitting bias. Crucially, a joint-grid BMA approach—averaging across lag orders and BVAR shrinkage hyperparameters—yields the most accurate IRF recovery. By dynamically shrinking overparameterized models, this method mitigates lag uncertainty while preserving lower-order precision, offering a robust alternative to traditional single-model selection.
 \vspace{1em}\\
 \noindent\textbf{Keywords:} Structural Vector Autoregression (SVAR), Set Identification, Bayesian Model Averaging (BMA), Model Uncertainty, Lag Order Selection, Monte Carlo Simulation \\
 \noindent\textbf{JEL Codes:} C11, C15, C32, C52 % Update with relevant JEL classification codes
@@ -201,15 +201,15 @@ we have derived an equation for the bias-variance tradeoff. In small samples, if
 Bayesian Model Averaging is an averaging mechanism designed to address the problem of model uncertainty \citep{hoetingBayesianModelAveraging1999, steelModelAveragingIts2020}. For any inference question, there may be more than one model that fits the data well, and committing to a single one ignores the uncertainty inherent in that choice. In our setting, the candidate models are reduced-form VARs of different lag orders. Bayesian Model Averaging retains all of them and forms a weighted average, with each model weighted by its posterior model probability. The averaged result is preferable for two reasons. First, it accounts for model uncertainty in addition to parameter uncertainty, rather than conditioning on a single model as if it were known to be correct. Second, averaging over all models in proportion to their posterior probabilities yields better average performance, as measured by a logarithmic scoring rule, than any single model \citep{madiganModelSelectionAccounting1994,hoetingBayesianModelAveraging1999}. In this section, we list four different Bayesian Model Averaging methods that we use as a metric (namely, Uniform prior-OLS, Geometric prior-OLS, Joint Grid, and Geometric Grid) and discuss their properties. To clarify, here is the blueprint of the process that we follow:
 
 \begin{enumerate}
-    \item We estimate every reduced form lag order specification up to $\bar p$ (maximum lag order) using OLS, and different ($p ; \lambda_1$) combinations using the BVAR developed in Paper A.
-    \item Then we calculate the weight parameters of each model (we use the BIC/AIC for OLS estimations and the marginal data density (MDD) for the BVAR estimations).
+    \item We estimate every reduced form VAR with lag order specification up to $\bar p =12$ (maximum lag order) using OLS, and different ($p ; \lambda_1$) combinations using the BVAR developed in Paper A.
+    \item Then we calculate the weight parameters of each model (we use AIC/BIC for OLS estimations and the marginal data density (MDD) for the BVAR estimations).
     \item We draw different amounts of IRFs based on the weights (Higher weight implies more draws from that specific model) and pool them. 
     \item We choose the median target IRF as discussed before.
 \end{enumerate}
 
 This process raises several questions. How are the model weights calculated? Is averaging genuinely better than selecting a single model? What do the six BMA variants share, and how do they differ? We address these in turn.
 
-\section*{General Bayesian Model Averaging Approach}
+\subsection*{General BMA}
 
 We find it important to discuss the common properties of the four different BMA approaches listed above. We follow the canonical treatment of \citet{hoetingBayesianModelAveraging1999} for this part. First, we start with the problem of choosing the right weight parameters (so that we can average the models based on the weights). Let $\Delta$ be our parameter of interest (Impulse response functions) and let $M_1,\dots,M_K$ be our candidate models (different reduced form VAR models). The posterior distribution of $\Delta$ given the data $y$ (step 3 defined in the blueprint), averaged over all models, is:
 \begin{equation} \label{eq:x1}
@@ -229,7 +229,7 @@ These 3 equations defined above are the backbones of the Bayesian Model Averagin
 
 So far, we have described the common structure they share. However, we use four different BMA methods, and each has its own priors or estimation methods. We discuss the differences below.
 
-\section*{Weights and Priors}
+\subsection*{Weights and Priors}
 
 We use two weight sources and two model-space priors (uniform prior and geometric prior). Each combination yields a different metric:
 
@@ -256,13 +256,7 @@ p(M_k) \propto \theta^p \quad \text{where} \quad \theta=0.5
 \end{equation}
 We set $\theta = 0.5$, under which each additional lag halves the prior weight---equivalently, the prior demands that the marginal data density favor a longer model by at least a factor of two before the additional lag is preferred. This value is a deliberate, interpretable benchmark rather than an optimized choice: it imposes a moderate preference for parsimony, neither so weak as to coincide with the uniform prior nor so strong as to dominate the evidence from the marginal data density.
 
-We use BIC and AIC for the models estimated via OLS. The reason is that it is not possible to calculate the marginal data density since OLS places no prior on the parameters: under the frequentist approach, each estimated parameter consumes one full degree of freedom, with no shrinkage. We therefore approximate it by the Schwarz criterion, which \citet{schwarzEstimatingDimensionModel1978,rafteryBayesianModelSelection1995} derive as an asymptotic approximation to the log marginal data density and which, in large samples, does not depend on a prior. For the BVAR models, by contrast, the Normal-Wishart prior---a normal prior on $\alpha$ and an Inverse-Wishart prior on $\Sigma$---supplies the joint density that \eqref{eq:x3} integrates over, and the conjugate structure makes the integral available in closed form, so the marginal data density is computed directly. 
-
-\subsection*{Weight Sources}
-
-By weight sources, we mean the way the marginal data density in \eqref{eq:x3} is obtained for each model class. As we discussed before, for models estimated by OLS, \eqref{eq:x3} was undefined because there were no priors $p(\theta_k \mid M_k)$. Therefore, for the OLS models, the marginal data density is approximated by $\exp\left(-\frac{1}{2}\mathrm{IC}(p)\right)$, since the log marginal data density is approximately $-\frac{1}{2} \mathrm{IC}(p)$, where IC is either BIC or AIC. On the other hand, the BVAR method uses an inverse-Wishart joint prior (normally distributed prior for $\boldsymbol{\alpha}$ and Inverse-Wishart distribution for prior $\Sigma$), which is described in Paper A and the appendix. Since the joint prior has a closed form, we can calculate the marginal data density ($m(y \mid p,\lambda_1)$) by plugging in the joint prior in \eqref{eq:x3} as $p(\theta_k \mid M_k)$.
-
-\subsection*{Calculated Weights}
+For models estimated via OLS, \eqref{eq:x3} is undefined because there are no priors $p(\theta_k \mid M_k)$; under the frequentist approach, each estimated parameter consumes one full degree of freedom with no shrinkage. We therefore approximate the marginal data density by $\exp\left(-\frac{1}{2}\mathrm{IC}(p)\right)$, where $\mathrm{IC}$ is either BIC or AIC. As derived by \citet{schwarzEstimatingDimensionModel1978,rafteryBayesianModelSelection1995}, this serves as an asymptotic approximation to the log marginal data density that, in large samples, does not depend on a prior. For the BVAR models, by contrast, the Normal-Wishart prior—a normal prior on $\boldsymbol{\alpha}$ and an Inverse-Wishart prior on $\Sigma$, as introduced below—supplies the joint density $p(\theta_k \mid M_k)$ that \eqref{eq:x3} integrates over. Because this conjugate structure makes the integral available in closed form, the marginal data density $m(y \mid p,\lambda_1)$ is computed directly.
 
 By using \eqref{eq:x2} we calculate the weights for the models estimated via OLS:
 \begin{equation} \label{eq:x6}
@@ -274,11 +268,30 @@ w_{\text{BVAR}}(p, \lambda_1) = \frac{m(y \mid p, \lambda_1) \pi(p)}{\sum_{p'=1}
 \end{equation}
 where $m(y \mid p, \lambda_1)$ is the calculated marginal data density \eqref{eq:x3} with joint prior and $\pi(p)$ is the same priors that are described above. 
 
-The BVAR models are indexed by pairs ($p, \lambda_1$), with the lag order ranging over $(p = 1, \dots, \bar p)$ and the tightness over the discrete grid $\lambda_1 \in \{0.20, 0.40, 0.60, 0.80\}$. For every pair in this grid, we estimate the Normal-Wishart BVAR and compute its marginal data density. The pairs are then weighted by their posterior model probability \eqref{eq:x7}; pairs whose normalized weight falls below a threshold of 0.01 are discarded, and the weights of the retained pairs are renormalized to sum to one. From each retained pair, we draw impulse responses in proportion to its weight, pool the draws, and select the median target.
+The BVAR models are indexed by pairs ($p, \lambda_1$), with the lag order ranging over $p = 1, \dots, \bar p=12$ and the tightness over the discrete grid $\lambda_1 \in \{0.20, 0.40, 0.60, 0.80\}$.\footnote{This set is relatively small but captures both tighter and looser hyperparameters. We have to limit it due to computational concerns.} For every pair in this grid, we estimate the Normal-Wishart BVAR and compute its marginal data density. The pairs are then weighted by their posterior model probability \eqref{eq:x7}; pairs whose normalized weight falls below a threshold of 0.01 are discarded, and the weights of the retained pairs are renormalized to sum to one. From each retained pair, we draw impulse responses in proportion to its weight, pool the draws, and select the median target.
 
-\section*{Advantages of the Bayesian Model Averaging}
+\subsection{Bayesian VAR (BVAR) Specification}
+\label{sec:BVAR}
 
-First of all, Bayesian Model Averaging explicitly takes model uncertainty into account. Following \citet{hoetingBayesianModelAveraging1999}:
+The frequentist lag-order selection problem and Bayesian shrinkage differ fundamentally. The frequentist approach suffers from the curse of dimensionality: each additional lag adds a full block of coefficients to the system, and every estimated parameter consumes one degree of freedom. The Bayesian approach reframes this problem. The estimated value of each parameter is determined jointly by the prior and the data, through the posterior. The posterior mean can be understood as a weighted average:
+\begin{equation} \label{eq:posterior_weight}
+\text{posterior} \approx w(\text{data estimate}) + (1 - w)(\text{prior mean})
+\end{equation}
+where the weight $w$ reflects the tightness of the prior. Because part of each coefficient is supplied by the prior rather than estimated freely from the data, no parameter consumes a full degree of freedom. The curse of dimensionality is thus addressed not by discarding lags, as selection does, but by disciplining their coefficients \citep[chapt. 5]{lutkepohlNewIntroductionMultiple2005}.
+
+To evaluate the BVAR models in our averaging grid, we must specify the likelihood and prior. Assuming a Gaussian VAR, the likelihood function is normally distributed. To shrink the coefficients $\boldsymbol{\alpha}$ toward our prior belief (a white noise process, setting the prior mean $\boldsymbol{\alpha}^{*} = 0$), we utilize the Minnesota prior framework to govern the prior variance. The central hyperparameter is $\lambda_1$, the overall tightness, which dictates the strength of the shrinkage. High $\lambda_1$ lets the data dominate, while small $\lambda_1$ prioritzes the prior belief. The variance of distant lags is shrunk further by a decay factor governed by $\lambda_3$, and exogenous/deterministic terms are controlled by $\lambda_4$.
+
+However, the standard Minnesota prior treats the residual covariance matrix $\Sigma$ as fixed. Because our BMA approach requires estimating $\Sigma$ alongside the coefficients while maintaining an analytically tractable marginal data density—the integral in \eqref{eq:x3}—we employ the conjugate Normal-Wishart prior:
+\begin{equation} \label{eq:normal_wishart}
+\Sigma \sim \mathcal{IW}(S_0, \alpha_0), \quad \boldsymbol{\alpha} \mid \Sigma \sim \mathcal{N}(\boldsymbol{\alpha}^*, \Sigma \otimes \Phi_0)
+\end{equation}
+Here, $\Sigma$ is assigned an Inverse-Wishart prior, and the coefficients $\boldsymbol{\alpha}$, conditional on $\Sigma$, retain a normal prior. The matrix $\Phi_0$ dictates the variance structure based on our hyperparameters ($\lambda_1, \lambda_3, \lambda_4$). 
+
+This conjugate structure—an Inverse-Wishart prior on $\Sigma$ combined with a conditionally normal prior on $\boldsymbol{\alpha}$—keeps the posterior in the Normal-Inverse-Wishart family. Crucially for our methodology, this ensures the marginal data density $m(y \mid p, \lambda_1)$ is available in closed form, allowing us to compute exact posterior model probabilities. The cost of this analytical tractability is that the prior covariance must take a specific Kronecker structure ($\Sigma \otimes \Phi_0$). Because $\Phi_0$ is shared across all equations, it forces the cross-variable tightness hyperparameter to $\lambda_2 = 1$, meaning imposing looser or tighter shrinkage on cross-variable coefficients compared to own-lag coefficients is not possible. By iterating over different combinations of $(p, \lambda_1)$ in our grid, we rely on this closed-form density to calculate the exact weights used for Bayesian Model Averaging.\footnote{For a deep-dive into BVAR, please refer to Paper A}
+
+\subsection*{Advantages of the Bayesian Model Averaging}
+
+First of all, Bayesian Model Averaging explicitly addresses model uncertainty directly. Following \citet{hoetingBayesianModelAveraging1999}:
 \begin{equation} \label{eq:x8}
 \mathrm{Var}[\Delta \mid y] = \sum_{k} \left( \mathrm{Var}[\Delta \mid y, M_k] + \hat{\Delta}_k^2 \right) p(M_k \mid y) - E[\Delta \mid y]^2
 \end{equation}
@@ -286,7 +299,7 @@ Here, $\hat \Delta_k = E[\Delta\mid y, M_k]$. After decomposing $\mathrm{Var}[\D
 \begin{equation} \label{eq:x9}
 \mathrm{Var}[\Delta \mid y] = \underbrace{\sum_{k} \mathrm{Var}[\Delta \mid y, M_k] p(M_k \mid y)}_{\text{within-model}} + \underbrace{\sum_{k} \left( \hat{\Delta}_k - E[\Delta \mid y] \right)^2 p(M_k \mid y)}_{\text{across-model}}
 \end{equation}
-From \eqref{eq:x9} we see that if a single model dominated the posterior---so that $\hat \Delta_k = E[\Delta\mid y]$ for that model---the across-model term would vanish and $\mathrm{Var}[\Delta \mid y]$ would reduce to the within-model variance alone. That is clearly an advantage of Bayesian Model Averaging since it allows the practitioner to estimate the posterior variance in a more accurate way. 
+From \eqref{eq:x9} we see that if a single model dominated the posterior---such that $\hat \Delta_k = E[\Delta\mid y]$ for that model---the across-model term would vanish and $\mathrm{Var}[\Delta \mid y]$ would reduce to the within-model variance alone. That is clearly an advantage of Bayesian Model Averaging since it allows the practitioner to estimate the posterior variance in a more accurate way. 
 
 Second, model averaging has a formal optimality property: Madigan and Raftery (1994) show that, under a logarithmic scoring rule, the model-averaged predictive distribution outperforms any single model. While our study concerns estimation rather than forecasting, this result underpins the broader case for averaging. Hoeting et al. (1999) provide a concrete illustration in which even the highest-probability model carries only 17\% of the posterior model probability, underscoring that model uncertainty is often substantial. Therefore, it makes sense to use Bayesian Model Averaging in order to account for model uncertainty. Our central motivation for using this approach is to assess whether accounting for model uncertainty leads to better MSE results or not. 
 
@@ -296,6 +309,9 @@ Having established the theoretical framework and estimation methodology, we now 
 \section{Simulation Design}
 \label{sec:methodology}
 
+\section{Simulation Design}
+\label{sec:simulation}
+
 This Monte Carlo simulation study follows \citet{ivanovPractitionersGuideLag2005} design with several alterations in order to make our extensions feasible and to fit the needs of our analysis. First of all, we only use one monthly DGP based on the empirical VAR study of \citet{kilianRoleInventoriesSpeculative2014}. Therefore, we do not get estimations for quarterly VAR series or VEC series, and additionally, we do not have additional robustness by including several different series with different macroeconomic indicators and movements. The reason for this limitation is our tight time constraint. We use the dataset from \citet{kilianRoleInventoriesSpeculative2014} containing the following 4 variables: percent change in global oil production, real activity index from \citet{kilianNotAllOil2009}, the log real price of oil, and changes in OECD crude oil inventories. Just as in the original study, we first estimate a VAR with a set lag order of these 4 variables and then use the sign restrictions approach explained earlier to identify structural IRFs and select the median target.
 
 The DGP is formed by structural VAR model using the structural impact matrix $\tilde{B}$ that corresponds to the median target IRF as the parameter for the structural shocks $e_t$, which are drawn from an i.i.d. standard normal distribution. The formula for the DGP is represented by a structural VAR model using the estimated reduced form parameters $A$ (for the lag coefficients $y_{t-p}$) and $V$ (for the monthly dummy parameters $d_t$) and the structural impact matrix $\tilde{B}$ as follows:
@@ -304,69 +320,34 @@ The DGP is formed by structural VAR model using the structural impact matrix $\t
     y_t = V d_t + A y_{t-p} + \tilde{B} e_t
 \end{equation}
 
-We estimate these parameters using the original data for two different lag orders, $p_0 \in \{4,10\}$ and create DGPs with different sample sizes, $T \in \{240, 360, 480, 600\}$, where $T=N+\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. We restrict the lag order selection $p_0$ to only include one high and one low lag order and drop $T=300$ in comparison to the setup of \citet{ivanovPractitionersGuideLag2005} in order to save computational power for the sign restriction decomposition. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
+We estimate these parameters using the original data for two different lag orders, $p_0 \in \{4,10\}$ and create DGPs with different sample sizes, $T \in \{240, 360, 480, 600\}$, where $T=N-\bar{p}$. $\bar{p}$ is the set of lag orders that are considered for both the IC and the BVAR estimations; it is uniformly set to $\bar{p}=12$ to ensure that the true lag order $p_0$ is part of the set. We restrict the lag order selection $p_0$ to only include one high and one low lag order and drop $T=300$ in comparison to the setup of \citet{ivanovPractitionersGuideLag2005} in order to save computational power for the sign restriction decomposition. For sampling, we use random draws of length $p_0$ from the original dataset as initial values, then apply the parametric bootstrap using the SVAR described above and generate sequences of lengths $T$.
 
-On each of these samples, OLS VARs fitted by lag orders selected by both the three ICs as well as the BMA determined OLS VARs and BVARs, for both the geometric and BIC-based approach, are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We only include AIC, BIC and HQC as information criteria and omit the Likelihood Ratio tests and the Lagrange Multiplier test for lag selection as these have become practically irrelevant in the last 20 years for macroeconomic time series analysis and were also shown to perform poorly in \citet{ivanovPractitionersGuideLag2005}. The four different BMA estimations follow the methodology described in the previous section. The space of optimal shrinkage parameters for the implementation with BVAR is limited to $\lambda_1 \in \{0.05, 0.2, 0.35, 0.5, 0.65, 0.8, 0.95\}$ in order to make computation in the simulation feasible. It still captures a good range of typically used $lambda_1$-values, both tighter and looser specifications. 
+On each of these samples, VARs fitted by lag orders selected by both the three ICs as well as different specifications of BVAR are estimated, a fixed number of admissible IRFs found, and the median target IRF determined. We estimate all BVARs using $p=\bar{p}=12$ as the lag order, thereby solely relying on shrinkage for reducing the variance and bias of the estimation. 
 
-Finally, we estimate the MSE by calculating the geometric mean over the ratio of the squared errors of the median target IRFs $\hat \theta_j$ computed by method j in relation to the squared errors of the median target IRF by a model fit with the true lag order $\hat \theta_{p_0i}$ over all Monte Carlo iterations from $1, ..., R$:
+Finally, we estimate the key performance parameter, the relative MSE, by calculating the geometric mean over the ratio of the squared errors of the median target IRFs $\hat \theta_j$ computed by method j in relation to the squared errors of the median target IRF by a model fit with the true lag order $\hat \theta_{p_0i}$ over all Monte Carlo iterations from $1, ..., R$:
 
 \begin{equation}
     MSE^{relative}_j = \exp\left( \frac{1}{n} \sum_{i=1}^{R} \ln(\frac{SE_{ji}}{SE_{p_0i}}) \right)
 \end{equation}
 
-The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. Normalization by the model fit with $p_0$ ensures that performance in each iteration is weighed by how well a correctly identified model performs.
+The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. Normalization by the OLS VAR estimation with $p_0$ ensures that the performance in each iteration is weighed by how well a correctly identified model performs.
 
-For the computation of the DGP parameters, we set the number of selected admissible IRFs to 1 million in order to get a highly accurate representation of the real world movements. However, during the Monte Carlo simulation we have to reduce that number to 1,000, which is seen as the minimum requirement for accurate set identification, albeit still with a larger variance. We set the number of Monte Carlo iterations to $R=500$. We understand the concern that this may be too little for eliminating all Monte Carlo biases. Yet we have to rely on such a small number as it is the absolute maximum that our hardware allows for, even though we have optimized the code by employing parallel processing and delegation to C-based processes using the \texttt{numba} and \texttt{joblib} packages in \texttt{python}. All in all, this simulation still took 18 hours to complete with 6.5 million admissible IRFs drawn.
-
-Finally, the squared error matrix of the selected median target IRF to the true DGP IRF is calculated, collapsed into a scalar total squared error by summation. Then we estimate the ratio of this squared error of a specific estimation approach to the model fitted by the true lag order $p_0$. Therefore, the deviations of the true IRF are directly put into relation to how well a correctly specified model compares for the given sample. Finally, we estimate the MSE by calculating the geometric mean of these individual ratios. The geometric mean is preferred over the arithmetic mean as the ratios are bounded on the left side at 0, but unbounded on the right side. Outliers on the right side are hence overweighed in the arithmetic mean. The relative MSE for one method for one true lag order $p_0$ and one sample size $T$ is given by the following formula:
-
-\begin{equation}
-    MSE_{relative} = \exp\left( \frac{1}{n} \sum_{i=1}^{n} \ln(r_i) \right) \text{ where } r_i=\frac{TSE_i}{TSE^{p_0}_{i}}
-\end{equation}
-
-While, for a single estimation it is possible to estimate millions of admissible IRFs, the Monte Carlo simulation approach doesn't allow for such a large number of draws. In establishing the median target IRF specific to the DGP, we set the number of discovered admissible IRFs to 1 million so as to have a very accurate median target IRF for the specific dataset. In the Monte Carlo Simulation, we reduce this number drastically to 100 as it has proven to be the absolute limit that still allows us to have an acceptable number of Monte Carlo iterations, 1000, for our set of different methods. Even with computational optimization by parallel processing, more draws are not applicable under our hardware constraints. For each individual iteration, the median target IRF is therefore less accurately determined. However, because we use relative MSEs as our performance measure and repeat the process 1000 times, this should not impact the interpretability of our results. 
+For the computation of the DGP parameters, we set the number of selected admissible IRFs to 1 million in order to get a highly accurate representation of the real world movements. However, during the Monte Carlo simulation we have to reduce that number to 1,000, which is seen as the minimum requirement for accurate set identification, albeit still with a larger variance. We set the number of Monte Carlo iterations to $R=500$. We understand the concern that this may be too little for eliminating all Monte Carlo biases. Yet we have to rely on such a small number as it is the absolute maximum that our hardware allows for, even though we have optimized the code by employing parallel processing and delegation to C-based processes using the \texttt{numba} and \texttt{joblib} packages in \texttt{python}. All in all, this simulation took 18 hours to complete with 6.5 million admissible IRFs drawn.\footnote{The computation included both the methods used in this paper as well as in Paper A.}
 
 \section{Results}
 \label{sec:results}
-
-First, we will look at the main comparison of performance between the different ICs and BVAR specifications in terms of recovering an accurate median target IRF. Table~\ref{tab:uncertainty_mse} displays the full set of relative MSEs. It reveals two main findings:
-
-1. We confirm the results from \citet{ivanovPractitionersGuideLag2005} about the performance of the different information criteria. AIC consistently outperforms both BIC and HQC, revealing that the strict penalization of the latter two towards low lag orders is biasing the IRF too much. On the other hand, AIC's milder lag penalization ensures a closer fit to the true lag order $p_0$ for finite samples, thereby reducing bias. The reduction of the variance by selecting a $p$ much lower than the true lag order selected by BIC and HQC, see Table~\ref{tab:ic_lag_orders}, is not evidenced to reduce the coefficient variance enough to compensate for the additional bias.
-
-2. Hedging the risk of lag selection by employing BMA is the best option in nearly all scenarios. For smaller sample sizes, $T=240$ and $T=360$, joint grid BMA is dominating all other methods by a solid margin. The OLS fitted BMA using AIC as the criterion is the best criterion in two scenarios, once without and once with geometric decay. However, for $p_0=10$ and $T=600$, joint grid BMA's relative MSE is only slightly higher. Only for the highest sample size $T=600$ and the lower true lag order $p_0=4$ does the conventional VAR fitted by an AIC-selected lag order perform the best. This may be explained by the finding that $\hat p^{AIC}$ has basically converged to $p_0$ at this sample size (See Table~\ref{tab:ic_lag_orders}) while the sample size is already large enough in order to accurately determine the coefficients for four lags. 
-
-Table~\ref{tab:bma_vs_aic} makes the comparison to AIC for all different scenarios clearer by setting the $MSE_{AIC}$ as the benchmark. Both OLS BMA with AIC as well as joint grid BMA outperform regular AIC in the majority of scenarios. All other versions of BMA are actually not consistently better than simple AIC. The sensitivity of the BMA hedging advantage to the exact specification requires further examination.
-
-To understand this, we have to consider Figures~\ref{fig:bma_heatmaps_grid} and \ref{fig:bma_heatmaps_grid_bvar} that present the weighting distribution of the different BMA methods for $p_0=4$. The reason for the BIC-weighted OLS BMA to fail is very apparent. The strong penalty of BIC forces it to rely very heavily on the lag order $p=2$ in finite samples, thereby basically eliminating the diversification of BMA. As BIC generally doesn't produce models with good IRF inference, this also applies to these BMAs.
-
-Once AIC is introduced to OLS BMA, the goal of spreading out the estimation on a selection of lag orders that are determined to be probable is achieved. AIC's weaker penalization of higher lag orders ensures that four to five different $p$s are assigned positive weights. The weighting becomes more concentrated on the true lag order $p_0=4$ as $T$ increases. The introduction of the geometric decay parameter $\theta=0.5$ distorts the weighting towards lower lag orders. This moves the estimation further away from the correctly fitted model, resulting in a larger underfitting bias. Table~\ref{tab:bma_vs_aic} shows that the reduction in parameter variance does not compensate for this bias.
-
-Finally, the joint grid approach provides the most widely distributed weighting scheme. Figure~\ref{fig:bma_heatmaps_grid_bvar} aggregates the weights from the grid at the lag order $p$-level, i.e., weights assigned to the combination of an individual $p$ with different $\lambda_1$-values are added up. For lower sample sizes, nearly all lag orders are considered in the BVAR estimated BMAs. Even for the largest $T=600$, the highest weight is just above 50\%. Hence, a wider diversification, also into the territory of overfitting lag orders $p > p_0$, can improve the fit of the determined median target IRF if combined with BVAR estimation. The inclusion of higher lag orders at first seems counterproductive. Yet, due to the additional shrinkage of parameters with the BVAR estimation, it enables you to spread the risk of lag order uncertainty wider while maintaining accurate parameter estimation for the crucial lower lags. The combined optimization of weighting on lag order $p$ as well as the hyperparameter $\lambda_1$ ensures that this shrinkage is amplified for those models that use overparameterized specifications. \ref{fig:tau_to_p} illustrates how, as an example for the scenario of $T=600$ and $p_0=4$, tighter average $\lambda_1$-values are selected on average for the BVAR specifications of higher lag orders, i.e., the weights among different combinations of $p$ and $\lambda_1$ are skewed more concentrated at the lower end of $\lambda1$ as $p$ increases above $p_0$. Although MDD optimizes on Out-of-Sample performance and therefore may select lower than optimal tau-values for IRF accuracy (CITATION), it appears to be a good enough approximation to ensure good estimations for BMA. The shift towards lower lag orders introduced by the geometric decay parameter $\theta$, on the other hand, cannot be evidenced to be of advantage for a BMA model estimated by the grid BVAR approach.
-
-A caveat for the interpretation of these results, however, remains: the low number of Monte Carlo iterations and admissible IRFs drawn per model. We cannot exclude that some part of the variation in relative MSEs may be driven by pure sampling variation. For example, the general increase in relative MSEs across all methods at $T=360$ and $p_0=4$ can barely be explained by the theoretical properties.  
 
 \input{Tables/Table2_Uncertainty.tex}
 
 \input{Tables/Table6_BMA_vs_AIC.tex}
 
-\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
-    \centering
-    
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig1b_Asymptotic_Convergence_p4.pdf}
-        \caption{$p_0=4$}
-        \label{fig:convergence4}
-    \end{subfigure}
-    \hfill % Adds horizontal space between the two columns
-    \begin{subfigure}[b]{0.48\textwidth}
-        \includegraphics[width=\textwidth]{Figures/Fig1c_Asymptotic_Convergence_p10.pdf}
-        \caption{$p_0=10$}
-        \label{fig:convergence10}
-    \end{subfigure}
-  
-    \caption{Performance of BMA vs Hard Selection at different sample sizes $T$.}
-    \label{fig:convergence}
-\end{figure}
+First, we will look at the main comparison of performance between the different ICs and BMA specifications in terms of recovering an accurate median target IRF. Table~\ref{tab:uncertainty_mse} displays the full set of relative MSEs. It reveals two main findings:
+
+1. We confirm the results from \citet{ivanovPractitionersGuideLag2005} about the performance of the different information criteria. AIC consistently outperforms both BIC and HQC, revealing that the strict penalization of the latter two towards low lag orders is biasing the IRF too much. On the other hand, AIC's milder lag penalization ensures a closer fit to the true lag order $p_0$ for finite samples, thereby reducing bias. The reduction of the variance by selecting a $p$ much lower than the true lag order as done by BIC and HQC, see Table~\ref{tab:ic_lag_orders}, is not evidenced to reduce the coefficient variance enough to compensate for the additional bias.
+
+2. Hedging the risk of lag selection by employing BMA is the best option in nearly all scenarios. For smaller sample sizes, $T=240$ and $T=360$, joint grid BMA is dominating all other methods by a solid margin. The OLS fitted BMA using AIC as the criterion is the best criterion in two scenarios, once without and once with geometric decay. However, for $p_0=10$ and $T=600$, joint grid BMA's relative MSE is only slightly higher. Only for the highest sample size $T=600$ and the lower true lag order $p_0=4$ does the conventional VAR fitted by an AIC-selected lag order perform the best. This may be explained by the finding that $\hat p^{AIC}$ has basically converged to $p_0$ at $T=600$ (See Table~\ref{tab:ic_lag_orders}) while the sample size is already large enough in order to accurately determine the coefficients for four lags. 
+
+Table~\ref{tab:bma_vs_aic} makes the comparison to AIC for all different scenarios clearer by setting $MSE_{AIC}$ as the benchmark. Both OLS BMA with AIC as well as joint grid BMA outperform regular AIC in the majority of scenarios. Meanwhile, all other versions of BMA are actually not consistently better than simple AIC. The sensitivity of the BMA hedging advantage to the exact specification requires further examination.
 
 \begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
     \centering
@@ -405,6 +386,11 @@ A caveat for the interpretation of these results, however, remains: the low numb
     \label{fig:bma_heatmaps_grid}
 \end{figure}
 
+
+To understand this, we have to consider Figures~\ref{fig:bma_heatmaps_grid} and \ref{fig:bma_heatmaps_grid_bvar} that present the weighting distribution of the different BMA methods for $p_0=4$. The reason for the BIC-weighted OLS BMA to fail is very apparent. The strong penalty of BIC forces it to rely very heavily on the lag order $p=2$ in finite samples, thereby basically eliminating the diversification of BMA. As BIC generally doesn't produce models with good IRF inference, this also applies to these BMAs.
+
+Once AIC is introduced to OLS BMA, the goal of BMA---spreading out the estimation on a selection of lag orders that are determined to be probable---is fulfilled. AIC's weaker penalization of higher lag orders ensures that four to five different $p$s are assigned positive weights. The weighting becomes more concentrated on the true lag order $p_0=4$ as $T$ increases. The introduction of the geometric decay parameter $\theta=0.5$ distorts the weighting towards lower lag orders. This moves the estimation further away from the correctly fitted model, resulting in a larger underfitting bias. Table~\ref{tab:bma_vs_aic} shows that the reduction in parameter variance does not compensate for this bias.
+
 \begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
     \centering
     
@@ -426,11 +412,34 @@ A caveat for the interpretation of these results, however, remains: the low numb
     \label{fig:bma_heatmaps_grid_bvar}
 \end{figure}
 
+The joint grid approach provides the most widely distributed weighting scheme. Figure~\ref{fig:bma_heatmaps_grid_bvar} aggregates the weights from the grid at the lag order $p$-level, i.e., weights assigned to the combination of an individual $p$ with different $\lambda_1$-values are added up. For lower sample sizes, nearly all lag orders are considered in the BVAR estimated BMAs. Even for the largest $T=600$, the highest weight is just above 50\%. Hence, a wider diversification, also reaching into the territory of overfitting lag orders $p > p_0$, can improve the accuracy of the determined median target IRF when combined with BVAR estimation. The inclusion of higher lag orders at first seems counterproductive. Yet, due to the additional shrinkage of parameters introduced by BVAR, it can reduce the risk of lag order uncertainty further while maintaining accurate parameter estimation for the crucial lower lags. The combined optimization of weighting on lag order $p$ as well as the hyperparameter $\lambda_1$ ensures that this shrinkage is amplified for those models that use overparameterized specifications. Figure~\ref{fig:tau_to_p} illustrates how, as an example for the scenario of $T=600$ and $p_0=4$, the weights among different combinations of $p$ and $\lambda_1$ are towards the lower end of $\lambda1$ as $p$ increases above $p_0$. Although MDD optimizes on Out-of-Sample performance and therefore may select lower than optimal tau-values for IRF accuracy (Paper A), it appears to work well for joint grid BMA estimation for inference of accurate IRFs. The shift towards lower lag orders introduced by the geometric decay parameter $\theta$, on the other hand, cannot be evidenced to be of advantage for a BMA model estimated by the grid BVAR approach.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{Figures/Fig9_Tau_Comparison_T600_p04.pdf}
-    \caption{Optimal $\lambda_1$ is adapted to the lag order $p$.}
+    \caption{The expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=4$).}
     \label{fig:tau_to_p}
+\end{figure}
+
+A caveat for the interpretation of these results, however, remains: the low number of Monte Carlo iterations and admissible IRFs drawn per model. We cannot exclude that some part of the variation in relative MSEs may be driven by pure sampling variation. For example, the general increase in relative MSEs across all methods at $T=360$ and $p_0=4$ can barely be explained by the theoretical properties. If you look at how the methods perform over different sample sizes $T$ (Figure~\ref{fig:convergence}), you can also not deduce a reasonable pattern. Only the simple AIC estimation has a downward movement that basically converges to the lowest possible MSE at $T=360$. However, both BMA methods shown, AIC OLS as well as joint grid, do not show a clear trend. We suspect that this is due to the complexity of these methods in each iteration whose number may not be enough to eliminate Monte Carlo biases.
+
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1b_Asymptotic_Convergence_p4.pdf}
+        \caption{$p_0=4$}
+        \label{fig:convergence4}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1c_Asymptotic_Convergence_p10.pdf}
+        \caption{$p_0=10$}
+        \label{fig:convergence10}
+    \end{subfigure}
+  
+    \caption{Performance of BMA vs Hard Selection at different sample sizes $T$.}
+    \label{fig:convergence}
 \end{figure}
 
 \clearpage
@@ -450,6 +459,159 @@ Ultimately, this study advocates for a shift in standard empirical practice. Rat
 % Print the bibliography
 \section*{References}
 \printbibliography
+
+\section*{Appendix}
+
+
+\subsection*{A. DGP IRFs}
+
+Figure~\ref{fig:IRF} visualizes the IRFs selected for the DGP of $p_0=4$ and $p_0=10$. You can see that they exhibit the same general pattern but that a higher lag order captures more complex movements.
+
+\begin{figure}[htbp]
+    \centering
+    % Top Graph
+    \includegraphics[width=0.85\textwidth]{Figures/True_IRF_plot_Cumulative_4_lags.png}
+    
+    \vspace{0.5cm} % Adjusts the vertical space between the two graphs
+    
+    % Bottom Graph
+    \includegraphics[width=0.85\textwidth]{Figures/True_IRF_plot_Cumulative_10_lags.png}
+    
+    % Single global title/caption
+    \caption{DGP IRFs for $p_0=4$ and $p_0=10$}
+    \label{fig:IRF}
+\end{figure}
+
+
+\subsection*{B. Derivation of the Relationship Between Structural Form Innovation Terms and Reduced Form Errors}
+
+For clarity, several intermediate steps were omitted in the main text. We collect them here. To derive the relationship in equation \eqref{eq:VAR_error}, we begin from the structural form:
+\begin{equation}
+Y_t = B_0Y_t + B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t  
+\end{equation}
+
+Moving the contemporaneous term $B_0Y_t$ to the left-hand side gives:
+\begin{equation}
+\underbrace{(I-B_0)}_{B^*}Y_t = B_1Y_{t-1} + B_2Y_{t-2} + \cdots + B_{p_0}Y_{t-p_0} + \varepsilon_t  
+\end{equation}
+
+Premultiplying by the inverse of $B^*$ yields the reduced form:
+\begin{equation}
+Y_t = \underbrace{(B^*)^{-1} B_1}_{A_1} Y_{t-1} + \underbrace{(B^*)^{-1} B_2}_{A_2} Y_{t-2} + \cdots + \underbrace{(B^*)^{-1} B_{p_0}}_{A_{p_0}} Y_{t-p_0} + \underbrace{(B^*)^{-1} \varepsilon_t}_{e_t}  
+\end{equation}
+which is the explicit reduced-form representation. The relationship defined in \eqref{eq:VAR_error} is now apparent: writing $(B^*)^{-1} = B$, we have:
+\begin{equation}
+e_t = B \varepsilon_t  
+\end{equation}
+
+Here, $B_0$ and $B$ denote distinct objects: $B_0$ is the structural contemporaneous coefficient matrix, which governs the simultaneous interactions among the endogenous variables in the structural form, whereas $B = (I-B_0)^{-1}$ is the impact matrix that maps the unit-variance structural shocks $\varepsilon_t$ into the reduced-form innovations $e_t$. The former is a primitive of the structural model; the latter is the object recovered through the identification procedure in the main text.
+
+\subsection*{C. Derivation of the Recursive Coefficients and the Mean}
+
+We now derive the recursion in (4). It is convenient to define the autoregressive lag polynomial: 
+\begin{equation}
+A(L) = I - A_1L - A_2L^2 - \cdots - A_{p_0}L^{p_0}  
+\end{equation}
+
+Its inverse admits a power-series representation in the lag operator:
+\begin{equation}
+A(L)^{-1} = \Phi(L) = \sum_{i=0}^{\infty} \Phi_i L^{i} = \Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots  
+\end{equation}
+
+Which leads to: 
+\begin{equation}
+A(L)A(L)^{-1} = A(L)\Phi(L) = (I - A_1L - A_2L^2 - \cdots)(\Phi_0 + \Phi_1L + \Phi_2L^2 + \cdots) = I  
+\end{equation}
+
+Matching coefficients on equal powers of $L$ gives: 
+\begin{align*}
+I\Phi_0 &= I_K \implies \Phi_0 = I_K \\
+\Phi_1 - A_1\Phi_0 &= 0 \implies \Phi_1 = A_1\Phi_0 \\
+\Phi_2 - A_1\Phi_1 - A_2\Phi_0 &= 0 \implies \Phi_2 = A_1\Phi_1 + A_2\Phi_0
+\end{align*}
+and, in general, the recursion: 
+\begin{equation}
+\Phi_i = \sum_{j=1}^{i} A_j\Phi_{i-j}  
+\end{equation}
+
+The unconditional mean is $\mu = (I-A_1-A_2-\cdots-A_{p_0})^{-1}v$ provided the process is weakly stationary. To derive it, take expectations of (1) under weak stationarity, so that $\mathbb{E}[Y_t] = \mu$ for all $t$:
+\begin{equation}
+\mathbb{E}[Y_t] = v + A_1\mathbb{E}[Y_{t-1}] + A_2\mathbb{E}[Y_{t-2}] + \cdots + A_{p_0}\mathbb{E}[Y_{t-p_0}] \iff [I-A_1-A_2-\cdots-A_{p_0}]\mu = v  
+\end{equation}
+
+which gives: 
+\begin{equation}
+\mu = [I-A_1-A_2-\cdots-A_{p_0}]^{-1}v  
+\end{equation}
+
+\subsection*{D. Posterior Weight Evolution for the BMAs ($p_0=10$).}
+
+Figures~\ref{fig:bma_heatmaps_grid_p10}~and~\ref{fig:bma_heatmaps_grid_bvar_p10} depict the weighting scheme across sample sizes $T$ for all six different BMA methods. Figure~\ref{fig:fig:tau_to_p_p10} depicts how the expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=10$)
+
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5a_BMA_Heatmap_OLS_p10.pdf}
+        \caption{OLS BMA (BIC-weighted)}
+        \label{fig:heat_ols_p10}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5b_BMA_Heatmap_OLS_Geom_p10.pdf}
+        \caption{OLS BMA (Geom. BIC-weighted, $\theta=0.5$)}
+        \label{fig:heat_ols_geom_p10}
+    \end{subfigure}
+    
+    \vspace{2em} % Adds vertical space between the rows
+    
+    % Bottom Left: Figure 7
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5c_BMA_Heatmap_OLS_AIC_p10.pdf}
+        \caption{OLS BMA (AIC-weighted)}
+        \label{fig:heat_aic_p10}
+    \end{subfigure}
+    \hfill
+    % Bottom Right: Figure 8
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC_p10.pdf}
+        \caption{OLS BMA (Geom. AIC-weighted, $\theta=0.5$)}
+        \label{fig:heat_aic_geom_p10}
+    \end{subfigure}
+    
+    \caption{Posterior Weight Evolution across the four OLS BMA architectures ($p_0=10$).}
+    \label{fig:bma_heatmaps_grid_p10}
+\end{figure}
+
+\begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5e_BMA_Heatmap_Joint_p10.pdf}
+        \caption{Joint Grid BMA}
+        \label{fig:heat_joint_p10}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5f_BMA_Heatmap_Geom_p10.pdf}
+        \caption{Geometric Grid BMA}
+        \label{fig:heat_geom_p10}
+    \end{subfigure}
+  
+    \caption{Posterior Weight Evolution for the two BVAR-based BMAs ($p_0=10$).}
+    \label{fig:bma_heatmaps_grid_bvar_p10}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/Fig9_Tau_Comparison_T600_p010.pdf}
+    \caption{The expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=10$).}
+    \label{fig:tau_to_p_p10}
+\end{figure}
 
 \section*{Declaration of AI Usage}
 

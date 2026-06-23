@@ -267,6 +267,7 @@ INPUT ./Tables/Table1_Shrinkage.tex
 INPUT ./Tables/Table1_Shrinkage.tex
 INPUT Tables/Table1_Shrinkage.tex
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecti1000.tfm
 INPUT ./Tables/Table5_BVAR_vs_AIC.tex
 INPUT ./Tables/Table5_BVAR_vs_AIC.tex
 INPUT Tables/Table5_BVAR_vs_AIC.tex
@@ -314,6 +315,7 @@ INPUT Paper1_BVAR.run.xml
 OUTPUT Paper1_BVAR.run.xml
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/eccc1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk
+INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1200.600pk
 INPUT c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600pk

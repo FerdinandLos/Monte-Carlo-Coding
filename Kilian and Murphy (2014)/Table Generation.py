@@ -109,9 +109,13 @@ def main():
         multirow_align="t", convert_css=True
     )
     
+    note_text = r"\\\vspace{1ex}\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario."
+
     latex1 = (latex1
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
+        # Inject the note right after the tabular environment ends
+        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
         .replace('SIC (BIC)', 'BIC')
         .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.2$)\end{tabular}')
         .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.4$)\end{tabular}')
@@ -119,6 +123,7 @@ def main():
         .replace('BVAR-WN-80', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.8$)\end{tabular}')
         .replace('BVAR-MDD', r'\begin{tabular}{@{}c@{}}BVAR \\ (MDD $\lambda_1$)\end{tabular}')
     )
+
     
     with open(os.path.join(tables_dir, "Table1_Shrinkage.tex"), "w") as f:
         f.write(latex1)
@@ -129,7 +134,7 @@ def main():
     n2 = len([c for c in cols2 if c in pivot_mse.columns])
     latex2 = styled_mse_latex(
         cols2,
-        caption="Relative Mean Squared Error: Hard Selection vs.~Bayesian Model Averaging (Including Informative Priors).",
+        caption="Relative Mean Squared Error: Hard Selection vs.~Bayesian Model Averaging.",
         label="tab:uncertainty_mse",
         column_format="ll" + "c" * n2,
         position="htbp", position_float="centering", hrules=True,
@@ -139,6 +144,8 @@ def main():
     latex2 = (latex2
         .replace('\\begin{table}', '\\begin{sidewaystable}')
         .replace('\\end{table}',   '\\end{sidewaystable}')
+        # Inject the note right after the tabular environment ends
+        .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
         .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
         .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
         .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -248,6 +255,8 @@ def main():
             
             # Apply your established LaTeX string replacements (Sideways table formatting removed)
             latex5 = (latex5
+                # Inject the note right after the tabular environment ends
+                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text) 
                 .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
                 .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
                 .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
@@ -293,6 +302,10 @@ def main():
                     ))
             
             latex6 = (latex6
+                .replace('\\begin{table}', '\\begin{sidewaystable}')
+                .replace('\\end{table}',   '\\end{sidewaystable}')
+                # Inject the note right after the tabular environment ends
+                .replace('\\end{tabular}', '\\end{tabular}\n' + note_text)   
                 .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
                 .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
                 .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
@@ -765,6 +778,51 @@ def main():
         fig.savefig(save_name)
         plt.close(fig)
         print(f"[SAVED] {save_name}")
+
+    # Figure 5: BMA Posterior Weight Heatmaps (All 6 Included)
+    if weights_df is not None:
+        heatmap_configs = [
+            ('OLS-BMA',      'OLS',      r'OLS BMA (BIC-W)',             'Fig5a'),
+            ('OLS-Geom-BMA', 'OLS_Geom', r'OLS BMA (Geom-BIC-W, $\theta=0.5$)', 'Fig5b'),
+            ('OLS-BMA (AIC-W)',      'OLS_AIC',      r'OLS BMA (AIC-W)',             'Fig5c'),
+            ('OLS-Geom-BMA (AIC-W)', 'OLS_Geom_AIC', r'OLS BMA (Geom-AIC-W, $\theta=0.5$)', 'Fig5d'),
+            ('Joint-BMA',    'Joint',    r'Joint BMA ($p, \lambda_1$)',       'Fig5e'),
+            ('Geom-BMA',     'Geom',     r'Geom BMA ($\theta=0.5$)',     'Fig5f'),
+        ]
+        
+        for est_name, file_suffix, title_str, fig_num in heatmap_configs:
+            heat_df = weights_df[
+                (weights_df['Estimator'] == est_name) &
+                (weights_df['True DGP (p0)'] == 10)
+            ].copy().set_index('Sample Size (T)')
+            
+            if heat_df.empty:
+                print(f"[SKIPPED] {fig_num} (No data for {est_name} in weights CSV)")
+                continue
+
+            p_cols = [c for c in [f"p={i}" for i in range(1, 13)] if c in heat_df.columns]
+            heat_df = heat_df[p_cols].T
+            heat_df.index.name = 'Candidate Lag'
+
+            fig, ax = plt.subplots(figsize=(8, 7))
+            sns.heatmap(heat_df, annot=True, fmt=".1%", cmap="YlGnBu",
+                        cbar_kws={'label': 'Posterior Probability Mass'},
+                        linewidths=1, linecolor='white', ax=ax)
+
+            true_lag_idx = 3  # p=4 is the 4th row (0-indexed = 3)
+            ax.add_patch(plt.Rectangle((0, true_lag_idx), len(heat_df.columns), 1,
+                                       fill=False, edgecolor='red', lw=3, clip_on=False))
+
+            ax.set_title(f'Posterior Weight Evolution: {title_str} ($p_0=4$)')
+            ax.set_xlabel('Sample Size ($T$)')
+            ax.set_ylabel('Candidate Lag Order ($p$)')
+            fig.tight_layout()
+            
+            save_name = f"{fig_num}_BMA_Heatmap_{file_suffix}_p10.pdf"
+            fig.savefig(os.path.join(figures_dir, save_name))
+            plt.close(fig)
+            print(f"[SAVED] {save_name}")
+
 
     print("\n" + "="*80)
     print(" VISUALIZATION PROCESS COMPLETE!")
