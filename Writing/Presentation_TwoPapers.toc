@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Motivation}{3}{0}{1}
+\beamer@sectionintoc {2}{Paper I: BVAR}{5}{0}{2}
+\beamer@sectionintoc {3}{Paper II: BMA}{8}{0}{3}
+\beamer@sectionintoc {4}{Comparison}{11}{0}{4}
+\beamer@sectionintoc {5}{Closing}{13}{0}{5}
