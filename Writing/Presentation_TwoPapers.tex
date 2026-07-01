@@ -1,21 +1,47 @@
 \documentclass[aspectratio=169]{beamer}
 
-\usetheme{Madrid}
-\usecolortheme{dolphin}
+% ===== Plain lecture-slide style: blue frame titles, blue triangle bullets =====
+\usetheme{default}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}[default][left]
+\setbeamertemplate{itemize items}[triangle]
+
+% Beamer blue used in the lecture slides
+\definecolor{lmublue}{RGB}{47,47,140}
+\setbeamercolor{frametitle}{fg=lmublue,bg=}
+\setbeamercolor{title}{fg=lmublue}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{structure}{fg=lmublue}   % bullets and block titles
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+
+% Bottom info bar: blue background, white text (as in the lecture slides)
+\setbeamercolor{author in head/foot}{fg=white,bg=lmublue}
+\setbeamercolor{title in head/foot}{fg=white,bg=lmublue}
+\setbeamercolor{date in head/foot}{fg=white,bg=lmublue}
+\setbeamertemplate{footline}{%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.5ex,dp=1ex,leftskip=1em]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.5ex,dp=1ex,center]{title in head/foot}%
+      \usebeamerfont{title in head/foot}\insertshorttitle%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.26\paperwidth,ht=2.5ex,dp=1ex,rightskip=1em]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\hfill\insertframenumber\,/\,\inserttotalframenumber%
+    \end{beamercolorbox}%
+  }%
+}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
 
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{itemize items}[triangle]
-\setbeamercolor{frametitle}{fg=black}
-\setbeamercolor{title}{fg=black}
-
-\title{Lag-Order Uncertainty in Set-Identified SVARs}
+\title[Lag-Order Uncertainty in Set-Identified SVARs]{Lag-Order Uncertainty in Set-Identified SVARs}
 \subtitle{A comparative presentation of two Monte Carlo studies}
-\author{Ak\i n Ayd\i n \and Ferdinand Loser}
+\author[Ak\i n Ayd\i n \& Ferdinand Loser]{Ak\i n Ayd\i n \and Ferdinand Loser}
 \institute{Ludwig-Maximilian University of Munich}
 \date{\today}
 
