@@ -1,0 +1,209 @@
+\documentclass[aspectratio=169]{beamer}
+
+% ===== Plain lecture-slide style: blue frame titles, blue triangle bullets =====
+\usetheme{default}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}[default][left]
+\setbeamertemplate{itemize items}[triangle]
+
+% Beamer blue used in the lecture slides
+\definecolor{lmublue}{RGB}{47,47,140}
+\setbeamercolor{frametitle}{fg=lmublue,bg=}
+\setbeamercolor{title}{fg=lmublue}
+\setbeamercolor{subtitle}{fg=black}
+\setbeamercolor{structure}{fg=lmublue}   % bullets and block titles
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+
+% Bottom info bar: blue background, white text (as in the lecture slides)
+\setbeamercolor{author in head/foot}{fg=white,bg=lmublue}
+\setbeamercolor{title in head/foot}{fg=white,bg=lmublue}
+\setbeamercolor{date in head/foot}{fg=white,bg=lmublue}
+\setbeamertemplate{footline}{%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.5ex,dp=1ex,leftskip=1em]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.5ex,dp=1ex,center]{title in head/foot}%
+      \usebeamerfont{title in head/foot}\insertshorttitle%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.26\paperwidth,ht=2.5ex,dp=1ex,rightskip=1em]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\hfill\insertframenumber\,/\,\inserttotalframenumber%
+    \end{beamercolorbox}%
+  }%
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{subcaption}
+
+\title[Lag-Order Uncertainty in Set-Identified SVARs]{Lag-Order Uncertainty in Set-Identified SVARs}
+\subtitle{A comparative presentation of two Monte Carlo studies}
+\author[Ak\i n Ayd\i n \& Ferdinand Loser]{Ak\i n Ayd\i n \and Ferdinand Loser}
+\institute{Ludwig-Maximilian University of Munich}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\section{Motivation}
+
+\begin{frame}{IC Lag Selection}
+  \input{Tables/Table3_IC_Lags.tex}
+\end{frame}
+
+\begin{frame}{IC Performance Comparison}
+  \input{Tables/Table7_IC_Baselines.tex}
+\end{frame}
+
+\begin{frame}{BVAR vs. IC Performance Comparison}
+  \input{Tables/Table5_BVAR_vs_AIC.tex}
+\end{frame}
+
+
+\begin{frame}{BVAR Performance Depending on $\lambda_1$}
+\begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1_Tradeoff_Curve.pdf}
+        \caption{$p_0=4$}
+    \label{fig:tradeoff_p4}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1_Tradeoff_Curve_p10.pdf}
+        \caption{$p_0=10$}
+    \label{fig:tradeoff_p10}
+    \end{subfigure}
+  
+    \caption{Comparison of BVAR's performance across different $\lambda_1$-values in comparison to AIC.}
+    \label{fig:tradeoff}
+\end{figure}
+\end{frame}
+
+\begin{frame}{MDD Selection of $\lambda_1$}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figures/Fig2_Asymptotic_Relaxation.pdf}
+    \caption{The MDD selected hyperparameter $\lambda_1$ for different sample sizes (both $p_0=4$ and $p_0=10$).}
+    {\raggedright \footnotesize \textbf{Note:} Circles represent optimal $\lambda_1$-values in individual iterations, bars represent the interquartile range, red lines indicate the median. \par}
+\label{fig:asymptotic_relaxation}
+\end{figure}
+\end{frame}
+
+\begin{frame}{BMA vs. IC Performance Comparison}
+  \input{Tables/Table8_BMA_vs_AIC.tex}
+\end{frame}
+\begin{frame}{BMA Weighting (OLS BMA - BIC)}
+\begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5a_BMA_Heatmap_OLS.pdf}
+        \caption{OLS BMA (BIC-weighted)}
+        \label{fig:heat_ols}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf}
+        \caption{OLS BMA (Geom. BIC-weighted, $\theta=0.5$)}
+        \label{fig:heat_ols_geom}
+    \end{subfigure}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{BMA Weighting (OLS BMA - AIC)}
+\begin{figure}
+    \centering
+    % Bottom Left: Figure 7
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf}
+        \caption{OLS BMA (AIC-weighted)}
+        \label{fig:heat_aic}
+    \end{subfigure}
+    \hfill
+    % Bottom Right: Figure 8
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf}
+        \caption{OLS BMA (Geom. AIC-weighted, $\theta=0.5$)}
+        \label{fig:heat_aic_geom}
+    \end{subfigure}
+    
+    \caption{Posterior Weight Evolution across the four OLS BMA architectures ($p_0=4$).}
+    \label{fig:bma_heatmaps_grid}
+\end{figure}  
+\end{frame}
+
+\begin{frame}{BMA Weighting (Aggreagated for both Grid Approaches)}
+\begin{figure} % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    % Top Left: Figure 5
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5e_BMA_Heatmap_Joint.pdf}
+        \caption{Joint Grid BMA}
+        \label{fig:heat_joint}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    % Top Right: Figure 6
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig5f_BMA_Heatmap_Geom.pdf}
+        \caption{Geometric Grid BMA}
+        \label{fig:heat_geom}
+    \end{subfigure}
+  
+    \caption{Posterior Weight Evolution for the two BVAR-based BMAs ($p_0=4$).}
+    \label{fig:bma_heatmaps_grid_bvar}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Average shrinkage changes with $p$}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figures/Fig9_Tau_Comparison_T600_p04.pdf}
+    \caption{The expected weight of $\lambda_1$ given $p$ changes with $p$ ($p_0=4$).}
+    \label{fig:tau_to_p}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Performance of BMA vs Hard Selection at Different Sample Sizes}
+\begin{figure}[p] % The [p] tells LaTeX to put this on its own dedicated page
+    \centering
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1b_Asymptotic_Convergence_p4.pdf}
+        \caption{$p_0=4$}
+        \label{fig:convergence4}
+    \end{subfigure}
+    \hfill % Adds horizontal space between the two columns
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{Figures/Fig1c_Asymptotic_Convergence_p10.pdf}
+        \caption{$p_0=10$}
+        \label{fig:convergence10}
+    \end{subfigure}
+  
+    \caption{Performance of BMA vs Hard Selection at different sample sizes $T$.}
+    \label{fig:convergence}
+\end{figure}
+\end{frame}
+
+
+
+
+\end{document}

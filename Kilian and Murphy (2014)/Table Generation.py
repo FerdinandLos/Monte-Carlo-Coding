@@ -97,11 +97,12 @@ def main():
                 .to_latex(caption=caption, label=label, **to_latex_kwargs))
 
     # Define the note block using native LaTeX sbox and minipage for perfect alignment
-    note_text = r"""\usebox0\par
-\vspace{1ex}
-\begin{minipage}{\wd0}
-\raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
-\end{minipage}"""
+    # Define the note block using native LaTeX sbox and minipage for perfect alignment
+    note_text = r"""\noindent\usebox0\par
+                \vspace{1ex}
+                \noindent\begin{minipage}{\wd0}
+                \raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+                \end{minipage}"""
 
     # TABLE 1: Shrinkage strategy
     cols1 = ['AIC', 'SIC (BIC)', 'HQC', 'BVAR-WN-05', 'BVAR-WN-20', 'BVAR-WN-40', 
@@ -260,8 +261,8 @@ def main():
             
             # Apply your established LaTeX string replacements (Sideways table formatting removed)
             latex5 = (latex5
-                .replace('\\begin{tabular}', '\\sbox0{\\begin{tabular}')
-                .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)
+                .replace('\\begin{tabular}', '\\noindent\\sbox0{\\resizebox{\\textwidth}{!}{%\n\\begin{tabular}')
+                .replace('\\end{tabular}', '\\end{tabular}%\n}}\n' + note_text)
                 .replace('BVAR-WN-20', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.20$)\end{tabular}')
                 .replace('BVAR-WN-40', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.40$)\end{tabular}')
                 .replace('BVAR-WN-60', r'\begin{tabular}{@{}c@{}}BVAR \\ ($\lambda_1=0.60$)\end{tabular}')
@@ -324,6 +325,83 @@ def main():
             print("[SAVED] Table 6: BMA_vs_AIC.tex")
     else:
         print("[SKIPPED] Table 6 (AIC column not found in pivot table)")
+
+
+    # TABLE 7: Information Criteria Baseline MSEs
+    cols7 = ['AIC', 'SIC (BIC)', 'HQC']
+    n7 = len([c for c in cols7 if c in pivot_mse.columns])
+    
+    if n7 > 0:
+        latex7 = styled_mse_latex(
+            cols7,
+            caption=r"Relative Mean Squared Error: Information Criteria Baselines.",
+            label="tab:ic_mse_baselines",
+            column_format="ll" + "c" * n7,
+            position="htbp", position_float="centering", hrules=True,
+            multirow_align="t", convert_css=True
+        )
+        
+        # Applying standard LaTeX string replacements (Standard table, no sidewaystable needed)
+        latex7 = (latex7
+            .replace('\\begin{tabular}', '\\noindent\\sbox0{\\begin{tabular}')
+            .replace('\\end{tabular}', '\\end{tabular}}\n' + note_text)
+            .replace('SIC (BIC)', 'BIC')
+        )
+        
+        with open(os.path.join(tables_dir, "Table7_IC_Baselines.tex"), "w") as f:
+            f.write(latex7)
+        print("[SAVED] Table 7: IC_Baselines.tex")
+    else:
+        print("[SKIPPED] Table 7 (IC columns not found in pivot table)")
+
+    
+    # TABLE 8: BMA Specifications Relative to AIC (for presentation)
+    if 'AIC' in pivot_mse.columns:
+        # Include all BMA models to give Joint Grid BMA proper context
+        bma_cols = ['OLS-BMA', 'OLS-GEOM-BMA', 'OLS_BMA_AIC', 'OLS_GEOM_BMA_AIC', 'JOINT-BMA', 'GEOM-BMA']
+        bma_cols_present = [c for c in bma_cols if c in pivot_mse.columns]
+        
+        if bma_cols_present:
+            # Calculate relative MSE using AIC as the denominator
+            calc_cols = ['AIC'] + bma_cols_present
+            pivot_mse_rel_aic_bma = pivot_mse[calc_cols].div(pivot_mse['AIC'], axis=0)
+            
+            # Drop the AIC column 
+            pivot_mse_rel_aic_bma = pivot_mse_rel_aic_bma.drop(columns=['AIC'])
+            
+            row_min_bma = pivot_mse_rel_aic_bma.min(axis=1)
+            def bold_row_min_bma(row):
+                mn = row_min_bma[row.name]
+                return ['font-weight: bold' if (pd.notna(v) and pd.notna(mn) and v == mn) else '' 
+                        for v in row]
+
+            latex8 = (pivot_mse_rel_aic_bma.style
+                    .format("{:.3f}", na_rep="-")
+                    .apply(bold_row_min_bma, axis=1)
+                    .to_latex(
+                        caption=r"Relative Mean Squared Error of Bayesian Model Averaging Specifications vs.~AIC Baseline.",
+                        label="tab:bma_vs_aic",
+                        column_format="ll" + "c" * len(bma_cols_present),
+                        position="htbp", position_float="centering", hrules=True,
+                        multirow_align="t", convert_css=True
+                    ))
+            
+            latex8 = (latex8
+                .replace('\\begin{tabular}', '\\noindent\\sbox0{\\resizebox{\\textwidth}{!}{%\n\\begin{tabular}')
+                .replace('\\end{tabular}', '\\end{tabular}%\n}}\n' + note_text)
+                .replace('OLS-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular}')
+                .replace('OLS-GEOM-BMA', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular}')
+                .replace('OLS_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular}')
+                .replace('OLS_GEOM_BMA_AIC', r'\begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular}')
+                .replace('JOINT-BMA', 'Joint Grid BMA')
+                .replace('GEOM-BMA', 'Geom. Grid BMA')
+            )
+            
+            with open(os.path.join(tables_dir, "Table8_BMA_vs_AIC.tex"), "w") as f:
+                f.write(latex8)
+            print("[SAVED] Table 8: BMA_vs_AIC.tex")
+    else:
+        print("[SKIPPED] Table 8 (AIC column not found in pivot table)")
 
     # -------------------------------------------------------------------
     # 4. FIGURES

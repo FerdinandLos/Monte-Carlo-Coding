@@ -1,8 +1,9 @@
-\begin{sidewaystable}[htbp]
+\begin{table}[htbp]
 \centering
 \caption{Relative Mean Squared Error of Bayesian Model Averaging Specifications vs.~AIC Baseline.}
 \label{tab:bma_vs_aic}
-\sbox0{\begin{tabular}{llcccccc}
+\noindent\sbox0{\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccc}
 \toprule
  &  & \begin{tabular}{@{}c@{}}OLS BMA \\ (BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. BIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (AIC)\end{tabular} & \begin{tabular}{@{}c@{}}OLS BMA \\ (Geom. AIC)\end{tabular} & Joint Grid BMA & Geom. Grid BMA \\
 $p_0$ & $T$ &  &  &  &  &  &  \\
@@ -16,10 +17,11 @@ $p_0$ & $T$ &  &  &  &  &  &  \\
  & 480 & 1.064 & 1.297 & \bfseries 0.893 & 1.224 & 1.031 & 0.908 \\
  & 600 & 1.248 & 1.062 & 0.852 & \bfseries 0.845 & 0.847 & 0.930 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}%
+}}
 \noindent\usebox0\par
                 \vspace{1ex}
                 \noindent\begin{minipage}{\wd0}
                 \raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
                 \end{minipage}
-\end{sidewaystable}
+\end{table}

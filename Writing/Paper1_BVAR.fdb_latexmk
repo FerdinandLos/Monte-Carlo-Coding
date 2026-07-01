@@ -1,26 +1,26 @@
 # Fdb version 4
-["biber Paper1_BVAR"] 1782248276.75672 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782249978.2683 0
+["biber Paper1_BVAR"] 1782248276.75672 "Paper1_BVAR.bcf" "Paper1_BVAR.bbl" "Paper1_BVAR" 1782920036.94371 0
   "Monte Carlo Simulations.bib" 1782248233 94352 61836e51d2c144cc167f0eec717b631c ""
-  "Paper1_BVAR.bcf" 1782249977 115716 5cb3e279936c1c30a4c50dfee60e06aa "pdflatex"
+  "Paper1_BVAR.bcf" 1782920036 115716 5cb3e279936c1c30a4c50dfee60e06aa "pdflatex"
   (generated)
   "Paper1_BVAR.bbl"
   "Paper1_BVAR.blg"
   (rewritten before read)
-["pdflatex"] 1782249972.10032 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782249978.27187 0
-  "Figures/Fig1_Tradeoff_Curve.pdf" 1782243256 25582 0237827cabb80737d88780d1b28319df ""
-  "Figures/Fig1_Tradeoff_Curve_p10.pdf" 1782243256 25514 25274d2abfe7f5dd9d246b2c880f46a5 ""
-  "Figures/Fig2_Asymptotic_Relaxation.pdf" 1782243257 58257 08737ae56895d94eaa8e5554f781a4a8 ""
-  "Figures/Fig3_MDD_Surface.pdf" 1782243258 29755 1f16892f89fd13a93418b0d5811d0ed7 ""
+["pdflatex"] 1782920030.59772 "c:/Users/ferdi/Documents/Monte Carlo Simulation/Monte-Carlo-Coding/Writing/Paper1_BVAR.tex" "Paper1_BVAR.pdf" "Paper1_BVAR" 1782920036.94485 0
+  "Figures/Fig1_Tradeoff_Curve.pdf" 1782920023 25582 bfb4a2bc2ff3d0fdd755e1a0e662f333 ""
+  "Figures/Fig1_Tradeoff_Curve_p10.pdf" 1782920023 25514 f3ff6cf6e98107afe2c8b91cb738a948 ""
+  "Figures/Fig2_Asymptotic_Relaxation.pdf" 1782920024 58385 996e43d2655456c1fe43ba3c15435c56 ""
+  "Figures/Fig3_MDD_Surface.pdf" 1782920024 29755 f01bb6a5ac97c2be89e68701a418e88e ""
   "Figures/True_IRF_plot_Cumulative_10_lags.png" 1782157781 706312 583e30a6b90071d4b1a6b613f57fc378 ""
   "Figures/True_IRF_plot_Cumulative_4_lags.png" 1782157781 646718 e1ac04c1a96dd673935b41a9d61c97d3 ""
-  "Paper1_BVAR.aux" 1782249977 21987 7e20ee163906468c41a155bfce9d72f8 "pdflatex"
+  "Paper1_BVAR.aux" 1782920036 21987 7e20ee163906468c41a155bfce9d72f8 "pdflatex"
   "Paper1_BVAR.bbl" 1782248279 86286 c547170e549829d56fc9b5f8117d27c7 "biber Paper1_BVAR"
-  "Paper1_BVAR.out" 1782249977 2433 ce50e5d18e833d530277e763969febc3 "pdflatex"
-  "Paper1_BVAR.run.xml" 1782249977 2407 a813a7fabcba9c3d82aa07c2bd80e7b4 "pdflatex"
+  "Paper1_BVAR.out" 1782920036 2433 ce50e5d18e833d530277e763969febc3 "pdflatex"
+  "Paper1_BVAR.run.xml" 1782920036 2407 a813a7fabcba9c3d82aa07c2bd80e7b4 "pdflatex"
   "Paper1_BVAR.tex" 1782249957 74964 1999dc08618a4179c448c2518928d57b ""
-  "Tables/Table1_Shrinkage.tex" 1782243255 1568 5862a9287bfd4b44460e12bc21037739 ""
-  "Tables/Table3_IC_Lags.tex" 1782243255 589 95075be94207d96d25dec846ad7ffb96 ""
-  "Tables/Table5_BVAR_vs_AIC.tex" 1782243255 1347 51449ce2941b42c5312a1eb1728a5902 ""
+  "Tables/Table1_Shrinkage.tex" 1782920022 1568 5862a9287bfd4b44460e12bc21037739 ""
+  "Tables/Table3_IC_Lags.tex" 1782920022 589 95075be94207d96d25dec846ad7ffb96 ""
+  "Tables/Table5_BVAR_vs_AIC.tex" 1782920022 1347 51449ce2941b42c5312a1eb1728a5902 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1000.tfm" 1747240602 3584 2d666ecf6d466d8b007246bc2f94d9da ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1095.tfm" 1747240602 3584 21b378cca2e40816b0e6d74a4dc98f04 ""
   "c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1747240602 3584 402da0b29eafbad07963b1224b222f18 ""

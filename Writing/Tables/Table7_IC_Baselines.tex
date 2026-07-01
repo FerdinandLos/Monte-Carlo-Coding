@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\caption{Relative Mean Squared Error: Information Criteria Baselines.}
+\label{tab:ic_mse_baselines}
+\noindent\sbox0{\begin{tabular}{llccc}
+\toprule
+ &  & AIC & BIC & HQC \\
+$p_0$ & $T$ &  &  &  \\
+\midrule
+\multirow[t]{4}{*}{4} & 240 & \bfseries 1.083 & 1.108 & 1.129 \\
+ & 360 & \bfseries 1.117 & 1.274 & 1.296 \\
+ & 480 & \bfseries 0.986 & 1.133 & 1.124 \\
+ & 600 & \bfseries 0.989 & 1.145 & 1.118 \\
+\multirow[t]{4}{*}{10} & 240 & 1.033 & \bfseries 1.018 & 1.021 \\
+ & 360 & \bfseries 0.811 & 0.904 & 0.878 \\
+ & 480 & \bfseries 0.989 & 1.190 & 1.185 \\
+ & 600 & \bfseries 1.036 & 1.260 & 1.259 \\
+\bottomrule
+\end{tabular}}
+\noindent\usebox0\par
+                \vspace{1ex}
+                \noindent\begin{minipage}{\wd0}
+                \raggedright\footnotesize\textit{Note:} Bold values indicate the lowest Relative Mean Squared Error across the respective scenario.
+                \end{minipage}
+\end{table}
