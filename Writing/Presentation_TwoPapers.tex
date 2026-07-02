@@ -52,10 +52,14 @@
 \end{frame}
 
 \begin{frame}{Agenda}
-  \tableofcontents
+  % subsectionstyle shows the two Results subsections (BVAR / BMA) in the outline
+  \tableofcontents[subsectionstyle=show/show/show]
 \end{frame}
 
-\section{Motivation}
+% ===== Shared 5-stage skeleton: Introduction -> Theory -> Simulation Design -> Results -> Conclusion =====
+% Theory is joint; Results splits into Paper I (BVAR, Akin) and Paper II (BMA, Ferdinand).
+
+\section{Introduction}
 
 \begin{frame}{The central problem}
   \begin{itemize}
@@ -69,6 +73,130 @@
     Which estimation strategy recovers the true impulse response function most reliably when the lag order is uncertain?
   \end{block}
 \end{frame}
+
+\section{Theory}
+
+% Placeholder: joint theory (VAR framework, sign restrictions, information criteria,
+% then BVAR for Akin / BMA for Ferdinand). Content to be aligned with the papers.
+\begin{frame}{Theory: overview}
+  \begin{itemize}
+    \item VAR framework and impulse response functions.
+    \item Set identification via sign restrictions and the median target.
+    \item Information criteria and the bias--variance trade-off.
+    \item Bayesian extension: shrinkage (Paper I) and model averaging (Paper II).
+  \end{itemize}
+\end{frame}
+
+% ===== T1: VAR framework -> IRF, and the two channels the IRF depends on =====
+\begin{frame}{From VAR to impulse responses}
+  \textbf{A reduced-form VAR explains today by its own past:}
+  \[
+    Y_t = v + A_1 Y_{t-1} + \dots + A_{p_0} Y_{t-p_0} + e_t,
+    \qquad \mathbb{E}[e_t e_t'] = \Sigma
+  \]
+  Inverting it (infinite MA form) rewrites today as accumulated past shocks:
+  \[
+    Y_t = \mu + \sum_{i=0}^{\infty} \Phi_i\, e_{t-i}
+  \]
+  \begin{itemize}
+    \item The \textbf{IRF} is the sequence $\Phi_i$: a shock's echo over time.
+    \item \textbf{Channel 1 -- lag order:} $\Phi_i$ comes from $A_1,\dots,A_{p_0}$,
+          so the number of lags shapes the IRF.
+    \item \textbf{Channel 2 -- identification:} $e_t$ mixes structural shocks;
+          isolating one needs $e_t = B\varepsilon_t$ with $\Sigma = BB'$.
+  \end{itemize}
+  \begin{block}{Takeaway}
+    An IRF depends on \emph{two} choices. We target lag uncertainty;
+    set identification adds a second layer (next).
+  \end{block}
+\end{frame}
+
+% ===== T2: sign restrictions, set identification, median target =====
+\begin{frame}{Sign restrictions: identification without a single answer}
+  \textbf{The problem:} infinitely many $B$ satisfy $\Sigma = BB'$
+  --- so which structural story is right?
+  \begin{itemize}
+    \item \textbf{Cholesky:} imposes a strong assumption (a fixed ordering)
+          to pin down \emph{one} answer.
+    \item \textbf{Uhlig (2005) -- agnostic:} let the data speak; impose only a few
+          sign restrictions everyone can agree on.
+    \item Sign restrictions rule out the ``wrong-signed'' models and keep the rest
+          $\Rightarrow$ they identify a \textbf{set} of admissible IRFs, not one.
+  \end{itemize}
+  \vspace{0.15cm}
+  \begin{block}{Picking one representative}
+    To compare against a single true IRF, we take the \textbf{median target}
+    (Fry \& Pagan, 2011): the actual admissible model closest to the pointwise median.
+  \end{block}
+\end{frame}
+
+% ===== T3: bias-variance trade-off and information criteria =====
+\begin{frame}{The bias--variance trade-off}
+  \textbf{An information criterion embodies the trade-off:}
+  \[
+    \mathrm{IC}(p) =
+    \underbrace{\ln|\hat\Sigma(p)|}_{\text{penalizes underfitting}}
+    \; + \;
+    \underbrace{c_T\,\tfrac{K^2 p}{N}}_{\text{penalizes overfitting}}
+    \qquad\quad
+    \bigl(\text{MSE} = \text{Bias}^2 + \text{Variance}\bigr)
+  \]
+  \begin{itemize}
+    \item Too few lags $\Rightarrow$ bias (underfitting); too many $\Rightarrow$ variance (overfitting).
+    \item Criteria differ only in the penalty weight $c_T$:
+          $\hat p_{BIC} \le \hat p_{HQC} \le \hat p_{AIC}$.
+    \item AIC is the \textbf{most lenient} and stays closest to the true lag order.
+    \item Caveat: AIC is usually seen as prone to \emph{overfitting}, but in a VAR each
+          extra lag adds a full $(K\times K)$ block --- so here even AIC can \emph{underfit}.
+  \end{itemize}
+  \begin{block}{Key insight (Ivanov \& Kilian)}
+    Recovering the \emph{true} lag order is not the goal --- minimizing MSE is.
+    Sometimes an underfitting model wins.
+  \end{block}
+\end{frame}
+
+% ===== T4a: Bayesian extension I -- BVAR shrinkage (solves curse of dimensionality) =====
+\begin{frame}{Our first extension: BVAR shrinkage}
+  \textbf{The frequentist problem --- curse of dimensionality:}
+  \begin{itemize}
+    \item A 12-lag system needs $K^2 p = 192$ coefficients against $\sim\!240$ observations;
+          each estimated coefficient costs one degree of freedom.
+  \end{itemize}
+  \textbf{The shrinkage idea (Paper~I):} don't \emph{discard} lags --- \emph{discipline} them
+  by pulling coefficients toward a prior.
+  \[
+    \text{posterior} \approx w\,(\text{data estimate}) + (1-w)\,(\text{prior mean})
+  \]
+  \begin{itemize}
+    \item The tightness $\lambda_1$ sets how hard we shrink.
+    \item Keep all 12 lags, but rein in the higher-order coefficients.
+  \end{itemize}
+  \begin{block}{What it solves}
+    Shrinkage tames the \textbf{dimensionality} problem: many coefficients, few observations.
+  \end{block}
+\end{frame}
+
+% ===== T4b: Bayesian extension II -- BMA (solves model uncertainty, NOT dimensionality) =====
+\begin{frame}{Our second extension: Bayesian model averaging}
+  \textbf{A different problem --- model uncertainty:}
+  \begin{itemize}
+    \item We do not know the true lag order. Committing to a single one ignores that
+          uncertainty entirely.
+  \end{itemize}
+  \textbf{The averaging idea (Paper~II):} keep \emph{all} candidate lag orders and combine them.
+  \[
+    p(\Delta \mid y) = \sum_{k} p(\Delta \mid M_k, y)\, p(M_k \mid y)
+  \]
+  \begin{itemize}
+    \item Each model $M_k$ (a lag order) is weighted by its posterior model probability.
+    \item Instead of selecting one model, we \textbf{average} over many.
+  \end{itemize}
+  \begin{block}{What it solves}
+    Averaging addresses \textbf{model uncertainty}.
+  \end{block}
+\end{frame}
+
+\section{Simulation Design}
 
 \begin{frame}{Simulation design in a nutshell}
   \begin{itemize}
@@ -84,7 +212,9 @@
   \end{figure}
 \end{frame}
 
-\section{Paper I: BVAR}
+\section{Results}
+
+\subsection{Paper I: BVAR shrinkage}
 
 \begin{frame}{Paper I: To Shrink or to Select?}
   \begin{itemize}
@@ -110,7 +240,7 @@
   \end{block}
 \end{frame}
 
-\section{Paper II: BMA}
+\subsection{Paper II: Bayesian model averaging}
 
 \begin{frame}{Paper II: Hedging Against Lag Order Uncertainty}
   \begin{itemize}
@@ -136,7 +266,7 @@
   \end{block}
 \end{frame}
 
-\section{Comparison}
+\section{Conclusion}
 
 \begin{frame}{How the two papers relate}
   \begin{table}
@@ -161,8 +291,6 @@
     \item The best strategy depends on the objective, but both papers support a more flexible treatment of lag uncertainty.
   \end{itemize}
 \end{frame}
-
-\section{Closing}
 
 \begin{frame}{Concluding message}
   \begin{block}{Bottom line}
