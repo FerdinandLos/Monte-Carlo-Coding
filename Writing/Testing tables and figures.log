@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  1 JUL 2026 18:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.2.17)  2 JUL 2026 19:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -726,118 +726,142 @@ Package caption Info: End \AtBeginDocument code.
 
 {c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./Testing tables and figures.toc) [2
 
-] (./Tables/Table3_IC_Lags.tex
-LaTeX Font Info:    Trying to load font information for U+msa on input line 3.
+]
+LaTeX Font Info:    Trying to load font information for U+msa on input line 79.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 3.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 79.
  (c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)) [3
+)
+Underfull \hbox (badness 10000) in paragraph at lines 79--79
+[]\T1/cmss/m/n/10.95 Set-Identified (Sign Re-stric-
+ []
 
-] (./Tables/Table7_IC_Baselines.tex) [4
+
+Underfull \hbox (badness 2150) in paragraph at lines 79--79
+[]\T1/cmss/m/n/10.95 Macroeconomic Stud-ies from
+ []
+
+
+Underfull \hbox (badness 1571) in paragraph at lines 79--79
+\T1/cmss/m/n/10.95 the 1990s/early 2000s (both
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 79--79
+[]\T1/cmss/m/n/10.95 Kilian and Mur-phy (2012)
+ []
+
+[3
+
+] [4
+
+] (./Tables/Table3_IC_Lags.tex) [5
+
+] (./Tables/Table7_IC_Baselines.tex) [6
 
 ] (./Tables/Table5_BVAR_vs_AIC.tex)
-Overfull \vbox (12.21854pt too high) detected at line 72
+Overfull \vbox (12.21854pt too high) detected at line 106
  []
 
-[5
+[7
 
 ]
-<Figures/Fig1_Tradeoff_Curve.pdf, id=73, 650.43pt x 433.62pt>
+<Figures/Fig1_Tradeoff_Curve.pdf, id=94, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve.pdf>
-Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 96.
+Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve.pdf  used on input line 130.
 (pdftex.def)             Requested size: 191.20082pt x 127.46686pt.
-<Figures/Fig1_Tradeoff_Curve_p10.pdf, id=74, 650.43pt x 433.62pt>
+<Figures/Fig1_Tradeoff_Curve_p10.pdf, id=95, 650.43pt x 433.62pt>
 File: Figures/Fig1_Tradeoff_Curve_p10.pdf Graphic file (type pdf)
 <use Figures/Fig1_Tradeoff_Curve_p10.pdf>
-Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve_p10.pdf  used on input line 96.
+Package pdftex.def Info: Figures/Fig1_Tradeoff_Curve_p10.pdf  used on input line 130.
 (pdftex.def)             Requested size: 191.20082pt x 127.46686pt.
- [6
+ [8
 
  <./Figures/Fig1_Tradeoff_Curve.pdf> <./Figures/Fig1_Tradeoff_Curve_p10.pdf>]
-<Figures/Fig2_Asymptotic_Relaxation.pdf, id=236, 722.7pt x 433.62pt>
+<Figures/Fig2_Asymptotic_Relaxation.pdf, id=257, 722.7pt x 433.62pt>
 File: Figures/Fig2_Asymptotic_Relaxation.pdf Graphic file (type pdf)
 <use Figures/Fig2_Asymptotic_Relaxation.pdf>
-Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 106.
+Package pdftex.def Info: Figures/Fig2_Asymptotic_Relaxation.pdf  used on input line 140.
 (pdftex.def)             Requested size: 258.91765pt x 155.3488pt.
- [7
-
- <./Figures/Fig2_Asymptotic_Relaxation.pdf>] (./Tables/Table8_BMA_vs_AIC.tex) [8
-
-]
-<Figures/Fig5a_BMA_Heatmap_OLS.pdf, id=331, 578.16pt x 505.89pt>
-File: Figures/Fig5a_BMA_Heatmap_OLS.pdf Graphic file (type pdf)
-<use Figures/Fig5a_BMA_Heatmap_OLS.pdf>
-Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS.pdf  used on input line 129.
-(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
-<Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf, id=332, 578.16pt x 505.89pt>
-File: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf Graphic file (type pdf)
-<use Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf>
-Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf  used on input line 129.
-(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
  [9
 
+ <./Figures/Fig2_Asymptotic_Relaxation.pdf>] (./Tables/Table8_BMA_vs_AIC.tex) [10
+
+]
+<Figures/Fig5a_BMA_Heatmap_OLS.pdf, id=351, 578.16pt x 505.89pt>
+File: Figures/Fig5a_BMA_Heatmap_OLS.pdf Graphic file (type pdf)
+<use Figures/Fig5a_BMA_Heatmap_OLS.pdf>
+Package pdftex.def Info: Figures/Fig5a_BMA_Heatmap_OLS.pdf  used on input line 163.
+(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
+<Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf, id=352, 578.16pt x 505.89pt>
+File: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf Graphic file (type pdf)
+<use Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf>
+Package pdftex.def Info: Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf  used on input line 163.
+(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
+ [11
+
  <./Figures/Fig5a_BMA_Heatmap_OLS.pdf> <./Figures/Fig5b_BMA_Heatmap_OLS_Geom.pdf>]
-<Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf, id=496, 578.16pt x 505.89pt>
+<Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf, id=516, 578.16pt x 505.89pt>
 File: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf Graphic file (type pdf)
 <use Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf>
-Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf  used on input line 151.
+Package pdftex.def Info: Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf  used on input line 185.
 (pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
-<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf, id=497, 578.16pt x 505.89pt>
+<Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf, id=517, 578.16pt x 505.89pt>
 File: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf Graphic file (type pdf)
 <use Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>
-Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf  used on input line 151.
+Package pdftex.def Info: Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf  used on input line 185.
 (pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
 
-Overfull \vbox (3.02223pt too high) detected at line 151
- []
-
-[10
-
- <./Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>]
-<Figures/Fig5e_BMA_Heatmap_Joint.pdf, id=662, 578.16pt x 505.89pt>
-File: Figures/Fig5e_BMA_Heatmap_Joint.pdf Graphic file (type pdf)
-<use Figures/Fig5e_BMA_Heatmap_Joint.pdf>
-Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint.pdf  used on input line 174.
-(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
-<Figures/Fig5f_BMA_Heatmap_Geom.pdf, id=663, 578.16pt x 505.89pt>
-File: Figures/Fig5f_BMA_Heatmap_Geom.pdf Graphic file (type pdf)
-<use Figures/Fig5f_BMA_Heatmap_Geom.pdf>
-Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom.pdf  used on input line 174.
-(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
-
-Overfull \vbox (3.02223pt too high) detected at line 174
- []
-
-[11
-
- <./Figures/Fig5e_BMA_Heatmap_Joint.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom.pdf>]
-<Figures/Fig9_Tau_Comparison_T600_p04.pdf, id=833, 578.16pt x 433.62pt>
-File: Figures/Fig9_Tau_Comparison_T600_p04.pdf Graphic file (type pdf)
-<use Figures/Fig9_Tau_Comparison_T600_p04.pdf>
-Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p04.pdf  used on input line 183.
-(pdftex.def)             Requested size: 258.91765pt x 194.18765pt.
-
-Overfull \vbox (5.9106pt too high) detected at line 183
+Overfull \vbox (3.02223pt too high) detected at line 185
  []
 
 [12
 
+ <./Figures/Fig5c_BMA_Heatmap_OLS_AIC.pdf> <./Figures/Fig5d_BMA_Heatmap_OLS_Geom_AIC.pdf>]
+<Figures/Fig5e_BMA_Heatmap_Joint.pdf, id=682, 578.16pt x 505.89pt>
+File: Figures/Fig5e_BMA_Heatmap_Joint.pdf Graphic file (type pdf)
+<use Figures/Fig5e_BMA_Heatmap_Joint.pdf>
+Package pdftex.def Info: Figures/Fig5e_BMA_Heatmap_Joint.pdf  used on input line 208.
+(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
+<Figures/Fig5f_BMA_Heatmap_Geom.pdf, id=683, 578.16pt x 505.89pt>
+File: Figures/Fig5f_BMA_Heatmap_Geom.pdf Graphic file (type pdf)
+<use Figures/Fig5f_BMA_Heatmap_Geom.pdf>
+Package pdftex.def Info: Figures/Fig5f_BMA_Heatmap_Geom.pdf  used on input line 208.
+(pdftex.def)             Requested size: 191.20082pt x 167.29929pt.
+
+Overfull \vbox (3.02223pt too high) detected at line 208
+ []
+
+[13
+
+ <./Figures/Fig5e_BMA_Heatmap_Joint.pdf> <./Figures/Fig5f_BMA_Heatmap_Geom.pdf>]
+<Figures/Fig9_Tau_Comparison_T600_p04.pdf, id=854, 578.16pt x 433.62pt>
+File: Figures/Fig9_Tau_Comparison_T600_p04.pdf Graphic file (type pdf)
+<use Figures/Fig9_Tau_Comparison_T600_p04.pdf>
+Package pdftex.def Info: Figures/Fig9_Tau_Comparison_T600_p04.pdf  used on input line 217.
+(pdftex.def)             Requested size: 258.91765pt x 194.18765pt.
+
+Overfull \vbox (5.9106pt too high) detected at line 217
+ []
+
+[14
+
  <./Figures/Fig9_Tau_Comparison_T600_p04.pdf>]
-<Figures/Fig1b_Asymptotic_Convergence_p4.pdf, id=932, 650.43pt x 433.62pt>
+<Figures/Fig1b_Asymptotic_Convergence_p4.pdf, id=953, 650.43pt x 433.62pt>
 File: Figures/Fig1b_Asymptotic_Convergence_p4.pdf Graphic file (type pdf)
 <use Figures/Fig1b_Asymptotic_Convergence_p4.pdf>
-Package pdftex.def Info: Figures/Fig1b_Asymptotic_Convergence_p4.pdf  used on input line 204.
+Package pdftex.def Info: Figures/Fig1b_Asymptotic_Convergence_p4.pdf  used on input line 238.
 (pdftex.def)             Requested size: 191.20082pt x 127.46686pt.
-<Figures/Fig1c_Asymptotic_Convergence_p10.pdf, id=933, 650.43pt x 433.62pt>
+<Figures/Fig1c_Asymptotic_Convergence_p10.pdf, id=954, 650.43pt x 433.62pt>
 File: Figures/Fig1c_Asymptotic_Convergence_p10.pdf Graphic file (type pdf)
 <use Figures/Fig1c_Asymptotic_Convergence_p10.pdf>
-Package pdftex.def Info: Figures/Fig1c_Asymptotic_Convergence_p10.pdf  used on input line 204.
+Package pdftex.def Info: Figures/Fig1c_Asymptotic_Convergence_p10.pdf  used on input line 238.
 (pdftex.def)             Requested size: 191.20082pt x 127.46686pt.
- [13
+ [15
 
  <./Figures/Fig1b_Asymptotic_Convergence_p4.pdf> <./Figures/Fig1c_Asymptotic_Convergence_p10.pdf>]
 \tf@nav=\write6
@@ -855,21 +879,21 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `"Testing tables and figures".out' has not changed.
-(rerunfilecheck)             Checksum: 9B43054CD6AED50502C6D6A5E9840F14;93.
+(rerunfilecheck)             Checksum: 1341CDAD28577393E514447162DB187E;78.
  ) 
 Here is how much of TeX's memory you used:
- 23379 strings out of 469513
- 453708 string characters out of 5468178
- 828535 words of memory out of 5000000
- 51496 multiletter control sequences out of 15000+600000
- 654981 words of font info for 103 fonts, out of 8000000 for 9000
+ 23429 strings out of 469513
+ 454954 string characters out of 5468178
+ 828540 words of memory out of 5000000
+ 51541 multiletter control sequences out of 15000+600000
+ 655295 words of font info for 104 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  101i,16n,107p,478b,689s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0600.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1440.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb>
-Output written on "Testing tables and figures.pdf" (13 pages, 443017 bytes).
+ <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0700.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi0900.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsi1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1200.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0600.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0800.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1095.600pk> <c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1440.600pk><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Users/ferdi/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on "Testing tables and figures.pdf" (15 pages, 499297 bytes).
 PDF statistics:
- 1447 PDF objects out of 1728 (max. 8388607)
- 390 compressed objects within 4 object streams
- 58 named destinations out of 1000 (max. 500000)
+ 1556 PDF objects out of 1728 (max. 8388607)
+ 421 compressed objects within 5 object streams
+ 62 named destinations out of 1000 (max. 500000)
  111 words of extra memory for PDF output out of 10000 (max. 10000000)
 

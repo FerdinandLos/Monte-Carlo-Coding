@@ -57,7 +57,41 @@
   \tableofcontents
 \end{frame}
 
-\section{Motivation}
+
+\begin{frame}{Introduction}
+  \begin{itemize}
+    \item Inspiration from Ivanov and Kilian (2005) who compare the performance of different lag-order selection criteria in a Monte Carlo study in how well they can recover the true IRF of a VAR model.
+    \item Since then VAR estimation has changed a lot, we aim to update their analysis to a more current framework:
+  \end{itemize}
+  \begin{table}
+        \begin{tabular}{@{} l p{5cm} p{5cm} @{}}
+            \toprule
+            \textbf{Feature} & \textbf{Ivanov and Kilian (2005)} & \textbf{Our Approach} \\
+            \midrule
+            IRF & Point-Identified (Cholesky Decomposition) & Set-Identified (Sign Restrictions) \\ 
+            \addlinespace
+            Model Selection & Information Criteria & Information Criteria vs. BVAR and BMA \\
+            \addlinespace
+            Data & Macroeconomic Studies from the 1990s/early 2000s (both monthly and quarterly) & Kilian and Murphy (2012) (monthly)\\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Simulation Design}
+  \begin{itemize}
+    \item Using VAR specification with true IRF specific $\tilde{B}$ to median target IRF from intitial estimation on real data from Kilian and Murphy (2012).
+    \item Estimation for lag orders $p_0 \in \{4,10\}$, and sample sizes $T \in \{240, 360, 480, 600\}$
+    \item 500 Monte Carlo iterations $R$ for each combination of $p_0$ and $T$, 1000 admissible IRFs selected for each model in each iteration. \\
+    (Computational limits even with parallel processing and translation into machine code with \texttt{numba} and \texttt{joblib} packages in \texttt{python})
+    \item Metric for performance comparison: Geometric mean of squared errors of median IRF of model $j$ relative to the median IRF of a model correctly specified with $p_0$:
+  \end{itemize}
+\begin{equation}
+    MSE^{relative}_j = \exp\left( \frac{1}{n} \sum_{i=1}^{R} \ln(\frac{SE_{ji}}{SE_{p_0i}}) \right)
+\end{equation}
+\end{frame}
+
+\section{Results}
 
 \begin{frame}{IC Lag Selection}
   \input{Tables/Table3_IC_Lags.tex}
@@ -202,7 +236,6 @@
     \label{fig:convergence}
 \end{figure}
 \end{frame}
-
 
 
 
